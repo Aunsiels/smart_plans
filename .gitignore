@@ -1,0 +1,9 @@
+tmp/
+.ropeproject/
+.ipynb_checkpoints/
+*pyc
+*aux
+*blg
+*bbl
+*log
+*gz
