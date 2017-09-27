@@ -1,6 +1,7 @@
 from function import Function
 import re
 import sys
+# from function_indexed_grammar import FunctionIndexedGrammar
 
 
 def main():
@@ -34,6 +35,10 @@ def main():
         query = ",".join([re.sub("-", "", r) + "m" * (r.count("-") % 2)
                           for r in [re.sub("\s+", ",", x.strip())
                                     for x in f.readline().split(",")]])
+
+    # grammar = FunctionIndexedGrammar(functions, query)
+    # if grammar.is_empty():
+    #     sys.exit("The Grammar is empty")
 
     # Initialization rules
     print("q(X) :- p([" + query + "], X, L), print(L).")

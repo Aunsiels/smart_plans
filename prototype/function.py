@@ -266,6 +266,16 @@ class Function (object):
         s1 = set([r[0] + 'm' for r in self.relations])
         return s0.union(s1)
 
+    def get_prolog(self):
+        """get_prolog Generate a string which represents the function as a
+        prolog rule"""
+        return self.name + " :- " + ", ".join([r[0] +
+                                               'm' * r[1]
+                                               for r in self.relations]) + ".\n"
+
+    def get_last(self):
+        return self.relations[-1][0] + 'm' * self.relations[-1][1]
+
 
 def test():
     """test Performs some basic tests"""

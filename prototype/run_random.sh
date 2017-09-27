@@ -8,7 +8,7 @@ start_time=$(($(date +%s%N)/1000000))
 
 mkdir -p tmp
 
-python3 function_generator.py $2 $3 $4 tmp/functions$1-$2-$3-$4.fct tmp/query$1-$2-$3-$4.txt
+python3 function_generator_main.py $2 $3 $4 tmp/functions$1-$2-$3-$4.fct tmp/query$1-$2-$3-$4.txt
 
 RESULT=$(python3 main.py $1 tmp/functions$1-$2-$3-$4.fct tmp/query$1-$2-$3-$4.txt > tmp/temp_rules$1-$2-$3-$4.pl && swipl -f tmp/temp_rules$1-$2-$3-$4.pl -q main)
 
