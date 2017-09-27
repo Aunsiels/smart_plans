@@ -44,3 +44,9 @@ class FunctionGenerator(object):
                               for _ in range(size)], function_name)
             functions.append(f_rel)
         return functions
+
+    def get_random_query(self):
+        """get_random_query
+        Returns a random query
+        """
+        return random.choice(self.relations) + "m" * random.randint(0, 1)

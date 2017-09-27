@@ -51,6 +51,9 @@ class Function (object):
         """n_relations Gives the number of relations in the function"""
         return len(self.relations)
 
+    def __repr__(self):
+        return self.to_string()
+
     def to_string(self):
         """to_string Gives the string representation of the function"""
         return self.name + " :- " + \
