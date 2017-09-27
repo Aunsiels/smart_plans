@@ -3,12 +3,36 @@ from consommation_rule import ConsommationRule
 from end_rule import EndRule
 from production_rule import ProductionRule
 from duplication_rule import DuplicationRule
+import sys
 
 
 class Function (object):
     """Function
     Represents a linear function
     """
+
+    def init_from_list(self, relations):
+        """init_from_list
+        Initializes the function from a list of relations
+        :param l_relations:
+        """
+        # We separate the relation name from its direction by counting "-"
+        self.relations = [(re.sub("-", "", r), r.count("-") % 2)
+                          for r in relations]
+        # We cache the inverse relations
+        self.minus_relations = [(re.sub("-", "", r), (r.count("-") + 1) % 2)
+                                for r in relations]
+
+    def init_from_string(self, l_string):
+        l0 = l_string.split(":-")
+        if len(l0) != 2:
+            sys.exit("Wrong line: " + l_string)
+        self.name = re.sub("\s+", ",", l0[0].strip())
+        relations = [re.sub("\s+", ",", s.strip())
+                     for s in re.sub("\.", "", l0[1]).split(",")]
+        if len(relations) == 0:
+            sys.exit("No relation: " + l_string)
+        self.init_from_list(relations)
 
     def __init__(self, relations, name):
         """__init__
@@ -17,13 +41,11 @@ class Function (object):
         relations are represented with a -, e.g. r-
         :param name: The name of the function
         """
-        # We separate the relation name from its direction by counting "-"
-        self.relations = [(re.sub("-", "", r), r.count("-") % 2)
-                          for r in relations]
-        # We cache the inverse relations
-        self.minus_relations = [(re.sub("-", "", r), (r.count("-") + 1) % 2)
-                                for r in relations]
-        self.name = name
+        if type(relations) == str:
+            self.init_from_string(relations)
+        else:
+            self.name = name
+            self.init_from_list(relations)
 
     def n_relations(self):
         """n_relations Gives the number of relations in the function"""
@@ -237,6 +259,12 @@ class Function (object):
         counter = l_rules[1]
         r_rules = self.generate_right_reduced_rules(counter, F)
         return (l_rules[0] + r_rules[0], r_rules[1])
+
+    def get_all_terminals(self):
+        """get_all_terminals Returns all terminals used and their opposite"""
+        s0 = set([r[0] for r in self.relations])
+        s1 = set([r[0] + 'm' for r in self.relations])
+        return s0.union(s1)
 
 
 def test():

@@ -25,62 +25,53 @@ for i in range(len(functions)):
 
 print("Test -1")
 
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [8]], "b",
-                                   all_relations)
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [8]], "b")
 assert not i_grammar.is_empty(), "Error-1"
 
 print("Test 0")
 
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [9, 5]], "b",
-                                   all_relations)
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [9, 5]], "b")
 assert not i_grammar.is_empty(), "Error0"
 
 print("Test 1")
 
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [0, 1]], "b",
-                                   all_relations)
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [0, 1]], "b")
 assert not i_grammar.is_empty(), "Error1"
 
 print("Test 2")
 
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [0]], "b",
-                                   all_relations)
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [0]], "b")
 assert i_grammar.is_empty(), "Error2"
 
 print("Test 3")
 
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [1]], "b",
-                                   all_relations)
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [1]], "b")
 assert i_grammar.is_empty(), "Error3"
 
 print("Test 4")
 
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [2, 7]], "b",
-                                   all_relations)
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [2, 7]], "b")
 assert not i_grammar.is_empty(), "Error4"
 
 print("Test 5")
 
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [9, 10, 7]],
-                                   "b", all_relations)
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [9, 10, 7]], "b")
 assert not i_grammar.is_empty(), "Error5"
 
 print("Test 6")
 
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [6, 11]],
-                                   "b", all_relations)
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [6, 11]], "b")
 assert not i_grammar.is_empty(), "Error6"
 
 print("Test 7")
 
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [2, 6, 5]],
-                                   "b", all_relations)
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [2, 6, 5]], "b")
 assert not i_grammar.is_empty(), "Error7"
 
 print("Test 8")
 
 i_grammar = FunctionIndexedGrammar([functions[x] for x in [2, 3, 4, 5]],
-                                   "b", all_relations)
+                                   "b")
 assert not i_grammar.is_empty(), "Error8"
 
 print("Test 9")

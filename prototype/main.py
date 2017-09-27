@@ -3,23 +3,6 @@ import re
 import sys
 
 
-def read_function(line):
-    """read_function
-    Read a function from a string. It must be of the form:
-        f :- r1, r2, ..., rn.
-    :param line: The string representing the function
-    """
-    l0 = line.split(":-")
-    if len(l0) != 2:
-        sys.exit("Wrong line: " + line)
-    f_name = re.sub("\s+", ",", l0[0].strip())
-    relations = [re.sub("\s+", ",", s.strip())
-                 for s in re.sub("\.", "", l0[1]).split(",")]
-    if len(relations) == 0:
-        sys.exit("No relation: " + line)
-    return Function(relations, f_name)
-
-
 def main():
     """main
     Prepares the functions to input to prolog. Its takes 3 arguments:
@@ -35,7 +18,7 @@ def main():
     functions = []
     with open(sys.argv[2]) as f:
         for line in f:
-            functions.append(read_function(line))
+            functions.append(Function(line, ""))
 
     # Stop rules
     print("p([], _, []).")

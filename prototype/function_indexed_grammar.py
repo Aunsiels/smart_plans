@@ -10,7 +10,7 @@ class FunctionIndexedGrammar(IndexedGrammar):
     Represents a grammar generated from functions as presented in our paper
     """
 
-    def __init__(self, functions, query, all_relations):
+    def __init__(self, functions, query):
         """__init__
         Initializes the indexed grammar from a set of functions
         :param functions: a list of Functions
@@ -28,6 +28,10 @@ class FunctionIndexedGrammar(IndexedGrammar):
         f_rules = []
         # Generate the rules
         counter = 0
+        self.functions = functions
+        all_relations = set()
+        for f in functions:
+            all_relations = all_relations.union(f.get_all_terminals())
         for f in functions:
             temp_rule = f.generate_reduced_rules(counter, all_relations)
             counter = temp_rule[1]
