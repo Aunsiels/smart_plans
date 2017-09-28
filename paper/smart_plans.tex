@@ -347,15 +347,15 @@ In what follows, we assume that if we can call a linear function $f = r_1 ... r_
 \subsection{Algorithm}
 
 \begin{algorithm}[H]
- \SetAlgoLined
- \KwData{A set of functions $F$ and a linear query $q$}
- \KwResult{whether there exists a smart plan composed only of calls to functions in $F$}
- Replace all functions $f$ in $F$ by a their subfunctions as describe in hypothesis \ref{intermediatefunctions}\;
- Create an indexed grammar as follows:
- \begin{itemize}
- \item $S \rightarrow C[q]$
- \item $C[] \rightarrow \epsilon$
- \item For all functions $f \in F$, derive the left rules and right rules in their reduced form as describes in \ref{reducedleftrules} and \ref{reducedrightrules} (the C is common to all rules).
+\SetAlgoLined
+\KwData{A set of functions $F$ and a linear query $q$}
+\KwResult{whether there exists a smart plan composed only of calls to functions in $F$}
+Replace all functions $f$ in $F$ by a their subfunctions as describe in hypothesis \ref{intermediatefunctions}\;
+Create an indexed grammar as follows:
+\begin{itemize}
+\item $S \rightarrow C[q]$
+\item $C[] \rightarrow \epsilon$
+\item For all functions $f \in F$, derive the left rules and right rules in their reduced form as describes in \ref{reducedleftrules} and \ref{reducedrightrules} (the C is common to all rules).
  \end{itemize}
  \KwRet{Whether $L(G) = \emptyset$ or not using the algorithm described in \cite{aho68}}
  \caption{Algorithm Smart Plan From a Set of Functions}

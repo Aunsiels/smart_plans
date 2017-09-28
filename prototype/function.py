@@ -179,12 +179,11 @@ class Function (object):
             counter += 1
         return (rules, counter)
 
-    def generate_right_reduced_rules(self, counter, F):
+    def generate_right_reduced_rules(self, counter):
         """generate_right_reduced_rules
         Generates the reduced right rules as describe in the paper.
         :param counter: counter used to be sure we do not duplicate
         non-terminals. So, it MUST be update after the function.
-        :param F: The list of all terminals
         :return A couple (rules, counter) containing the generated rules and the
         new counter value
         """
@@ -197,15 +196,6 @@ class Function (object):
                                          "A" + str(counter),
                                          "D" + str(counter)))
             temp_counter = counter
-            for f in F:
-                if f != "end":
-                    rules.append(ConsommationRule(f,
-                                                  "A" + str(counter),
-                                                  "A" + str(counter)))
-            rules.append(ConsommationRule("end",
-                                          "A" + str(counter),
-                                          "A" + str(counter + 1)))
-            counter += 1
             rules.append(ProductionRule("A" + str(counter),
                                         "A" + str(counter + 1),
                                         "end"))
@@ -249,18 +239,17 @@ class Function (object):
             counter += 1
         return (rules, counter)
 
-    def generate_reduced_rules(self, counter, F):
+    def generate_reduced_rules(self, counter):
         """generate_reduced_rules
         Generates both left and right reduced rules
         :param counter: counter used to be sure we do not duplicate
         non-terminals. So, it MUST be update after the function.
-        :param F: The list of all terminals
         :return A couple (rules, counter) containing the generated rules and the
         new counter value
         """
         l_rules = self.generate_left_reduced_rules(counter)
         counter = l_rules[1]
-        r_rules = self.generate_right_reduced_rules(counter, F)
+        r_rules = self.generate_right_reduced_rules(counter)
         return (l_rules[0] + r_rules[0], r_rules[1])
 
     def get_all_terminals(self):
