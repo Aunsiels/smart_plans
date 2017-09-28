@@ -83,7 +83,7 @@ class IndexedGrammar(object):
                                 return (was_modified, True)
         return (was_modified, False)
 
-    def is_empty(self, debug=False):
+    def is_empty(self, debug=True):
         """is_empty Checks whether the grammar generates a word or not"""
         # To know when no more modification are done
         was_modified = True

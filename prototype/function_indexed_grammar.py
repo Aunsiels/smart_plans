@@ -29,16 +29,12 @@ class FunctionIndexedGrammar(IndexedGrammar):
         # Generate the rules
         counter = 0
         self.functions = functions
-        all_relations = set()
         for f in functions:
-            all_relations = all_relations.union(f.get_all_terminals())
-        for f in functions:
-            temp_rule = f.generate_reduced_rules(counter, all_relations)
+            temp_rule = f.generate_reduced_rules(counter)
             counter = temp_rule[1]
             f_rules += temp_rule[0]
         rules = Rules(f_rules + initial_rules)
         self.query = query
-        self.all_relations = all_relations
         super(FunctionIndexedGrammar, self).__init__(rules)
 
     def update(self, new_query):
