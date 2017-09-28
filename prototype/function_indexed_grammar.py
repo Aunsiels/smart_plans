@@ -52,3 +52,13 @@ class FunctionIndexedGrammar(IndexedGrammar):
         self.marked["Cinit"].append({"Cinit"})
         self.marked["S"] = []
         self.marked["S"].append({"S"})
+
+    def is_empty(self):
+        """is_empty Whether the grammar is empty or not"""
+        # Here we have an optimization: if the query is not among the terminals,
+        # it is not possible the reach it
+        print(self.rules.getTerminals())
+        if self.query not in self.rules.getTerminals():
+            return True
+        else:
+            return super(FunctionIndexedGrammar, self).is_empty()

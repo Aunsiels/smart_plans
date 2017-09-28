@@ -266,6 +266,7 @@ class Function (object):
                                                for r in self.relations]) + ".\n"
 
     def get_last(self):
+        """get_last Gets the last relation of the function"""
         return self.relations[-1][0] + 'm' * self.relations[-1][1]
 
 

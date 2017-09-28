@@ -33,9 +33,13 @@ class DuplicationRule(ReducedRule):
         self.leftTerm = leftTerm
         self.rightTerms = (rightTerm0, rightTerm1)
 
-    def getTerminals(self):
-        """getTerminals Gives the set of non-terminals used in this rule"""
+    def getNonTerminals(self):
+        """getNonTerminals Gives the set of non-terminals used in this rule"""
         return {self.leftTerm, self.rightTerms[0], self.rightTerms[1]}
+
+    def getTerminals(self):
+        """getTerminals Gets the terminals used in the rule"""
+        return {}
 
     def __repr__(self):
         """__repr__ Gives a string representation of the rule, ignoring the

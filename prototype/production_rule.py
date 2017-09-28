@@ -35,9 +35,13 @@ class ProductionRule(ReducedRule):
         self.leftTerm = left
         self.rightTerm = right
 
+    def getNonTerminals(self):
+        """getNonTerminals Gets the non-terminals used in the rule"""
+        return {self.leftTerm, self.rightTerm}
+
     def getTerminals(self):
         """getTerminals Gets the terminals used in the rule"""
-        return {self.leftTerm, self.rightTerm}
+        return {}
 
     def __repr__(self):
         """__repr__ Gets the string representation of the rule"""

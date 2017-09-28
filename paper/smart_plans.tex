@@ -509,6 +509,104 @@ For the rule $C[\sigma] \rightarrow C[r_{n}^{-1} ... r_1^{-1}] r_1 ... r_n C[\si
 We conclude only plans with function loops are removed.
 \end{proof}
 
+\section{Algorithm}
+
+\subsection{Introduction}
+\label{introAlgo}
+
+The algorithm presented in \cite{aho68} has a disadvantage: a set of rules is generated before actually applying the algorithm. The size of this set is exponential. So, at the end the algorithm has an exponential complexity even in the best case. For computational purposes, it is great to lower this bound, even if the upper bound is still exponential.
+
+We propose here to generate the rules on the fly so we do not generate useless rules. To apply the algorithm, as in \cite{aho68}, we need rules in their reduced form. More precisely, they should be either a production, a consumption, a duplication or an end rule.
+
+\begin{definition}[Production Rule]
+We call "production rules" rules of the form:
+
+$A[\sigma] \rightarrow B[f \sigma]$
+
+where $A$ and $B$ are non-terminals, $f$ is a production symbol (here production symbols are the terminals) and $\sigma$ is the stack.
+\end{definition}
+
+\begin{definition}[Consumption Rule]
+We call "consumption rules" rules of the form:
+
+$A[f \sigma] \rightarrow B[\sigma]$
+
+where $A$ and $B$ are non-terminals, $f$ is a production symbol (here production symbols are the terminals) and $\sigma$ is the stack.
+
+In what follows, we call $Cons(f)$ the set of all the consumption rules which use $f$ as a production symbol.
+\end{definition}
+
+\begin{definition}[Duplication Rule]
+We call "duplication rules" rules of the form:
+
+$A[\sigma] \rightarrow B[\sigma] C[\sigma]$
+
+where $A$, $B$ and $C$ are non-terminals and $\sigma$ is the stack.
+\end{definition}
+
+\begin{definition}[End Rule]
+We call "end rules" rules of the form:
+
+$A[\sigma] \rightarrow a$
+
+where $A$ is a non-terminals, $a$ is a terminal and $\sigma$ is the stack.
+\end{definition}
+
+\subsection{Initialization}
+\label{initAlgo}
+
+Instead of writting all the rules presented in \cite{aho68}, we keep track of all marked sets. We initialize the algorithm as follows:
+
+\begin{enumerate}
+\item $marked \leftarrow dictionary()$, $marked$ gives for all non-terminal the sets which are marked.
+\item For all non-terminals $A$, $marked[A] = List()$
+\item For all non-terminals $A$, $marked[A].append(set(A))$
+\item For all end rules $A[\sigma] \rightarrow a$, $marked[A].append(set())$ 
+\end{enumerate}
+
+Then, we will loop on the rules until no more new sets are marked. During the loop, we process duplication and production rules differently.
+
+\subsection{Duplication Rule Processing}
+\label{processDuplication}
+
+For the duplication rule $A[\sigma] \rightarrow B[\sigma] C[\sigma]$, we mark for $A$ all the $N_B \cup N_C$ where $N_B$ is marked for $B$ and $N_C$ is marked for $C$.
+
+\subsection{Production Rule Processing}
+\label{processProduction}
+
+For the production rule $A[\sigma] \rightarrow B[f \sigma]$:
+\begin{enumerate}
+\item If there exists a rule of the form $B[f \sigma] \rightarrow C[\sigma]$ (where $C$ is a non-terminal) in $Cons(f)$ then:
+\begin{enumerate}
+\item For $A$, mark all the $N_B$ where $N_B$ is marked for $B$.
+\item If the empty set is marked for $B$, for all rules $D[f \sigma] \rightarrow E[\sigma]$, mark for $A$ all the $N_E$ where $N_E$ is a set marked for $E$.
+\end{enumerate}
+\item For all marked sets for $B$ $N_B = \{C_1, C_2, ..., C_r\}$, for all combinations of rules from $Cons(f)$ $C_1[f \sigma] \rightarrow D_1[\sigma]$, ..., $C_r[f \sigma] \rightarrow D_r[\sigma]$ (we need exactly only rule for each $C_i$), mark for $A$ $N = \cup_{i=1}^{r} N_{D_i}$ for all $N_{D_i}$ marked for $D_i$ ($1 \leq i \leq r$)
+\end{enumerate}
+
+\subsection{Final Algorithm}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwData{a set of rules in reduced form (\ref{introAlgo})}
+\KwResult{whether the grammar is empty or not}
+Initialize the algorithm (\ref{initAlgo})\;
+\While{new sets are marked}{
+\For {each rule}{
+  \If{the rule is a duplication rule}{
+   do the processing for duplication rule (\ref{processDuplication})\;
+  }
+  \ElseIf{the rule is a production rule}{
+   do the processing for production rule (\ref{processProduction})\;
+  }
+ }
+ }
+ \KwRet{the grammar is not empty if and only if the empty set is marked for $S$}
+ \caption{Algorithm Emptyness Indexed Grammar}
+ \label{algoEmptyness}
+\end{algorithm}
+
+
 \bibliographystyle{plain}
 \bibliography{./smart_plans.bib}
 

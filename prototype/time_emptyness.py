@@ -11,9 +11,9 @@ def get_millis():
 current_time = get_millis()
 
 for _ in range(10):
-    generator = FunctionGenerator(4)
-    functions = generator.generate(2, 2)
-    query = generator.get_random_query()
+    generator = FunctionGenerator(10)
+    functions = generator.generate(5, 4)
+    query = generator.get_random_query(functions)
     print(functions)
     print(query)
     grammar = FunctionIndexedGrammar(functions, query)

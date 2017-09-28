@@ -24,6 +24,16 @@ class Rules(object):
             terminals = terminals.union(rule.getTerminals())
         return list(terminals)
 
+    def getNonTerminals(self):
+        """getNonTerminals Gets all the non-terminals used by all the rules"""
+        terminals = set()
+        for temp_rule in self.consommationRules.values():
+            for rule in temp_rule:
+                terminals = terminals.union(rule.getNonTerminals())
+        for rule in self.rules:
+            terminals = terminals.union(rule.getNonTerminals())
+        return list(terminals)
+
     def remove_production(self, left, right, prod):
         """remove_production
         Remove the production rule:

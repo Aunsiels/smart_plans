@@ -35,9 +35,13 @@ class ConsommationRule(ReducedRule):
         self.right = right
         self.left = left
 
+    def getNonTerminals(self):
+        """getNonTerminals Gets the non-terminals used in the rule"""
+        return {self.left, self.right}
+
     def getTerminals(self):
         """getTerminals Gets the terminals used in the rule"""
-        return {self.left, self.right}
+        return {}
 
     def __repr__(self):
         """__repr__ Gives the string representation of the rule, ignoring the

@@ -15,8 +15,8 @@ functions.append(["b"])  # 8
 functions.append(["a"])  # 9
 functions.append(["d"])  # 10
 functions.append(["d", "b"])  # 11
-
-all_relations = ["c", "b", "cm", "bm", "a", "am", "d", "dm", "e", "em"]
+functions.append(["x-", "x-"])  # 12
+functions.append(["j", "x"])  # 13
 
 counter = 0
 
@@ -88,3 +88,9 @@ print("Test 11")
 
 i_grammar.update("e")
 assert i_grammar.is_empty(), "Error11"
+
+print("Test 12")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [12, 13]],
+                                   "xm")
+assert i_grammar.is_empty(), "Error12"

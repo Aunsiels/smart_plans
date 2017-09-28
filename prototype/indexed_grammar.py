@@ -11,7 +11,8 @@ class IndexedGrammar(object):
         """
         self.rules = rules
         # Precompute all non-terminals
-        self.non_terminals = rules.getTerminals()
+        self.non_terminals = rules.getNonTerminals()
+        print("There are ", len(self.non_terminals), "non terminals")
         # We cache the marked items in case of future update of the query
         self.marked = dict()
         # Initialize the marked symboles
@@ -59,12 +60,12 @@ class IndexedGrammar(object):
         # l_rules contains the left symbol plus what is marked on
         # the right side
         l_temp = [(x.getLeft(),
-                  list(self.marked[x.getRight()])) for x in f_rules]
+                  self.marked[x.getRight()]) for x in f_rules]
         marked_symbols = [x.getLeft() for x in f_rules]
         # Process all combinations of consumption rule
-        was_modified |= addrec(l_temp,
-                               self.marked[rule.getLeftTerm()],
-                               self.marked[rule.getRightTerm()])
+        was_modified |= addrec_bis(l_temp,
+                                   self.marked[rule.getLeftTerm()],
+                                   self.marked[rule.getRightTerm()])
         # End condition
         if set() in self.marked["S"]:
             return (was_modified, True)
@@ -107,6 +108,7 @@ class IndexedGrammar(object):
                         if debug:
                             print("number marked : ",
                                   length_marked(self.marked))
+                            print("NOT EMPTY!")
                         return False
                 elif rule.isProduction():
                     prod_res = self.production_process(rule)
@@ -114,11 +116,13 @@ class IndexedGrammar(object):
                         if debug:
                             print("number marked : ",
                                   length_marked(self.marked))
+                            print("NOT EMPTY!")
                             # print_marked(self.marked)
                         return False
                     was_modified |= prod_res[0]
         if debug:
             print("number marked : ", length_marked(self.marked))
+            print("EMPTY")
         return True
 
 
@@ -133,6 +137,67 @@ def exists(l, f):
         if f(x):
             return True
     return False
+
+
+def addrec_bis(l_sets, markedLeft, markedRight):
+    """addrec_bis
+    Optimized version of addrec
+    :param l_sets: a list containing tuples (C, M) where:
+        * C is a non-terminal on the left of a consumption rule
+        * M is the set of the marked set for the right non-terminal in the
+        production rule
+    :param markedLeft: Sets which are marked for the non-terminal on the
+    left of the production rule
+    :param markedRight: Sets which are marked for the non-terminal on the
+    right of the production rule
+    """
+    was_modified = False
+    for s in markedRight:
+        l_temp = [x for x in l_sets if x[0] in s]
+        s_temp = [x[0] for x in l_temp]
+        # At least one symbol to consider
+        if set(s_temp) == s and len(s) > 0:
+            was_modified |= addrec_ter(l_temp, markedLeft, markedRight)
+    return was_modified
+
+
+def addrec_ter(l_sets, markedLeft, markedRight, temp=set(), temp_in=set()):
+    """addrec
+    Explores all possible combination of consumption rules to mark a
+    production rule.
+    :param l_sets: a list containing tuples (C, M) where:
+        * C is a non-terminal on the left of a consumption rule
+        * M is the set of the marked set for the right non-terminal in the
+        production rule
+    :param markedLeft: Sets which are marked for the non-terminal on the
+    left of the production rule
+    :param markedRight: Sets which are marked for the non-terminal on the
+    right of the production rule
+    :param temp: Contains the union of all sets considered up to that point
+    :param temp_in: Contains the non-terminals on the left of consumption
+    rules which have been considered up to that point
+    :return Whether an element was actually marked
+    """
+    # End condition, nothing left to process
+    if len(l_sets) == 0:
+        # Check if at least one non-terminal was considered, then if the set
+        # of non-terminals considered is marked of the right non-terminal in
+        # the production rule, then if a new set is marked or not
+        if temp not in markedLeft:
+            markedLeft.append(temp)
+            return True
+        return False
+    res = False
+    if l_sets[0][0] in temp_in or \
+            exists(l_sets[1:], lambda x: x[0] == l_sets[0][0]):
+        res |= addrec_ter(l_sets[1:], markedLeft, markedRight, temp, temp_in)
+    if l_sets[0][0] not in temp_in:
+        # For all sets which were marked for the current comsumption rule
+        for s in l_sets[0][1]:
+            res |= addrec_ter(l_sets[1:], markedLeft, markedRight,
+                              temp.union(s),
+                              temp_in.union({l_sets[0][0]}))
+    return res
 
 
 def addrec(l_sets, markedLeft, markedRight, temp=set(), temp_in=set()):
@@ -152,6 +217,9 @@ def addrec(l_sets, markedLeft, markedRight, temp=set(), temp_in=set()):
     rules which have been considered up to that point
     :return Whether an element was actually marked
     """
+    # Try to stop the earliest possible, not sure it helps
+    if not exists(markedRight, lambda x: temp_in.issubset(x)):
+        return False
     # End condition, nothing left to process
     if len(l_sets) == 0:
         # Check if at least one non-terminal was considered, then if the set
