@@ -1,5 +1,6 @@
 from function_indexed_grammar import FunctionIndexedGrammar
 from function import Function
+from equivalence_rule import EquivalenceRule
 
 functions = []
 
@@ -17,6 +18,12 @@ functions.append(["d"])  # 10
 functions.append(["d", "b"])  # 11
 functions.append(["x-", "x-"])  # 12
 functions.append(["j", "x"])  # 13
+functions.append(["a", "b"])  # 14
+functions.append(["c", "d", "q"])  # 15
+
+equivalence_rules = []
+
+equivalence_rules.append(EquivalenceRule(["a", "b"], ["d-", "c-"], "r0"))
 
 counter = 0
 
@@ -94,3 +101,18 @@ print("Test 12")
 i_grammar = FunctionIndexedGrammar([functions[x] for x in [12, 13]],
                                    "xm")
 assert i_grammar.is_empty(), "Error12"
+
+print("Test 13")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [14, 15]] +
+                                   [equivalence_rules[x] for x in [0]],
+                                   "q")
+
+assert not i_grammar.is_empty(), "Error13"
+
+print("Test 14")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [14, 15]],
+                                   "q")
+
+assert i_grammar.is_empty(), "Error14"

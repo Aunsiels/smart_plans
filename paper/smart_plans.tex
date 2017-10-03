@@ -490,6 +490,8 @@ We know that if there are words in the grammar in algorithm \ref{functionWBLAlgo
 
 \section{Reducing the Grammar}
 
+\subsection{Remove Forced Loops}
+
 As we proved in theorem \ref{implyaxiomtheorem}, one could remove all the loops and still obtain the same result after algorithm \ref{functionWBLAlgo}. Then, would it be possible to remove rules from the grammar that add nothing but function loops? By doing so, we hope to reduce the computation time of algorithm \ref{implyaxiomtheorem} and of the exploration to find a plan. However, we might lose the completeness of the grammar but it does not change the result of the algorithm \ref{functionWBLAlgo}.\\
 
 \begin{theorem}
@@ -508,6 +510,40 @@ Then, all rules of the form $C[\sigma] \rightarrow r_1 ... r_n C[r_{n}^{-1} ... 
 For the rule $C[\sigma] \rightarrow C[r_{n}^{-1} ... r_1^{-1}] r_1 ... r_n C[\sigma]$, only results with function loops are created as a function ends on $r_n$, $C[r_{n}^{-1} ... r_1^{-1}]$ generate lists of the form $r_{n}^{-1} l_n ... r_1^{-1} l_1$ ($l_1$ ... $l_n$ are way-back lists) and $r_{n}^{-1} l_n ... r_1^{-1} l_1 r_1 ... r_n$ is a way-back list.\\
 We conclude only plans with function loops are removed.
 \end{proof}
+
+\subsection{Introduce End Symbol}
+
+By introducing an end symbole, that we will call $end$, it is possible to reduce the number of rules used in the reduced form for right rules.
+
+\subsubsection{Initialization Rules}
+
+As we introduce an end symbol, we have to modify the initialization rules. The new ones are:
+
+\begin{itemize}
+\item $S[\sigma] \rightarrow C_0[end \quad \sigma]$
+\item $C_0[\sigma] \rightarrow C[q \quad \sigma]$
+\item $C[end \quad \sigma] \rightarrow \epsilon$
+\end{itemize}
+
+Here, we simply add the end symbol before everything else to know where to stop and the say that when an end symbol is met, then it is the end.
+
+\subsubsection{Reduced Right Rules}
+
+For the right rules, we replace the first rules presented in \ref{reducedrightrules}:
+
+\begin{itemize}
+\item $C[c_i \sigma] \rightarrow B[\sigma]$
+\item $B[\sigma] \rightarrow A^{back}_{-1}[\sigma] D[\sigma]$
+\item $A^{back}_{-1}[\sigma] \rightarrow A^{back}_{0}[end \quad \sigma]$
+\item $A^{back}_{0}[\sigma] \rightarrow A^{back}_{1}[r_1^{-1} \sigma]$
+\item ...
+\end{itemize}
+
+Here, by adding the end symbol on the stack, we obtain the same result as emptying the stack.
+
+\subsubsection{Number of Rules}
+
+Now, we always have $\mathcal{O}(k * n^2)$ rules.
 
 \section{Algorithm}
 
@@ -606,6 +642,45 @@ Initialize the algorithm (\ref{initAlgo})\;
  \label{algoEmptyness}
 \end{algorithm}
 
+\section{Introduce Rules}
+
+Often, in knowledge bases, different paths can have the same or the meaning. For example, the child relation has the same meaning that the opposite of the parent relation. However, some functions may consider only one path and ignore all others which are equivalent. So, the rules must be introduced in the grammar.
+
+\begin{definition}[Equivalence Rule]
+Let $r_1,..., r_N$ be $N$ binary relations, $X_1,..., X_{N+1}$ be $N+1$ variables, $l_1,..., l_K$ be $K$ binary relations and $Y_1,..., Y_{K+1}$ be $K+1$ variables. A equivalence rule is a rule of the form:
+$r_1(X_1, X_2) \wedge ... \wedge r_N(X_N, X_{N+1}) \Leftrightarrow l_1(Y_1, Y_2) \wedge ... \wedge l_K(Y_K, Y_{K+1})$
+where $X_1 = Y_1$ and $X_{N+1} = Y_{K+1}$.
+\end{definition}
+
+\begin{notation}
+We write $r_1 ... r_N \Leftrightarrow l_1 ... l_K$ instead of $r_1(X_1, X_2) \wedge ... \wedge r_N(X_N, X_{N+1}) \Leftrightarrow l_1(Y_1, Y_2) \wedge ... \wedge l_K(Y_K, Y_{K+1})$ where $X_1 = Y_1$ and $X_{N+1} = Y_{K+1}$.
+\end{notation}
+
+\begin{hypothesis}
+\label{ruleHypothesis}
+If we have the rule of $r_1 ... r_N \Leftrightarrow l_1 ... l_K$, then the existence of the path $r_1 ... r_N$ is equivalent to the existence of the path $l_1 ... l_K$.
+\end{hypothesis}
+
+\begin{property}
+Let's suppose we have a rule $r_1 ... r_N \Leftrightarrow l_1 ... l_K$. We introduce the four rules:
+\begin{itemize}
+\item $C[r_1...r_N \sigma] \rightarrow C[l_1 ... l_K \sigma]$
+\item $C[l_1 ... l_K \sigma] \rightarrow C[r_1...r_N \sigma]$
+\item $C[r_N^{-1} ... r_1^{-1} \sigma] \rightarrow C[l_K^{-1} ... l_1^{-1} \sigma]$
+\item $C[l_K^{-1} ... l_1^{-1} \sigma] \rightarrow C[r_N^{-1} ... r_1^{-1} \sigma]$
+\end{itemize}
+in the grammar from the algorithm \ref{functionWBLAlgo}. Then, under hypothesis \ref{ruleHypothesis} and \ref{implyfunction}, the grammar produces words of the form $lq$ where $q$ is the query and where if $l$ is called on a knowledge base, its input is also among outputs.
+\end{property}
+
+\begin{proof}
+TODO
+\end{proof}
+
+\section{Multiple Inputs Functions}
+
+\subsection{Tree-Like Function}
+
+\subsection{Linear Multiple Inputs Functions}
 
 \bibliographystyle{plain}
 \bibliography{./smart_plans.bib}
