@@ -180,7 +180,7 @@ class Function (object):
                      "C")
         counter = temp[1]
         rules = rules + temp[0]
-        temp = unstack(self.part0[i:self.n_relations()],
+        temp = unstack(self.part0[i:j+1],
                        self.part0,
                        temp_counter,
                        "D" + str(temp_counter),
@@ -205,10 +205,17 @@ class Function (object):
         :return A couple (rules, counter) containing the generated rules and the
         new counter value
         """
-        l_rules = self.generate_left_reduced_rules(counter)
-        counter = l_rules[1]
-        r_rules = self.generate_right_reduced_rules(counter)
-        return (l_rules[0] + r_rules[0], r_rules[1])
+        # l_rules = self.generate_left_reduced_rules(counter)
+        # counter = l_rules[1]
+        # r_rules = self.generate_right_reduced_rules(counter)
+        # return (l_rules[0] + r_rules[0], r_rules[1])
+        rules = []
+        for i in range(0, self.n_relations()):
+            for j in range(i, self.n_relations()):
+                temp = self.generate_general_reduced_rules(counter, i, j)
+                rules = rules + temp[0]
+                counter = temp[1]
+        return (rules, counter)
 
     def get_all_terminals(self):
         """get_all_terminals Returns all terminals used and their opposite"""
