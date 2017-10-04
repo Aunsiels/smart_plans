@@ -46,6 +46,8 @@ class Function (object):
         else:
             self.name = name
             self.init_from_list(relations)
+        self.part0 = [r[0] + 'm' * r[1] for r in self.relations]
+        self.part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
 
     def n_relations(self):
         """n_relations Gives the number of relations in the function"""
@@ -118,18 +120,16 @@ class Function (object):
         :return A couple (rules, counter) containing the generated rules and the
         new counter value
         """
-        part0 = [r[0] + 'm' * r[1] for r in self.relations]
-        part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
         rules = []
         for i in range(1, self.n_relations() + 1):
-            temp = unstack(part0[0:i],
-                           part0,
+            temp = unstack(self.part0[0:i],
+                           self.part0,
                            counter,
                            "C",
                            "Cback" + str(counter + self.n_relations() + 1))
             counter = temp[1]
             rules = rules + temp[0]
-            temp = stack(part1[i:],
+            temp = stack(self.part1[i:],
                          counter,
                          "Cback" + str(counter),
                          "C")
@@ -145,22 +145,20 @@ class Function (object):
         :return A couple (rules, counter) containing the generated rules and the
         new counter value
         """
-        part0 = [r[0] + 'm' * r[1] for r in self.relations]
-        part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
         rules = []
         for i in range(1, self.n_relations()):
             rules.append(DuplicationRule("C",
                                          "A" + str(counter),
                                          "D" + str(counter)))
             temp_counter = counter
-            temp = stack(["end"] + part1[:i],
+            temp = stack(["end"] + self.part1[:i],
                          counter,
                          "A" + str(counter),
                          "C")
             counter = temp[1]
             rules = rules + temp[0]
-            temp = unstack(part0[i:self.n_relations()],
-                           part0,
+            temp = unstack(self.part0[i:self.n_relations()],
+                           self.part0,
                            temp_counter,
                            "D" + str(temp_counter),
                            "C")
@@ -168,8 +166,35 @@ class Function (object):
             rules = rules + temp[0]
             counter = max(counter, temp_counter)
             counter += 1
-        print(self)
-        print(rules)
+        return (rules, counter)
+
+    def generate_general_reduced_rules(self, counter, i, j):
+        rules = []
+        rules.append(DuplicationRule("C",
+                                     "A" + str(counter),
+                                     "D" + str(counter)))
+        temp_counter = counter
+        temp = stack(["end"] + self.part1[:i],
+                     counter,
+                     "A" + str(counter),
+                     "C")
+        counter = temp[1]
+        rules = rules + temp[0]
+        temp = unstack(self.part0[i:self.n_relations()],
+                       self.part0,
+                       temp_counter,
+                       "D" + str(temp_counter),
+                       "Cback" + str(temp_counter + self.n_relations() + 1))
+        counter = temp[1]
+        rules = rules + temp[0]
+        counter = max(counter, temp_counter)
+        counter += 1
+        temp = stack(self.part1[j+1:],
+                     counter,
+                     "Cback" + str(temp_counter + self.n_relations() + 1),
+                     "C")
+        counter = temp[1]
+        rules = rules + temp[0]
         return (rules, counter)
 
     def generate_reduced_rules(self, counter):
