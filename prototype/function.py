@@ -129,20 +129,12 @@ class Function (object):
                            "Cback" + str(counter + self.n_relations() + 1))
             counter = temp[1]
             rules = rules + temp[0]
-            rules.append(DuplicationRule("Cback" + str(counter),
-                                         "Cback" + str(counter + 1),
-                                         "T"))
-            counter += 1
-            counter += 1
-            for x in range(i, self.n_relations()):
-                rules.append(ProductionRule("Cback" + str(counter - 1),
-                                            "Cback" + str(counter),
-                                            part1[x]))
-                counter += 1
-            rules.append(DuplicationRule("Cback" + str(counter - 1),
-                                         "C",
-                                         "T"))
-            counter += 1
+            temp = stack(part1[i:],
+                         counter,
+                         "Cback" + str(counter),
+                         "C")
+            counter = temp[1]
+            rules = rules + temp[0]
         return (rules, counter)
 
     def generate_right_reduced_rules(self, counter):
@@ -157,25 +149,17 @@ class Function (object):
         part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
         rules = []
         for i in range(1, self.n_relations()):
-            rules.append(ConsommationRule(part0[i], "C", "B" + str(counter)))
-            rules.append(DuplicationRule("B" + str(counter),
+            rules.append(DuplicationRule("C",
                                          "A" + str(counter),
                                          "D" + str(counter)))
             temp_counter = counter
-            rules.append(ProductionRule("A" + str(counter),
-                                        "A" + str(counter + 1),
-                                        "end"))
-            counter += 1
-            for x in range(i - 1):
-                rules.append(ProductionRule("A" + str(counter),
-                                            "A" + str(counter + 1),
-                                            part1[x]))
-                counter += 1
-            rules.append(ProductionRule("A" + str(counter),
-                                        "C",
-                                        part1[i - 1]))
-            counter += 1
-            temp = unstack(part0[i+1:self.n_relations()],
+            temp = stack(["end"] + part1[:i],
+                         counter,
+                         "A" + str(counter),
+                         "C")
+            counter = temp[1]
+            rules = rules + temp[0]
+            temp = unstack(part0[i:self.n_relations()],
                            part0,
                            temp_counter,
                            "D" + str(temp_counter),
@@ -184,6 +168,8 @@ class Function (object):
             rules = rules + temp[0]
             counter = max(counter, temp_counter)
             counter += 1
+        print(self)
+        print(rules)
         return (rules, counter)
 
     def generate_reduced_rules(self, counter):
@@ -263,7 +249,21 @@ def stack(s_relations, counter, start, end):
         rules.append(ProductionRule(start,
                                     end,
                                     s_relations[0]))
-
+    else:
+        rules.append(ProductionRule(start,
+                                    "A" + str(counter),
+                                    s_relations[0]))
+    for x in range(1, len(s_relations) - 1):
+        rules.append(ProductionRule("A" + str(counter),
+                                    "A" + str(counter + 1),
+                                    s_relations[x]))
+        counter += 1
+    if len(s_relations) > 1:
+        rules.append(ProductionRule("A" + str(counter),
+                                    end,
+                                    s_relations[-1]))
+    counter += 1
+    return (rules, counter)
 
 
 def test():
