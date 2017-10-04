@@ -41,7 +41,7 @@ class ConsommationRule(ReducedRule):
 
     def getTerminals(self):
         """getTerminals Gets the terminals used in the rule"""
-        return {}
+        return {self.f}
 
     def __repr__(self):
         """__repr__ Gives the string representation of the rule, ignoring the

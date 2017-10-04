@@ -20,6 +20,10 @@ functions.append(["x-", "x-"])  # 12
 functions.append(["j", "x"])  # 13
 functions.append(["a", "b"])  # 14
 functions.append(["c", "d", "q"])  # 15
+functions.append(["d"])  # 16
+functions.append(["d-", "b-", "e-"])  # 17
+functions.append(["e", "c-"])  # 18
+functions.append(["c", "b", "a"])  # 19
 
 equivalence_rules = []
 
@@ -116,3 +120,9 @@ i_grammar = FunctionIndexedGrammar([functions[x] for x in [14, 15]],
                                    "q")
 
 assert i_grammar.is_empty(), "Error14"
+
+print("Test 15")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [16, 17, 18, 19]],
+                                   "a")
+assert not i_grammar.is_empty(), "Error15"
