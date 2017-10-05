@@ -27,8 +27,9 @@ def main():
 
     # Produce all the rules from the function
     for f in functions:
-        print("\n".join(f.generate_left_rules()))
-        print("\n".join(f.generate_right_rules()))
+        # print("\n".join(f.generate_left_rules()))
+        # print("\n".join(f.generate_right_rules()))
+        print("\n".join(f.generate_middle_rules()))
 
     # Read the query
     with open(sys.argv[3]) as f:

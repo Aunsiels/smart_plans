@@ -263,6 +263,18 @@ where $\sigma$ represents the stack.
 These are allowed indexed grammar rules. See \ref{reducedrightrules}.
 \end{proof}
 
+\begin{definition}[Middle Rules]
+\label{middleRule}
+A middle rule is a generalization of a left rule and a right rule: the middle of a function is consumed and so, both the begin and the end are required to be completed in the future. Let $f=r_1...r_n$ be a linear function. We call middle rules extracted from $f$ the production rules (for an indexed grammar):\\
+For all $ 1 \leq i \leq j \leq n $, we extract the rule:\\
+$C[r_i ... r_j \sigma] \rightarrow C[r_{i-1}^{-1} ... r_1^{-1}]r_1 ... r_n C[r_n^{-1} ... r_{j+1}^{-1} \sigma]$ \\
+where $\sigma$ represents the stack.
+\end{definition}
+
+\begin{proof}
+These are allowed indexed grammar rules. See \ref{reducedmiddlerules}.
+\end{proof}
+
 \subsection{Reduced Form Rules}
 
 Although the rules are easier to understand with definitions \ref{leftrule} and \ref{rightrule}, it is more practical for algorithmic purposes to transform the rules into a reduce form.
@@ -288,9 +300,9 @@ Let $i \in [1; n]$. The associated rule is $C[r_1...r_i \sigma] \rightarrow r_1 
 \item $C_n[\sigma] \rightarrow A_n[\sigma] C^{back}[\sigma]$
 \item $A_n[\sigma] \rightarrow r_n$
 \item $C^{back}[\sigma] \rightarrow C^{back}_{i+1}[\sigma] T[\sigma]$
-\item $C_{i+1}^{back}[\sigma] \rightarrow C^{back}_{i+2}[c^{-1}_{i+2} \sigma]$
+\item $C_{i+1}^{back}[\sigma] \rightarrow C^{back}_{i+2}[r^{-1}_{i+2} \sigma]$
 \item ...
-\item $C_{n}^{back}[\sigma] \rightarrow C^{back}_{n+1}[c^{-1}_{n} \sigma]$
+\item $C_{n}^{back}[\sigma] \rightarrow C^{back}_{n+1}[r^{-1}_{n} \sigma]$
 \item $C^{back}_{n+1}[\sigma] \rightarrow C[\sigma] T[\sigma]$
 \item $T[\sigma] \rightarrow \epsilon$
 \end{itemize}
@@ -302,7 +314,7 @@ Here, we have a total of $4 * n - i + 1$ rules.
 
 Let $i \in [2; n]$. The associated rule is $C[r_i ... r_n \sigma] \rightarrow C[r_{i-1}^{-1} ... r_1^{-1}] r_1 ... r_n C[\sigma]$. Let's transform it into reduced rules:
 \begin{itemize}
-\item $C[c_i \sigma] \rightarrow B[\sigma]$
+\item $C[r_i \sigma] \rightarrow B[\sigma]$
 \item $B[\sigma] \rightarrow A_1[\sigma] D[\sigma]$
 \item For all relations $r$, $A_1[r \sigma] \rightarrow A_1[\sigma]$ (the stack is emptied).
 \item $A[] \rightarrow A^{back}_{0}[\sigma]$
@@ -323,15 +335,51 @@ Let $i \in [2; n]$. The associated rule is $C[r_i ... r_n \sigma] \rightarrow C[
 
 Here, we have a total of ($\textrm{Number relations} + 3 * n + 4$) rules.
 
+\subsubsection{Reduced Middle Rules}
+\label{reducedmiddlerules}
+
+Let $ 1 \leq i \leq j \leq n $, the associated rule is: $C[r_i ... r_j \sigma] \rightarrow C[r_{i-1}^{-1} ... r_1^{-1}]r_1 ... r_n C[r_n^{-1} ... r_{j+1}^{-1} \sigma]$. Let's transform it into reduced rules (it will combine methods we saw for the right rules and the left rules).
+\begin{itemize}
+\item $C[r_i \sigma] \rightarrow B[\sigma]$
+\item $B[\sigma] \rightarrow A_1[\sigma] D[\sigma]$
+\item For all relations $r$, $A_1[r \sigma] \rightarrow A_1[\sigma]$ (the stack is emptied).
+\item $A[] \rightarrow A^{back}_{0}[\sigma]$
+\item $A^{back}_{0}[\sigma] \rightarrow A^{back}_{1}[r_1^{-1} \sigma]$
+\item ...
+\item $A^{back}_{i-2}[\sigma] \rightarrow C[r_{i-1}^{-1} \sigma]$
+\item $D[\sigma] \rightarrow E_1[\sigma]C_{i+1}[\sigma]$
+
+\item $C_{i+1}[r_{i+1} \sigma] \rightarrow C_{i+2}[\sigma]$
+\item ...
+\item $C_{j}[r_{j} \sigma] \rightarrow C^{back}[\sigma]$
+
+\item $E_1[\sigma] \rightarrow F_1[\sigma] E_2[\sigma]$
+\item ...
+\item $E_n[\sigma] \rightarrow F_n[\sigma] E_{n+1}[\sigma]$
+\item $E_{n+1}[\sigma] \rightarrow \epsilon$
+\item $F_1[\sigma] \rightarrow r_1$
+\item $F_n[\sigma] \rightarrow r_n$
+
+\item $C^{back}[\sigma] \rightarrow C^{back}_{j+1}[\sigma] T[\sigma]$
+\item $C_{j+1}^{back}[\sigma] \rightarrow C^{back}_{j+2}[r^{-1}_{j+1} \sigma]$
+\item ...
+\item $C_{n}^{back}[\sigma] \rightarrow C^{back}_{n+1}[r^{-1}_{n} \sigma]$
+\item $C^{back}_{n+1}[\sigma] \rightarrow C[\sigma] T[\sigma]$
+\item $T[\sigma] \rightarrow \epsilon$
+\end{itemize}
+
+Here, we have a total of ($\textrm{Number relations} + 4 * n + 7 - j$) rules.
+
 \subsubsection{Total Number of Rules}
 
 Let $f_1 ... f_k$ be k linear functions with respectively $n_1, ..., n_k$ relations. Let $R$ be the set of all relations (it can be reduced to the set of relations used by the $f_i$s as only them can be pushed on the stack). For $i \in [0; k-1]$,
 \begin{itemize}
 \item $f_i$ has $n_i$ left rules, so a total after reducing of $\sum\limits_{j=1}^n [4 * n_i - j + 1] = \mathcal{O}(n_i^2)$
-\item $f_i$ has $n_i - 1$ right rulesn so a total after reducing of $\mathcal{O}(n_i * |R| - |R| + n_i^2)$
+\item $f_i$ has $n_i - 1$ right rules so a total after reducing of $\mathcal{O}(n_i * |R| - |R| + n_i^2)$
+\item $f_i$ has $n_i^2$ middle rules so a total after reducing of $\mathcal{O}(n_i^2 * |R| + n_i^3)$
 \end{itemize}
 
-At the end, if we sum for all functions and we have $n = n_1 = ... = n_k$ , we have $\mathcal{O}(k*(n^2 + n * |R|))$ relations. If $|R| = \mathcal{O}(n)$ then we have $\mathcal{O}(k * n^2)$ relations.
+At the end, if we sum for all functions, and knowing that left and right rules are included in middle rules, and we have $n = n_1 = ... = n_k$ , we have $\mathcal{O}(k*(n^3 + n^2 * |R|))$ relations. If $|R| = \mathcal{O}(n)$ then we have $\mathcal{O}(k * n^3)$ relations.
 
 \subsection{Problem}
 
@@ -344,6 +392,35 @@ In what follows, we assume that if we can call a linear function $f = r_1 ... r_
 
 \end{hypothesis}
 
+\subsection{Are Middle Rules Required When We Have Intermediate Function}
+
+Let's show a counter-example where middle rules are required. We consider we have the functions:
+\begin{itemize}
+\item $f_1 = c \quad b a$
+\item $f_2 = d^{-1} \quad b^{-1} \quad e^{-1}$
+\item $f_3 = e \quad c^{-1}$
+\item $f_4 = d$
+\end{itemize}
+So, we also have the subfunctions:
+\begin{itemize}
+\item $f_2' = d \quad b^{-1}$
+\item $f_1' = c \quad b$
+\item Others which are not useful here
+\end{itemize}
+Now, let's suppose we want to get $a$. Without middle rules, we would get:
+\begin{equation}
+\begin{split}
+C[a] & \rightarrow^{f_1} C[b^{-1}] \, c^{-1}\\
+     & \rightarrow^{f_2'} C[d] \, d^{-1} \,  b^{-1} \, C[c^{-1}] \, c \, b \, a\\
+     & \rightarrow^{f_4} d \, d^{-1} \,  b^{-1} \, C[c^{-1}] \, c \, b \, a\\
+     & \rightarrow^{f_3} d \, d^{-1} \,  b^{-1} \, C[e^{-1}] \, e \, c^{-1} \, c \, b \, a\\
+     & \rightarrow^{f_2} d \, d^{-1} \,  b^{-1} \, C[b \, d] \, d^{-1} \, b^{-1} \, e^{-1} \, e \, c^{-1} \, c \, b \, a\\
+     & \rightarrow^{f_2} d \, d^{-1} \,  b^{-1} \, C[c^{-1}] \, c \, b \, C[d] \, d^{-1} \, b^{-1} \, e^{-1} \, e \, c^{-1} \, c \, b \, a\\
+\end{split}
+\end{equation}
+
+We see that a loop appear as we need $C[c^{-1}]$ to compute $C[c^{-1}]$ so middle functions are required.
+
 \subsection{Algorithm}
 
 \begin{algorithm}[H]
@@ -355,7 +432,8 @@ Create an indexed grammar as follows:
 \begin{itemize}
 \item $S \rightarrow C[q]$
 \item $C[] \rightarrow \epsilon$
-\item For all functions $f \in F$, derive the left rules and right rules in their reduced form as describes in \ref{reducedleftrules} and \ref{reducedrightrules} (the C is common to all rules).
+\item For all functions $f \in F$, derive the middle rules in their reduced\\
+form as describes in \ref{reducedmiddlerules} (the C is common to all rules).
  \end{itemize}
  \KwRet{Whether $L(G) = \emptyset$ or not using the algorithm described in \cite{aho68}}
  \caption{Algorithm Smart Plan From a Set of Functions}
@@ -383,7 +461,8 @@ Let $n$ be an integer, $i \in [1, n]$ and let's consider the right rule $C[r_i..
 \item ...
 \item $C_{n - i + 1}[\sigma] \rightarrow r_n C[\sigma]$
 \end{itemize}
-As both left and right rules can be written as rules which are rules extracted from definition \ref{Way-Back List 3}, we conclude that we will generate plans $P = l$ where l is a way-back list and if $q$ is composed of no relation.
+We can prove the same result for middle rules by using the same ideas used for left and right rules.\\
+As middle rules can be written as rules which are rules extracted from definition \ref{Way-Back List 3}, we conclude that we will generate plans $P = l$ where l is a way-back list and if $q$ is composed of no relation.
 
 \begin{lemma}
 \label{formWordsGrammar}
@@ -517,11 +596,13 @@ By introducing an end symbole, that we will call $end$, it is possible to reduce
 
 \subsubsection{Initialization Rules}
 
-As we introduce an end symbol, we have to modify the initialization rules. The new ones are:
+As we introduce an end symbol, we have to modify the initialization rules. The new ones are, for a query $q=q_1...q_n$:
 
 \begin{itemize}
-\item $S[\sigma] \rightarrow C_0[end \quad \sigma]$
-\item $C_0[\sigma] \rightarrow C[q \quad \sigma]$
+\item $S[\sigma] \rightarrow C_1^{init}[end \, \sigma]$
+\item $C_1^{init}[\sigma] \rightarrow C_2^{init}[q_1 \, \sigma]$
+\item ...
+\item $C_n^{init}[\sigma] \rightarrow C[q_n \, \sigma]$
 \item $C[end \quad \sigma] \rightarrow \epsilon$
 \end{itemize}
 
@@ -543,7 +624,7 @@ Here, by adding the end symbol on the stack, we obtain the same result as emptyi
 
 \subsubsection{Number of Rules}
 
-Now, we always have $\mathcal{O}(k * n^2)$ rules.
+Now, we always have $\mathcal{O}(k * n^3)$ rules.
 
 \section{Algorithm}
 
@@ -642,13 +723,13 @@ Initialize the algorithm (\ref{initAlgo})\;
  \label{algoEmptyness}
 \end{algorithm}
 
-\section{Introduce Rules}
+\section{Introduce Equivalence Rules}
 
 Often, in knowledge bases, different paths can have the same or the meaning. For example, the child relation has the same meaning that the opposite of the parent relation. However, some functions may consider only one path and ignore all others which are equivalent. So, the rules must be introduced in the grammar.
 
 \begin{definition}[Equivalence Rule]
-Let $r_1,..., r_N$ be $N$ binary relations, $X_1,..., X_{N+1}$ be $N+1$ variables, $l_1,..., l_K$ be $K$ binary relations and $Y_1,..., Y_{K+1}$ be $K+1$ variables. A equivalence rule is a rule of the form:
-$r_1(X_1, X_2) \wedge ... \wedge r_N(X_N, X_{N+1}) \Leftrightarrow l_1(Y_1, Y_2) \wedge ... \wedge l_K(Y_K, Y_{K+1})$
+Let $r_1,..., r_N$ be $N$ binary relations, $X_1,..., X_{N+1}$ be $N+1$ variables, $l_1,..., l_K$ be $K$ binary relations and $Y_1,..., Y_{K+1}$ be $K+1$ variables. A equivalence rule is a rule of the form: \\
+$r_1(X_1, X_2) \wedge ... \wedge r_N(X_N, X_{N+1}) \Leftrightarrow l_1(Y_1, Y_2) \wedge ... \wedge l_K(Y_K, Y_{K+1})$ \\
 where $X_1 = Y_1$ and $X_{N+1} = Y_{K+1}$.
 \end{definition}
 
@@ -675,6 +756,12 @@ in the grammar from the algorithm \ref{functionWBLAlgo}. Then, under hypothesis 
 \begin{proof}
 TODO
 \end{proof}
+
+\section{Updating the query}
+
+Once the algorithm \ref{algoEmptyness} returns a result, a set of symbols will be marked. It means that, if the marked symbols are remembered and the algorithm runs again, then the output will be immediate. Now, let's consider \ref{functionWBLAlgo}. Is it possible to update the query by keeping as much marked symbols as possible?
+
+What we need to do is to replace the rules using the $C^{init}$s by the new rules derived from the new query. Then, the marked symbols for the $C^{init}$s and $S$ must be reset. Then, no other modification is required.
 
 \section{Multiple Inputs Functions}
 

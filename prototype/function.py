@@ -1,6 +1,5 @@
 import re
 from consommation_rule import ConsommationRule
-from end_rule import EndRule
 from production_rule import ProductionRule
 from duplication_rule import DuplicationRule
 import sys
@@ -24,6 +23,11 @@ class Function (object):
                                 for r in relations]
 
     def init_from_string(self, l_string):
+        """init_from_string
+        Initialization if a string description is given
+        :param l_string: the string describing the function, in a prolog-like
+        form (f :- r1, r2, rn.
+        """
         l0 = l_string.split(":-")
         if len(l0) != 2:
             sys.exit("Wrong line: " + l_string)
@@ -112,6 +116,39 @@ class Function (object):
             rules.append(new_rule)
         return rules
 
+    def generate_middle_rules(self):
+        rules = []
+        for i in range(self.n_relations()):
+            for j in range(i, self.n_relations()):
+                rules.append(self.generate_middle_rules_sub(i, j))
+        return rules
+
+    def generate_middle_rules_sub(self, i, j):
+        """generate_middle_rules
+        Generate the general middle rules
+        :param i: The beginning index
+        :param j: The ending symbol
+        """
+        part0 = [r[0] + 'm' * r[1] for r in self.relations]
+        part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
+        part1.reverse()
+        new_rule = "p(["
+        new_rule += ", ".join(part0[i:j+1])
+        new_rule += "|R], Counter, L) "
+        new_rule += " :- p("
+        new_rule += "["
+        new_rule += ", ".join(part1[self.n_relations() - i:])
+        new_rule += "], Counter - 1, L1), length(L1, K), p("
+        if j != self.n_relations() - 1:
+            new_rule += "["
+            new_rule += ", ".join(part1[:self.n_relations() - j - 1])
+            new_rule += "|R]"
+        else:
+            new_rule += "R"
+        new_rule += ", Counter - K - 1, L2), "
+        new_rule += "append(L1, [\"" + self.name + "\"|L2], L)."
+        return new_rule
+
     def generate_left_reduced_rules(self, counter):
         """generate_left_reduced_rules
         Generates the reduced left rules as describe in the paper.
@@ -169,6 +206,12 @@ class Function (object):
         return (rules, counter)
 
     def generate_general_reduced_rules(self, counter, i, j):
+        """generate_general_reduced_rules
+        Generate a middle rule, starting at ci and ending at cj
+        :param counter: The counter to avoid collision
+        :param i: index of the first relation
+        :param j: index of the last relation
+        """
         rules = []
         rules.append(DuplicationRule("C",
                                      "A" + str(counter),
@@ -236,6 +279,14 @@ class Function (object):
 
 
 def unstack(u_relations, all_relations, counter, start, end):
+    """unstack
+    Unstack the given relation from the stack by using reduced forms
+    :param u_relations: The relations to unstack
+    :param all_relations: All the relations used
+    :param counter: Counter to avoid collision
+    :param start: the starting non-terminal
+    :param end: the ending non-terminal
+    """
     rules = []
     if len(u_relations) != 0:
         rules.append(DuplicationRule(start,
@@ -272,6 +323,13 @@ def unstack(u_relations, all_relations, counter, start, end):
 
 
 def stack(s_relations, counter, start, end):
+    """stack
+    Stack the given relations on the stack using reduced rules.
+    :param s_relations: The relations to stack
+    :param counter: The counter to avoid collisions
+    :param start: The starting non-terminal
+    :param end: The ending non-terminal
+    """
     rules = []
     if len(s_relations) == 0:
         rules.append(DuplicationRule(start,
