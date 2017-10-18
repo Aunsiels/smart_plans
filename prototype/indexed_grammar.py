@@ -12,7 +12,6 @@ class IndexedGrammar(object):
         self.rules = rules
         # Precompute all non-terminals
         self.non_terminals = rules.getNonTerminals()
-        print("There are ", len(self.non_terminals), "non terminals")
         # We cache the marked items in case of future update of the query
         self.marked = dict()
         # Initialize the marked symboles
@@ -84,7 +83,7 @@ class IndexedGrammar(object):
                                 return (was_modified, True)
         return (was_modified, False)
 
-    def is_empty(self, debug=True):
+    def is_empty(self, debug=False):
         """is_empty Checks whether the grammar generates a word or not"""
         # To know when no more modification are done
         was_modified = True

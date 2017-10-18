@@ -1,4 +1,5 @@
 from production_rule import ProductionRule
+from consommation_rule import ConsommationRule
 
 
 class Rules(object):
@@ -57,7 +58,30 @@ class Rules(object):
         """
         self.rules.append(ProductionRule(left, right, prod))
 
-    def __init__(self, rules):
+    def remove_consommation(self, prod, left, right):
+        """remove_consommation
+        Remove the consommation rule:
+            left[prod sigma] -> right[sigma]
+        :param prod: The production used in the rule
+        :param left: The left non-terminal in the rule
+        :param right: The right non-terminal in the rule
+        """
+        self.rules = list(filter(lambda x: not(x.isConsommation() and
+                                 x.getLeft == left and
+                                 x.getRight == right and
+                                 x.getF == prod), self.rules))
+
+    def add_consommation(self, prod, left, right):
+        """add_consommation
+        Add the consommation rule:
+            left[prod sigma] -> right[sigma]
+        :param prod: The production used in the rule
+        :param left: The left non-terminal in the rule
+        :param right: The right non-terminal in the rule
+        """
+        self.rules.append(ConsommationRule(prod, left, right))
+
+    def __init__(self, rules, optim=True):
         """__init__
         Initializes the rules.
         :param rules: A list of all the rules
@@ -72,3 +96,5 @@ class Rules(object):
                 self.consommationRules[rule.getF()] = temp
             else:
                 self.rules.append(rule)
+        if optim:
+            self.rules.reverse()  # Nice optimization
