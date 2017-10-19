@@ -17,15 +17,17 @@ class IndexedGrammar(object):
         # Initialize the marked symboles
         # Mark the identity
         for A in self.non_terminals:
-            self.marked[A] = []
-            temp = set()
-            temp.add(A)
-            self.marked[A].append(temp)
+            self.marked[A] = set()
+            temp = frozenset({A})
+            self.marked[A].add(temp)
         # Mark all end symboles
         for A in self.non_terminals:
             if exists(self.rules.getRules(),
                       lambda x: x.isEndRule() and x.getLeftTerm() == A):
-                self.marked[A].append(set())
+                self.marked[A].add(frozenset())
+
+    def get_terminals(self):
+        return self.rules.getTerminals()
 
     def duplication_processing(self, rule):
         """duplication_processing
@@ -40,7 +42,7 @@ class IndexedGrammar(object):
                 # Check if it was marked before
                 if temp not in self.marked[rule.getLeftTerm()]:
                     was_modified = True
-                    self.marked[rule.getLeftTerm()].append(temp)
+                    self.marked[rule.getLeftTerm()].add(temp)
                     # Stop condition, no need to continuer
                     if rule.getLeftTerm() == "S" and len(temp) == 0:
                         need_stop = True
@@ -66,24 +68,24 @@ class IndexedGrammar(object):
                                    self.marked[rule.getLeftTerm()],
                                    self.marked[rule.getRightTerm()])
         # End condition
-        if set() in self.marked["S"]:
+        if frozenset() in self.marked["S"]:
             return (was_modified, True)
         if rule.getRightTerm() in marked_symbols:
             for s in l_temp:
                 if rule.getRightTerm() == s[0] or \
-                        set() in self.marked[rule.getRightTerm()]:
+                        frozenset() in self.marked[rule.getRightTerm()]:
                     for sc in s[1]:
                         if sc not in\
                                 self.marked[rule.getLeftTerm()]:
                             was_modified = True
-                            self.marked[rule.getLeftTerm()].append(
+                            self.marked[rule.getLeftTerm()].add(
                                 sc)
                             if rule.getLeftTerm() == "S" and \
                                     len(sc) == 0:
                                 return (was_modified, True)
         return (was_modified, False)
 
-    def is_empty(self, debug=False):
+    def is_empty(self, debug=True):
         """is_empty Checks whether the grammar generates a word or not"""
         # To know when no more modification are done
         was_modified = True
@@ -151,16 +153,16 @@ def addrec_bis(l_sets, markedLeft, markedRight):
     right of the production rule
     """
     was_modified = False
-    for s in markedRight:
+    for s in list(markedRight):
         l_temp = [x for x in l_sets if x[0] in s]
         s_temp = [x[0] for x in l_temp]
         # At least one symbol to consider
-        if set(s_temp) == s and len(s) > 0:
+        if frozenset(s_temp) == s and len(s) > 0:
             was_modified |= addrec_ter(l_temp, markedLeft, markedRight)
     return was_modified
 
 
-def addrec_ter(l_sets, markedLeft, markedRight, temp=set(), temp_in=set()):
+def addrec_ter(l_sets, markedLeft, markedRight, temp=frozenset(), temp_in=frozenset()):
     """addrec
     Explores all possible combination of consumption rules to mark a
     production rule.
@@ -183,7 +185,7 @@ def addrec_ter(l_sets, markedLeft, markedRight, temp=set(), temp_in=set()):
         # of non-terminals considered is marked of the right non-terminal in
         # the production rule, then if a new set is marked or not
         if temp not in markedLeft:
-            markedLeft.append(temp)
+            markedLeft.add(temp)
             return True
         return False
     res = False
@@ -199,7 +201,8 @@ def addrec_ter(l_sets, markedLeft, markedRight, temp=set(), temp_in=set()):
     return res
 
 
-def addrec(l_sets, markedLeft, markedRight, temp=set(), temp_in=set()):
+def addrec(l_sets, markedLeft, markedRight, temp=frozenset(),
+           temp_in=frozenset()):
     """addrec
     Explores all possible combination of consumption rules to mark a
     production rule.
@@ -217,7 +220,7 @@ def addrec(l_sets, markedLeft, markedRight, temp=set(), temp_in=set()):
     :return Whether an element was actually marked
     """
     # Try to stop the earliest possible, not sure it helps
-    if not exists(markedRight, lambda x: temp_in.issubset(x)):
+    if not exists(markedRight, lambda x: temp_in.issubfrozenset(x)):
         return False
     # End condition, nothing left to process
     if len(l_sets) == 0:
@@ -226,7 +229,7 @@ def addrec(l_sets, markedLeft, markedRight, temp=set(), temp_in=set()):
         # the production rule, then if a new set is marked or not
         if len(temp_in) > 0 and temp_in in markedRight and \
                 temp not in markedLeft:
-            markedLeft.append(temp)
+            markedLeft.add(temp)
             return True
         return False
     res = False

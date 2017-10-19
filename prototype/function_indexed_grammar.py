@@ -81,14 +81,14 @@ class FunctionIndexedGrammar(IndexedGrammar):
 
         # Reinitialize the marked symboles for S and Cinit
         temp_counter = -1
-        self.marked["Cinitquery"] = []
-        self.marked["Cinitquery"].append({"Cinitquery"})
+        self.marked["Cinitquery"] = set()
+        self.marked["Cinitquery"].add(frozenset({"Cinitquery"}))
         for i in range(self.init_counter + 1):
-            self.marked["Cinit" + str(i)] = []
-            self.marked["Cinit" + str(i)].append(
-                        {"Cinit" + str(i)})
-        self.marked["S"] = []
-        self.marked["S"].append({"S"})
+            self.marked["Cinit" + str(i)] = set()
+            self.marked["Cinit" + str(i)].add(
+                        frozenset({"Cinit" + str(i)}))
+        self.marked["S"] = set()
+        self.marked["S"].add(frozenset({"S"}))
 
         # Add new rules
         self.init_counter = -1
@@ -109,9 +109,9 @@ class FunctionIndexedGrammar(IndexedGrammar):
 
         # Init rules
         for i in range(self.init_counter + 1):
-            self.marked["Cinit" + str(i)] = []
-            self.marked["Cinit" + str(i)].append(
-                        {"Cinit" + str(i)})
+            self.marked["Cinit" + str(i)] = set()
+            self.marked["Cinit" + str(i)].add(
+                        frozenset({"Cinit" + str(i)}))
         self.query = new_query
 
     def is_empty(self):
