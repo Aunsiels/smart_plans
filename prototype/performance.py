@@ -3,7 +3,7 @@ from function_indexed_grammar import FunctionIndexedGrammar
 import time
 
 
-generator = FunctionGenerator(1000)
+generator = FunctionGenerator(10)
 
 functions = []
 

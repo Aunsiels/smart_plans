@@ -85,7 +85,7 @@ class IndexedGrammar(object):
                                 return (was_modified, True)
         return (was_modified, False)
 
-    def is_empty(self, debug=True):
+    def is_empty(self, debug=False):
         """is_empty Checks whether the grammar generates a word or not"""
         # To know when no more modification are done
         was_modified = True
@@ -162,7 +162,8 @@ def addrec_bis(l_sets, markedLeft, markedRight):
     return was_modified
 
 
-def addrec_ter(l_sets, markedLeft, markedRight, temp=frozenset(), temp_in=frozenset()):
+def addrec_ter(l_sets, markedLeft, markedRight, temp=frozenset(),
+               temp_in=frozenset()):
     """addrec
     Explores all possible combination of consumption rules to mark a
     production rule.
