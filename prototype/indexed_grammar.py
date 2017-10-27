@@ -72,16 +72,13 @@ class IndexedGrammar(object):
             return (was_modified, True)
         if rule.getRightTerm() in marked_symbols:
             for s in l_temp:
-                if rule.getRightTerm() == s[0] or \
-                        frozenset() in self.marked[rule.getRightTerm()]:
+                if rule.getRightTerm() == s[0]:
                     for sc in s[1]:
                         if sc not in\
                                 self.marked[rule.getLeftTerm()]:
                             was_modified = True
-                            self.marked[rule.getLeftTerm()].add(
-                                sc)
-                            if rule.getLeftTerm() == "S" and \
-                                    len(sc) == 0:
+                            self.marked[rule.getLeftTerm()].add(sc)
+                            if rule.getLeftTerm() == "S" and len(sc) == 0:
                                 return (was_modified, True)
         return (was_modified, False)
 

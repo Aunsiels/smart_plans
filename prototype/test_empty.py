@@ -156,3 +156,21 @@ l_rules.append(EndRule("F1", "b"))
 rules = Rules(l_rules)
 i_grammar = IndexedGrammar(rules)
 assert(i_grammar.is_empty())
+
+# Write rules
+
+l_rules = []
+
+# Initialization rules
+
+l_rules.append(ProductionRule("S", "A", "f"))
+l_rules.append(ConsommationRule("f", "A", "B"))
+l_rules.append(ConsommationRule("f", "C", "F"))
+l_rules.append(ProductionRule("B", "C", "f"))
+l_rules.append(ProductionRule("D", "E", "f"))
+l_rules.append(EndRule("F", "epsilon"))
+l_rules.append(DuplicationRule("B0", "A0", "C"))
+
+rules = Rules(l_rules)
+i_grammar = IndexedGrammar(rules)
+assert(not i_grammar.is_empty())
