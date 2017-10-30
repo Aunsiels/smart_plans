@@ -1,5 +1,5 @@
 from function_indexed_grammar import FunctionIndexedGrammar
-from function import Function
+from multiple_input_function import MultipleInputFunction
 import sys
 
 # Books
@@ -83,40 +83,30 @@ if FUNISBN1:
     functions.append(["isTitled-", "wrote-", "hasIdAuthor"])
 
 if FUNMB1reduced:
-    # FUNMB1GetCollaboratorInfoById
+    # FUNMB1GetArtistInfoByID
     functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "isMemberOf-"])
-    functions.append(["hasIdArtist-", "isMemberOf-", "hasIdArtist"])
-    # FUNMB1GetRealeaseByArtistID
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "released"])
-    functions.append(["hasIdArtist-", "released", "hasIdRelease"])
-    # FUNMB1GetTracksByArtistId
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "sang"])
-    # FUNMB1GetTrackInfoByName
-    functions.append(["hasIdTrack"])
-    functions.append(["isMemberOf"])
-    functions.append(["sang-"])
-    functions.append(["hasValue"])
-    functions.append(["hasDuration"])
-    # FUNMB1GetTracksByReleaseID
-    functions.append(["hasIdRelease-"])
-    functions.append(["hasIdRelease-", "inLanguage"])
-    functions.append(["hasIdRelease-", "isMemberOf-"])
-    functions.append(["hasIdRelease-", "isMemberOf-", "hasDuration"])
-    functions.append(["hasIdRelease-", "isMemberOf-", "hasIdTrack"])
-    # FUNMB1GetRealeaseByArtistID
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "released"])
-    functions.append(["hasIdArtist-", "released", "hasIdRelease"])
-    functions.append(["hasIdArtist-", "released", "inLanguage"])
+    functions.append(["hasIdArtist-", "describes-"])
+    functions.append(["hasIdArtist-", "rated"])
+    functions.append(["hasIdArtist-", "diedOnDate"])
+    functions.append(["hasIdArtist-", "bornOnDate"])
+    # FUNMB1GetArtistInfoByName
+    # functions.append(["hasIdArtist"])
+    functions.append(["diedOnDate"])
+    functions.append(["bornOnDate"])
     # FUNMB1GetArtistsByRealeaseID
     functions.append(["hasIdRelease-"])
     functions.append(["hasIdRelease-", "inLanguage"])
     functions.append(["hasIdRelease-", "sang-"])
     functions.append(["hasIdRelease-", "produced-"])
     functions.append(["hasIdRelease-", "lyricsBy"])
+    # FUNMB1GetCollaboratorInfoById
+    functions.append(["hasIdArtist-"])
+    functions.append(["hasIdArtist-", "isMemberOf-"])
+    functions.append(["hasIdArtist-", "isMemberOf-", "hasIdArtist"])
+    # FUNMB1GetCollaboratorsByID
+    # functions.append(["hasIdArtist-"])
+    functions.append(["hasIdArtist-", "isMemberOf"])
+    functions.append(["hasIdArtist-", "isMemberOf", "hasIdCollab"])
     # FUNMB1GetRelativesByID
     functions.append(["hasIdArtist-"])
     functions.append(["hasIdArtist-", "hasSiblings"])
@@ -127,7 +117,53 @@ if FUNMB1reduced:
     functions.append(["hasIdArtist-", "hasChild", "hasIdChild"])
     functions.append(["hasIdArtist-", "divorcedOn"])
     functions.append(["hasIdArtist-", "marriedOn"])
+    # FUNMB1GetReleaseInfoByID
+    functions.append(["hasIdRelease-"])
+    functions.append(["hasIdRelease-", "inLanguage"])
+    functions.append(["hasIdRelease-", "happenedIn"])
+    functions.append(["hasIdRelease-", "hasTrackNumber"])
+    functions.append(["hasIdRelease-", "happenedOnDate"])
+    functions.append(["hasIdRelease-", "hasDiscNumber"])
+    functions.append(["hasIdRelease-", "describes-"])
+    functions.append(["hasIdRelease-", "released-"])
+    functions.append(["hasIdRelease-", "released-", "hasIdArtist"])
+    # FUNMB1GetReleaseInfoByTitle
+    # functions.append(["hasIdRelease"])
+    functions.append(["inLanguage"])
+    functions.append(["released-"])
+    # FUNMB1GetRealeaseByArtistID
+    functions.append(["hasIdArtist-"])
+    functions.append(["hasIdArtist-", "released"])
+    functions.append(["hasIdArtist-", "released", "hasIdRelease"])
+    functions.append(["hasIdArtist-", "released", "inLanguage"])
+    # FUNMB1GetTrackInfoByID
+    functions.append(["hasIdTrack-"])
+    functions.append(["hasIdTrack-", "hasDuration"])
+    functions.append(["hasIdTrack-", "sang-"])
+    functions.append(["hasIdTrack-", "hasValue"])
+    functions.append(["hasIdTrack-", "isMemberOf"])
+    # FUNMB1GetTrackInfoByName
+    # functions.append(["hasIdTrack"])
+    functions.append(["isMemberOf"])
+    functions.append(["sang-"])
+    functions.append(["hasValue"])
+    functions.append(["hasDuration"])
+    # FUNMB1GetTracksByReleaseID
+    functions.append(["hasIdRelease-"])
+    functions.append(["hasIdRelease-", "inLanguage"])
+    functions.append(["hasIdRelease-", "isMemberOf-"])
+    functions.append(["hasIdRelease-", "isMemberOf-", "hasDuration"])
+    functions.append(["hasIdRelease-", "isMemberOf-", "hasIdTrack"])
+    # FUNMB1GetTracksByArtistId
+    functions.append(["hasIdArtist-"])
+    functions.append(["hasIdArtist-", "sang"])
 if FUNMB1:
+    # FUNMB1GetArtistInfoByID
+    functions.append(["hasIdArtist-"])
+    functions.append(["hasIdArtist-", "describes-"])
+    functions.append(["hasIdArtist-", "rated"])
+    functions.append(["hasIdArtist-", "diedOnDate"])
+    functions.append(["hasIdArtist-", "bornOnDate"])
     # FUNMB1GetCollaboratorInfoById
     functions.append(["hasIdCollab-"])
     functions.append(["hasIdCollab-", "isMemberOf-"])
@@ -214,7 +250,7 @@ if FUNLF1:
     functions.append(["hasIdRelease-", "describes-"])
     functions.append(["hasIdRelease-", "happenedOnDate"])
     # FUNLF1GetTrackInfoByName
-    functions.append(["sang-"])
+    # functions.append(["sang-"])
     functions.append(["describes-"])
     # FUNF1GetArtistInfoByID
     functions.append(["hasIdArtist-"])
@@ -230,8 +266,34 @@ functions = f_temp
 print("Number functions:", len(functions))
 
 for i in range(len(functions)):
-    functions[i] = Function(functions[i], "f" + str(i))
-    print(functions[i])
+    functions[i] = MultipleInputFunction(functions[i], "f" + str(i), 1)
+
+# Multiple Input functions
+if FUNABE:
+    functions.append(MultipleInputFunction(["wrote", "hasISBN"], "f", 2))
+    functions.append(MultipleInputFunction(["wrote", "published"], "f", 2))
+if FUNLF1:
+    # functions.append(MultipleInputFunction(["released", "hasIdRelease"],
+    #                                        "f", 2))
+    functions.append(MultipleInputFunction(["released", "describes-"],
+                                           "f", 2))
+    functions.append(MultipleInputFunction(["released", "happenedOnDate"],
+                                           "f", 2))
+    functions.append(MultipleInputFunction(["sang", "hasIdTrack"],
+                                           "f", 2))
+    functions.append(MultipleInputFunction(["sang", "hasDuration"],
+                                           "f", 2))
+    functions.append(MultipleInputFunction(["sang", "isMemberOf"],
+                                           "f", 2))
+    functions.append(MultipleInputFunction(["sang", "isMemberOf", "hasIdAlbum"],
+                                           "f", 2))
+    functions.append(MultipleInputFunction(["sang", "describes-"],
+                                           "f", 2))
+    functions.append(MultipleInputFunction(["sang-", "hasIdArtist"],
+                                           "f", 2))
+
+for f in functions:
+    print(f)
 
 i_grammar = FunctionIndexedGrammar(functions, [[""]])
 
