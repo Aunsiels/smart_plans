@@ -3,13 +3,13 @@ from multiple_input_function import MultipleInputFunction
 import sys
 
 # Books
-FUNLIBTH = False
+FUNLIBTH = True
 FUNABE = False
 FUNISBN1 = False
 # Music
 FUNLF1 = False
 FUNMB1 = False
-FUNMB1reduced = True
+FUNMB1reduced = False
 FUNLYRIC1 = False
 
 functions = []
@@ -257,13 +257,12 @@ if FUNLF1:
     functions.append(["describes-"])
 
 # Make each function unique
-print("Number functions:", len(functions))
+# print("Number functions:", len(functions))
 f_temp = []
 for f in functions:
     if f not in f_temp:
         f_temp.append(f)
 functions = f_temp
-print("Number functions:", len(functions))
 
 for i in range(len(functions)):
     functions[i] = MultipleInputFunction(functions[i], "f" + str(i), 1)
@@ -292,6 +291,8 @@ if FUNLF1:
     functions.append(MultipleInputFunction(["sang-", "hasIdArtist"],
                                            "f", 2))
 
+print("Number functions:", len(functions))
+
 for f in functions:
     print(f)
 
@@ -301,6 +302,9 @@ terminals = i_grammar.get_terminals()
 terminals.remove("epsilon")
 terminals.remove("end")
 terminals.remove("query")
+terminals = list(filter(lambda x: "_IN" not in x, terminals))
+
+n_reachable = 0
 
 for terminal in terminals:
     # i_grammar.update([[terminal]])
@@ -309,4 +313,11 @@ for terminal in terminals:
         print(terminal, "Cannot be reached")
     else:
         print(terminal, "Can be reached")
+        n_reachable += 1
     sys.stdout.flush()
+
+if n_reachable == 0:
+    print("No terminal was reachable")
+else:
+    print(str(n_reachable * 100.0 / float(len(terminals))) +
+          "% terminals reachable")

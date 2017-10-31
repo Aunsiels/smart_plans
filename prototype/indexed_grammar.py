@@ -88,6 +88,8 @@ class IndexedGrammar(object):
         was_modified = True
         # To know the number of iteration (debug)
         count = 0
+        if debug:
+            print("Number of rules:", self.rules.get_length())
         while was_modified:
             if debug:
                 print("Stage ", count, " number marked : ",

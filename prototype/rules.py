@@ -11,6 +11,9 @@ class Rules(object):
         """getRules Gets the non consumption rules"""
         return self.rules
 
+    def get_length(self):
+        return (len(self.rules), len(self.consommationRules.values()))
+
     def getConsommationRules(self):
         """getConsommationRules Gets the consumption rules"""
         return self.consommationRules

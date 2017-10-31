@@ -218,7 +218,7 @@ class Function (object):
                                      "D" + str(counter)))
         temp_counter = counter
         temp = stack(["end"] + self.part1[:i],
-                     counter,
+                     counter + 1,
                      "A" + str(counter),
                      "C")
         counter = temp[1]
