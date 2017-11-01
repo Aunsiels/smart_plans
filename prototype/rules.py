@@ -1,5 +1,6 @@
 from production_rule import ProductionRule
 from consommation_rule import ConsommationRule
+from rule_ordering import RuleOrdering
 
 
 class Rules(object):
@@ -84,7 +85,7 @@ class Rules(object):
         """
         self.rules.append(ConsommationRule(prod, left, right))
 
-    def __init__(self, rules, optim=True):
+    def __init__(self, rules, optim=2):
         """__init__
         Initializes the rules.
         :param rules: A list of all the rules
@@ -99,5 +100,10 @@ class Rules(object):
                 self.consommationRules[rule.getF()] = temp
             else:
                 self.rules.append(rule)
-        if optim:
-            self.rules.reverse()  # Nice optimization
+        ro = RuleOrdering(self.rules, self.consommationRules)
+        if optim == 1:
+            self.rules = ro.reverse()
+        elif optim == 2:
+            self.rules = ro.order_by_core()
+        elif optim == 3:
+            self.rules = ro.order_by_core(reverse=True)

@@ -10,7 +10,7 @@ class FunctionIndexedGrammar(IndexedGrammar):
     Represents a grammar generated from functions as presented in our paper
     """
 
-    def __init__(self, functions, query, optim=True):
+    def __init__(self, functions, query, optim=2):
         """__init__
         Initializes the indexed grammar from a set of functions
         :param functions: a list of Functions
@@ -123,3 +123,21 @@ class FunctionIndexedGrammar(IndexedGrammar):
             return True
         else:
             return super(FunctionIndexedGrammar, self).is_empty()
+
+    def get_prolog_rules(self, max_depth):
+        # CAREFUL DO NOT WORK WITH MULTIPLE INPUT FUNCTION
+        # AND WITH QUERY WITH MORE THAN ONE RELATION
+        # Stop rules
+        res = "p([], _, []).\n"
+        res += "p(_, Counter, _) :- Counter =< 0, !, fail.\n"
+        for f in self.functions:
+            res += "\n".join(f.generate_middle_rules()) + "\n"
+        # Initialization rules
+        res += "q(X) :- p([" + self.query[0][0] + "], X, L), print(L).\n"
+        res += "q(X) :- X < " + str(max_depth) + ", q(X + 1).\n"
+        res += "q(_).\n"
+        # To start automatically the program in prolog
+        res += ":- initialization main.\n"
+        res += "main :- q(1), halt(0).\n"
+        return res
+

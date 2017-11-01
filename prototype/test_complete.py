@@ -240,6 +240,16 @@ terminals.remove("epsilon")
 terminals.remove("end")
 terminals.remove("query")
 
+
+def remove_minus(rel):
+    if rel.endswith("m"):
+        return rel[:-1]
+    else:
+        return rel
+
+
+terminals = set(map(lambda x: remove_minus(x), terminals))
+
 for terminal in terminals:
     # i_grammar.update([[terminal]])
     i_grammar = FunctionIndexedGrammar(functions, [[terminal]])

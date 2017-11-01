@@ -1,15 +1,15 @@
 from function_indexed_grammar import FunctionIndexedGrammar
 from multiple_input_function import MultipleInputFunction
 import sys
+import time
 
 # Books
-FUNLIBTH = True
+FUNLIBTH = False
 FUNABE = False
 FUNISBN1 = False
 # Music
 FUNLF1 = False
-FUNMB1 = False
-FUNMB1reduced = False
+FUNMB1 = True
 FUNLYRIC1 = False
 
 functions = []
@@ -20,7 +20,7 @@ if FUNLIBTH:
     functions.append(["hasIdAuthor"])
     functions.append(["isCitizenOf"])
     functions.append(["bornOnDate"])
-    functions.append(["graduatedFrom"])
+    functions.append(["graduatedFroM"])
     functions.append(["hasGender"])
     functions.append(["livesIn"])
     # FUNLIBTHGetBookInfoByISBN
@@ -42,7 +42,7 @@ if FUNLIBTH:
     functions.append(["hasIdAuthor"])
     functions.append(["livesIn"])
     functions.append(["bornOnDate"])
-    functions.append(["graduatedFrom"])
+    functions.append(["graduatedFroM"])
     functions.append(["hasGender"])
     functions.append(["isCitizenOf"])
     functions.append(["hasWonPrize"])
@@ -82,7 +82,7 @@ if FUNISBN1:
     functions.append(["isTitled-", "wrote-"])
     functions.append(["isTitled-", "wrote-", "hasIdAuthor"])
 
-if FUNMB1reduced:
+if FUNMB1:
     # FUNMB1GetArtistInfoByID
     functions.append(["hasIdArtist-"])
     functions.append(["hasIdArtist-", "describes-"])
@@ -90,7 +90,7 @@ if FUNMB1reduced:
     functions.append(["hasIdArtist-", "diedOnDate"])
     functions.append(["hasIdArtist-", "bornOnDate"])
     # FUNMB1GetArtistInfoByName
-    # functions.append(["hasIdArtist"])
+    functions.append(["hasIdArtist"])
     functions.append(["diedOnDate"])
     functions.append(["bornOnDate"])
     # FUNMB1GetArtistsByRealeaseID
@@ -104,7 +104,7 @@ if FUNMB1reduced:
     functions.append(["hasIdArtist-", "isMemberOf-"])
     functions.append(["hasIdArtist-", "isMemberOf-", "hasIdArtist"])
     # FUNMB1GetCollaboratorsByID
-    # functions.append(["hasIdArtist-"])
+    functions.append(["hasIdArtist-"])
     functions.append(["hasIdArtist-", "isMemberOf"])
     functions.append(["hasIdArtist-", "isMemberOf", "hasIdCollab"])
     # FUNMB1GetRelativesByID
@@ -128,7 +128,7 @@ if FUNMB1reduced:
     functions.append(["hasIdRelease-", "released-"])
     functions.append(["hasIdRelease-", "released-", "hasIdArtist"])
     # FUNMB1GetReleaseInfoByTitle
-    # functions.append(["hasIdRelease"])
+    functions.append(["hasIdRelease"])
     functions.append(["inLanguage"])
     functions.append(["released-"])
     # FUNMB1GetRealeaseByArtistID
@@ -143,39 +143,6 @@ if FUNMB1reduced:
     functions.append(["hasIdTrack-", "hasValue"])
     functions.append(["hasIdTrack-", "isMemberOf"])
     # FUNMB1GetTrackInfoByName
-    # functions.append(["hasIdTrack"])
-    functions.append(["isMemberOf"])
-    functions.append(["sang-"])
-    functions.append(["hasValue"])
-    functions.append(["hasDuration"])
-    # FUNMB1GetTracksByReleaseID
-    functions.append(["hasIdRelease-"])
-    functions.append(["hasIdRelease-", "inLanguage"])
-    functions.append(["hasIdRelease-", "isMemberOf-"])
-    functions.append(["hasIdRelease-", "isMemberOf-", "hasDuration"])
-    functions.append(["hasIdRelease-", "isMemberOf-", "hasIdTrack"])
-    # FUNMB1GetTracksByArtistId
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "sang"])
-if FUNMB1:
-    # FUNMB1GetArtistInfoByID
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "describes-"])
-    functions.append(["hasIdArtist-", "rated"])
-    functions.append(["hasIdArtist-", "diedOnDate"])
-    functions.append(["hasIdArtist-", "bornOnDate"])
-    # FUNMB1GetCollaboratorInfoById
-    functions.append(["hasIdCollab-"])
-    functions.append(["hasIdCollab-", "isMemberOf-"])
-    functions.append(["hasIdCollab-", "isMemberOf-", "hasIdArtist"])
-    # FUNMB1GetCollaboratorsByID
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "isMemberOf"])
-    functions.append(["hasIdArtist-", "isMemberOf", "hasIdCollab"])
-    # FUNMB1GetTracksByArtistId
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "sang"])
-    # FUNMB1GetTrackInfoByName
     functions.append(["hasIdTrack"])
     functions.append(["isMemberOf"])
     functions.append(["sang-"])
@@ -187,37 +154,9 @@ if FUNMB1:
     functions.append(["hasIdRelease-", "isMemberOf-"])
     functions.append(["hasIdRelease-", "isMemberOf-", "hasDuration"])
     functions.append(["hasIdRelease-", "isMemberOf-", "hasIdTrack"])
-    # FUNMB1GetTrackInfoByID
-    functions.append(["hasIdTrack-"])
-    functions.append(["hasIdTrack-", "hasDuration"])
-    functions.append(["hasIdTrack-", "isMemberOf"])
-    functions.append(["hasIdTrack-", "sang-"])
-    functions.append(["hasIdTrack-", "hasValue"])
-    # FUNMB1GetRealeaseByArtistID
+    # FUNMB1GetTracksByArtistId
     functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "released"])
-    functions.append(["hasIdArtist-", "released", "hasIdRelease"])
-    functions.append(["hasIdArtist-", "released", "inLanguage"])
-    # FUNMB1GetArtistsByRealeaseID
-    functions.append(["hasIdRelease-"])
-    functions.append(["hasIdRelease-", "inLanguage"])
-    functions.append(["hasIdRelease-", "sang-"])
-    functions.append(["hasIdRelease-", "produced-"])
-    functions.append(["hasIdRelease-", "lyricsBy"])
-    # FUNMB1GetArtistInfoByName
-    functions.append(["hasIdArtist"])
-    functions.append(["diedOnDate"])
-    functions.append(["bornOnDate"])
-    # FUNMB1GetRelativesByID
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "hasSiblings"])
-    functions.append(["hasIdArtist-", "hasSiblings", "hasIdSibling"])
-    functions.append(["hasIdArtist-", "isMarriedTo"])
-    functions.append(["hasIdArtist-", "isMarriedTo", "hasIdSpouse"])
-    functions.append(["hasIdArtist-", "hasChild"])
-    functions.append(["hasIdArtist-", "hasChild", "hasIdChild"])
-    functions.append(["hasIdArtist-", "divorcedOn"])
-    functions.append(["hasIdArtist-", "marriedOn"])
+    functions.append(["hasIdArtist-", "sang"])
 if FUNLYRIC1:
     # FUNMB1GetRealeaseByArtistID
     functions.append(["hasIdArtist-"])
@@ -304,7 +243,21 @@ terminals.remove("end")
 terminals.remove("query")
 terminals = list(filter(lambda x: "_IN" not in x, terminals))
 
+
+def remove_minus(rel):
+    if rel.endswith("m"):
+        return rel[:-1]
+    else:
+        return rel
+
+
+terminals = list(set(map(lambda x: remove_minus(x), terminals)))
+
+terminals = terminals + list(map(lambda x: x + "m", terminals))
+
 n_reachable = 0
+
+current_time = time.time()
 
 for terminal in terminals:
     # i_grammar.update([[terminal]])
@@ -314,6 +267,8 @@ for terminal in terminals:
     else:
         print(terminal, "Can be reached")
         n_reachable += 1
+        with open('prolog_web_services/' + terminal + '.pl', "w") as f:
+            f.write(i_grammar.get_prolog_rules(3))
     sys.stdout.flush()
 
 if n_reachable == 0:
@@ -321,3 +276,6 @@ if n_reachable == 0:
 else:
     print(str(n_reachable * 100.0 / float(len(terminals))) +
           "% terminals reachable")
+
+delta_t = time.time() - current_time
+print("Elapsed time", delta_t)
