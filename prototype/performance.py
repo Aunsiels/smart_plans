@@ -4,7 +4,7 @@ import time
 
 
 # number relations
-n_relations = 20
+n_relations = 10
 size_max = 10
 generator = FunctionGenerator(n_relations)
 
