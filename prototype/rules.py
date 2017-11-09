@@ -107,3 +107,11 @@ class Rules(object):
             self.rules = ro.order_by_core()
         elif optim == 3:
             self.rules = ro.order_by_core(reverse=True)
+        elif optim == 4:
+            self.rules = ro.order_by_arborescence(reverse=True)
+        elif optim == 5:
+            self.rules = ro.order_by_arborescence(reverse=False)
+        elif optim == 6:
+            self.rules = ro.order_by_edges()
+        elif optim == 7:
+            self.rules = ro.order_by_edges(reverse=True)

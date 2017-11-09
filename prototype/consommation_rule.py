@@ -24,6 +24,9 @@ class ConsommationRule(ReducedRule):
         """getLeft Gets the symbole on the left of the rule"""
         return self.left
 
+    def getLeftTerm(self):
+        return self.left
+
     def __init__(self, f, left, right):
         """__init_ Initialises a rule of the form:
             C[ f sigma] -> B[sigma]

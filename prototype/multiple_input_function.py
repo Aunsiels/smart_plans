@@ -92,7 +92,7 @@ class MultipleInputFunction (Function):
         # return (l_rules[0] + r_rules[0], r_rules[1])
         rules = []
         for i in range(0, self.n_relations()):
-            for j in range(i, self.n_relations()):
+            for j in range(max(i, self.n_inputs - 1), self.n_relations()):
                 temp = self.generate_general_reduced_rules(counter, i, j)
                 rules = rules + temp[0]
                 counter = temp[1]

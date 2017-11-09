@@ -10,7 +10,7 @@ class FunctionIndexedGrammar(IndexedGrammar):
     Represents a grammar generated from functions as presented in our paper
     """
 
-    def __init__(self, functions, query, optim=2):
+    def __init__(self, functions, query, optim=4):
         """__init__
         Initializes the indexed grammar from a set of functions
         :param functions: a list of Functions
@@ -140,4 +140,3 @@ class FunctionIndexedGrammar(IndexedGrammar):
         res += ":- initialization main.\n"
         res += "main :- q(1), halt(0).\n"
         return res
-
