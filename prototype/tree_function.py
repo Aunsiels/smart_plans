@@ -7,12 +7,20 @@ class TreeFunction(object):
     """TreeFunction Represents a tree function"""
 
     def __init__(self, head, others, name="tf"):
+        """__init__
+        Initialize a tree function. For now, the order of the nodes which are
+        not the head is not important.
+        :param head: The head of the tree. It is a Function (linear function)
+        :param others:
+        :param name:
+        """
         self.head = head
         self.others = others
         self.part0 = head.part0
         self.part1 = head.part1
 
     def __repr__(self):
+        """__repr__ The string representation of the tree"""
         return "HEAD : " + str(self.head) + " OTHERS : " + str(self.others)
 
     def n_relations(self):
