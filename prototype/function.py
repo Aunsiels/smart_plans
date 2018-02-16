@@ -38,7 +38,7 @@ class Function (object):
             sys.exit("No relation: " + l_string)
         self.init_from_list(relations)
 
-    def __init__(self, relations, name):
+    def __init__(self, relations, name="f"):
         """__init__
         Creates the function represented by a sequence of relations
         :param relations: the sequence of relations in the function, inverse
@@ -52,6 +52,15 @@ class Function (object):
             self.init_from_list(relations)
         self.part0 = [r[0] + 'm' * r[1] for r in self.relations]
         self.part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
+
+    def get_inverse_function(self):
+        """get_inverse_function Get the list representation of the inverse
+        function"""
+        return [r[0] + "-" * r[1] for r in self.minus_relations[::-1]]
+
+    def to_list(self):
+        """to_list Gives the list representation of the function"""
+        return [r[0] + "-" * r[1] for r in self.relations]
 
     def n_relations(self):
         """n_relations Gives the number of relations in the function"""
@@ -240,7 +249,7 @@ class Function (object):
         rules = rules + temp[0]
         return (rules, counter)
 
-    def generate_reduced_rules(self, counter):
+    def generate_reduced_rules(self, counter, empty=False):
         """generate_reduced_rules
         Generates both left and right reduced rules
         :param counter: counter used to be sure we do not duplicate
@@ -248,16 +257,19 @@ class Function (object):
         :return A couple (rules, counter) containing the generated rules and the
         new counter value
         """
-        # l_rules = self.generate_left_reduced_rules(counter)
-        # counter = l_rules[1]
-        # r_rules = self.generate_right_reduced_rules(counter)
-        # return (l_rules[0] + r_rules[0], r_rules[1])
         rules = []
-        for i in range(0, self.n_relations()):
+        max_i = self.n_relations()
+        if empty:
+            max_i = 1
+        for i in range(0, max_i):
             for j in range(i, self.n_relations()):
                 temp = self.generate_general_reduced_rules(counter, i, j)
                 rules = rules + temp[0]
                 counter = temp[1]
+        if empty:
+            temp = self.generate_general_reduced_rules(counter, 0, -1)
+            rules = rules + temp[0]
+            counter = temp[1]
         return (rules, counter)
 
     def get_all_terminals(self):

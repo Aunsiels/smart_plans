@@ -1,7 +1,6 @@
 from function import Function
 import re
 import sys
-# from function_indexed_grammar import FunctionIndexedGrammar
 
 
 def main():

@@ -119,13 +119,13 @@ i_grammar = FunctionIndexedGrammar([functions[x] for x in [12, 13]],
                                    [["xm"]])
 assert i_grammar.is_empty(), "Error12"
 
-print("Test 13")
-
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [14, 15]] +
-                                   [equivalence_rules[x] for x in [0]],
-                                   [["q"]])
-
-assert not i_grammar.is_empty(), "Error13"
+# print("Test 13")
+#
+# i_grammar = FunctionIndexedGrammar([functions[x] for x in [14, 15]] +
+#                                    [equivalence_rules[x] for x in [0]],
+#                                    [["q"]])
+#
+# assert not i_grammar.is_empty(), "Error13"
 
 print("Test 14")
 

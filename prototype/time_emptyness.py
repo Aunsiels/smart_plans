@@ -9,14 +9,19 @@ def get_millis():
 
 
 current_time = get_millis()
+total = 0
+n_loop = 10
 
-for _ in range(10):
-    generator = FunctionGenerator(10)
-    functions = generator.generate(5, 4)
+for _ in range(n_loop):
+    generator = FunctionGenerator(5)
+    functions = generator.generate(25, 10)
     query = generator.get_random_query(functions)
-    print(functions)
-    print(query)
+    # print(functions)
+    # print(query)
     grammar = FunctionIndexedGrammar(functions, query)
-    cProfile.run("grammar.is_empty()")
+    # cProfile.run("grammar.is_empty()")
     print(get_millis() - current_time)
+    total += get_millis() - current_time
     current_time = get_millis()
+
+print("Mean :" + str(total / n_loop))

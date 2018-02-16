@@ -80,6 +80,11 @@ class IndexedGrammar(object):
                             self.marked[rule.getLeftTerm()].add(sc)
                             if rule.getLeftTerm() == "S" and len(sc) == 0:
                                 return (was_modified, True)
+        # Edge case
+        if frozenset() in self.marked[rule.getRightTerm()]:
+            if frozenset() not in self.marked[rule.getLeftTerm()]:
+                was_modified = True
+                self.marked[rule.getLeftTerm()].add(frozenset())
         return (was_modified, False)
 
     def is_empty(self, debug=False):
@@ -94,7 +99,7 @@ class IndexedGrammar(object):
             if debug:
                 print("Stage ", count, " number marked : ",
                       length_marked(self.marked))
-                # print_marked(self.marked)
+                print_marked(self.marked)
             count += 1
             was_modified = False
             for rule in self.rules.getRules():
@@ -121,6 +126,9 @@ class IndexedGrammar(object):
                         return False
                     was_modified |= prod_res[0]
         if debug:
+            print("Stage ", count, " number marked : ",
+                  length_marked(self.marked))
+            print_marked(self.marked)
             print("number marked : ", length_marked(self.marked))
             print("EMPTY")
         return True

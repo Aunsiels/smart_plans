@@ -1,5 +1,6 @@
 import networkx as nx
 from queue import Queue
+import random
 
 
 class RuleOrdering(object):
@@ -79,3 +80,7 @@ class RuleOrdering(object):
         if reverse:
             new_order.reverse()
         return new_order
+
+    def order_random(self):
+        random.shuffle(self.rules)
+        return self.rules

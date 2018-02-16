@@ -85,7 +85,7 @@ class Rules(object):
         """
         self.rules.append(ConsommationRule(prod, left, right))
 
-    def __init__(self, rules, optim=2):
+    def __init__(self, rules, optim=7):
         """__init__
         Initializes the rules.
         :param rules: A list of all the rules
@@ -115,3 +115,5 @@ class Rules(object):
             self.rules = ro.order_by_edges()
         elif optim == 7:
             self.rules = ro.order_by_edges(reverse=True)
+        elif optim == 8:
+            self.rules = ro.order_random()

@@ -10,7 +10,7 @@ class FunctionIndexedGrammar(IndexedGrammar):
     Represents a grammar generated from functions as presented in our paper
     """
 
-    def __init__(self, functions, query, optim=4):
+    def __init__(self, functions, query, optim=7, empty=False, eq_rules=[]):
         """__init__
         Initializes the indexed grammar from a set of functions
         :param functions: a list of Functions
@@ -46,11 +46,14 @@ class FunctionIndexedGrammar(IndexedGrammar):
         initial_rules.append(EndRule("T", "epsilon"))
         # Rules from functions
         f_rules = []
+        # Apply equivalence rules
+        for eq_rule in eq_rules:
+            functions = eq_rule.transform_function_set(functions)
         # Generate the rules
         counter = 0
         self.functions = functions
         for f in functions:
-            temp_rule = f.generate_reduced_rules(counter)
+            temp_rule = f.generate_reduced_rules(counter, empty)
             counter = temp_rule[1]
             f_rules += temp_rule[0]
         rules = Rules(f_rules + initial_rules, optim=optim)
@@ -114,15 +117,15 @@ class FunctionIndexedGrammar(IndexedGrammar):
                         frozenset({"Cinit" + str(i)}))
         self.query = new_query
 
-    def is_empty(self):
+    def is_empty(self, debug=False):
         """is_empty Whether the grammar is empty or not"""
         # Here we have an optimization: if the query is not among the terminals,
         # it is not possible the reach it
         if any([any([y not in self.rules.getTerminals() for y in x])
-                for x in self.query]):
+                for x in self.query]) and ["end"] not in self.query:
             return True
         else:
-            return super(FunctionIndexedGrammar, self).is_empty()
+            return super(FunctionIndexedGrammar, self).is_empty(debug)
 
     def get_prolog_rules(self, max_depth):
         # CAREFUL DO NOT WORK WITH MULTIPLE INPUT FUNCTION
@@ -140,3 +143,6 @@ class FunctionIndexedGrammar(IndexedGrammar):
         res += ":- initialization main.\n"
         res += "main :- q(1), halt(0).\n"
         return res
+
+    def get_n_rules(self):
+        return self.rules.get_length()

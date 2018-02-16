@@ -10,7 +10,7 @@ generator = FunctionGenerator(n_relations)
 
 functions = []
 
-optims = [0, 1, 2, 3, 4, 5, 6, 7]
+optims = [2, 3, 6, 7, 8]
 
 # # query = generator.get_random_query()
 # for i in range(1, 36):
@@ -30,7 +30,7 @@ deltas = dict()
 for optim in optims:
     deltas[optim] = []
 
-for i in range(128, 1000):
+for i in range(0, 1000):
     # 1 function, size_max is 10
     functions = []
     temp = generator.generate(25, size_max)
@@ -41,7 +41,7 @@ for i in range(128, 1000):
         grammar = FunctionIndexedGrammar(functions, [[query]], optim=optim)
         grammar.is_empty()
         delta_t = time.time() - current_time
-        with open("rule_ordering.csv", "a") as f:
+        with open("rule_ordering2.csv", "a") as f:
             f.write(str(optim) + "," + str(i) + "," + str(delta_t) + "," +
                     str(n_relations) + "," + str(size_max) + "\n")
         deltas[optim].append(delta_t)
