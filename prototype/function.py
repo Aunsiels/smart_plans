@@ -22,20 +22,27 @@ class Function (object):
         self.minus_relations = [(re.sub("-", "", r), (r.count("-") + 1) % 2)
                                 for r in relations]
 
-    def init_from_string(self, l_string):
+    def init_from_string(self, l_string, name):
         """init_from_string
         Initialization if a string description is given
         :param l_string: the string describing the function, in a prolog-like
         form (f :- r1, r2, rn.
         """
         l0 = l_string.split(":-")
-        if len(l0) != 2:
+        if len(l0) > 2 or len(l0) == 0:
             sys.exit("Wrong line: " + l_string)
-        self.name = re.sub("\s+", ",", l0[0].strip())
-        relations = [re.sub("\s+", ",", s.strip())
-                     for s in re.sub("\.", "", l0[1]).split(",")]
-        if len(relations) == 0:
-            sys.exit("No relation: " + l_string)
+        if len(l0) == 2:
+            self.name = re.sub("\s+", ",", l0[0].strip())
+            relations = [re.sub("\s+", ",", s.strip())
+                         for s in re.sub("\.", "", l0[1]).split(",")]
+            if len(relations) == 0:
+                sys.exit("No relation: " + l_string)
+        else:
+            self.name = name
+            relations = [re.sub("\s+", ",", s.strip())
+                         for s in re.sub("\.", "", l0[0]).split(",")]
+            if len(relations) == 0:
+                sys.exit("No relation: " + l_string)
         self.init_from_list(relations)
 
     def __init__(self, relations, name="f"):
@@ -46,7 +53,7 @@ class Function (object):
         :param name: The name of the function
         """
         if type(relations) == str:
-            self.init_from_string(relations)
+            self.init_from_string(relations, name)
         else:
             self.name = name
             self.init_from_list(relations)

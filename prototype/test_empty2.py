@@ -34,19 +34,19 @@ functions.append(["a-"])  # 25
 functions.append(["b-"])  # 26
 functions.append(["d", "c", "q"])  # 27
 functions.append(["a", "b-"])  # 28
-functions.append(["a-", "d-"]) # 29
+functions.append(["a-", "d-"])  # 29
+functions.append(["c-", "a-"])  # 30
+functions.append(["c-", "b-"])  # 31
+
 
 tree_functions = []
-tree_functions.append(TreeFunction(Function(["c"]),
-                                   [Function(["a"]), Function(["b"])])) # 0
-tree_functions.append(TreeFunction(Function(["c", "d"]),
-                                   [Function(["a"]), Function(["b"])])) # 1
-tree_functions.append(TreeFunction(Function(["c-"]),
-                                   [Function(["a"]), Function(["b"])])) # 2
-tree_functions.append(TreeFunction(Function(["c"]), [])) # 3
-tree_functions.append(TreeFunction(Function(["d"]), []))  # 4
-tree_functions.append(TreeFunction(Function(["d-", "b-", "e-"]), []))  # 5
-tree_functions.append(TreeFunction(Function(["e", "c-"]), []))  # 6
+tree_functions.append(TreeFunction("(a;b)c"))  # 0
+tree_functions.append(TreeFunction("(a;b)c,d"))  # 1
+tree_functions.append(TreeFunction("(a;b)c-"))  # 2
+tree_functions.append(TreeFunction("c"))  # 3
+tree_functions.append(TreeFunction("d"))  # 4
+tree_functions.append(TreeFunction("d-, b-, e-"))  # 5
+tree_functions.append(TreeFunction("e, c-"))  # 6
 tree_functions.append(TreeFunction(Function(["c", "b", "a"]), []))  # 7
 
 equivalence_rules = []
@@ -269,3 +269,19 @@ i_grammar = FunctionIndexedGrammar([tree_functions[x] for x in [4, 5, 6, 7]],
                                    [["a"]])
 
 assert not i_grammar.is_empty(), "Error31"
+
+print("Test 32")
+
+i_grammar = FunctionIndexedGrammar([tree_functions[x] for x in [1]] +
+                                   [functions[x] for x in [30, 31]],
+                                   [["d"]])
+
+assert not i_grammar.is_empty(), "Error32"
+
+print("Test 33")
+
+i_grammar = FunctionIndexedGrammar([tree_functions[x] for x in [0]] +
+                                   [functions[x] for x in [28]],
+                                   [["a", "c"]])
+
+assert not i_grammar.is_empty(), "Error33"
