@@ -16,6 +16,7 @@ class TreeFunction(object):
         :param others:
         :param name:
         """
+        self.name = name
         if type(data) == str:
             self.init_from_string(data)
         else:
@@ -25,7 +26,6 @@ class TreeFunction(object):
         self.others = [Function(x) for x in self.get_paths_to_leaves()]
         self.part0 = self.head.part0
         self.part1 = self.head.part1
-        self.name = name
 
     def set_data(self, data):
         self.data = data
@@ -96,6 +96,12 @@ class TreeFunction(object):
         current_node = self
         nodes = []
         current_stack = ""
+        s = s.split(":-")
+        if len(s) == 2:
+            self.name = s[0]
+            s = s[1]
+        else:
+            s = s[0]
         for c in s:
             if c == '(':
                 new_node = TreeFunction(Function([]))
