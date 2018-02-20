@@ -285,3 +285,10 @@ i_grammar = FunctionIndexedGrammar([tree_functions[x] for x in [0]] +
                                    [["a", "c"]])
 
 assert not i_grammar.is_empty(), "Error33"
+
+print("Test 34")
+
+i_grammar = FunctionIndexedGrammar([tree_functions[x] for x in [6]],
+                                   [["c-"]])
+
+assert i_grammar.is_empty(), "Error34"

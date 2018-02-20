@@ -24,6 +24,8 @@ class TreeFunction(object):
             self.sons = sons[:]
         self.head = self.data
         self.others = [Function(x) for x in self.get_paths_to_leaves()]
+        if len(self.others) == 0:
+            self.others.append(Function([]))
         self.part0 = self.head.part0
         self.part1 = self.head.part1
 
@@ -33,6 +35,8 @@ class TreeFunction(object):
         self.part0 = self.head.part0
         self.part1 = self.head.part1
         self.others = [Function(x) for x in self.get_paths_to_leaves()]
+        if len(self.others) == 0:
+            self.others.append(Function([]))
 
     def get_all_nodes(self):
         """get_all_nodes Returns all the nodes in the tree"""
@@ -109,6 +113,8 @@ class TreeFunction(object):
                 nodes.append(current_node)
                 current_node = new_node
             elif c == ';':
+                if current_stack == "":
+                    raise ValueError
                 current_node.set_data(Function(current_stack))
                 current_node = nodes.pop()
                 new_node = TreeFunction(Function([]))
@@ -117,11 +123,15 @@ class TreeFunction(object):
                 current_node = new_node
                 current_stack = ""
             elif c == ')':
+                if current_stack == "":
+                    raise ValueError
                 current_node.set_data(Function(current_stack))
                 current_node = nodes.pop()
                 current_stack = ""
             elif c != ' ':
                 current_stack += c
+        if current_stack == "":
+            raise ValueError
         self.set_data(Function(current_stack))
 
     def n_relations(self):
@@ -188,14 +198,14 @@ class TreeFunction(object):
             rules.append(DuplicationRule("K" + str(counter),
                                          "CD" + str(counter),
                                          first_nt))
-            # Stacking
-            for i in range(len(self.others)):
-                temp = stack(["end"] + self.others[i].part0 + also,
-                             counter,
-                             "CD" + str(initial_counter + i),
-                             "C")
-                counter = temp[1]
-                rules = rules + temp[0]
+        # Stacking
+        for i in range(len(self.others)):
+            temp = stack(["end"] + self.others[i].part0 + also,
+                         counter,
+                         "CD" + str(initial_counter + i),
+                         "C")
+            counter = temp[1]
+            rules = rules + temp[0]
         return (rules, counter)
 
     def generate_fake_tree_functions(self, counter, empty=False):
