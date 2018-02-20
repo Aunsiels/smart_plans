@@ -71,9 +71,9 @@ class Rules(object):
         :param right: The right non-terminal in the rule
         """
         self.rules = list(filter(lambda x: not(x.isConsommation() and
-                                 x.getLeft == left and
-                                 x.getRight == right and
-                                 x.getF == prod), self.rules))
+                                 x.getLeftTerm() == left and
+                                 x.getRight() == right and
+                                 x.getF() == prod), self.rules))
 
     def add_consommation(self, prod, left, right):
         """add_consommation

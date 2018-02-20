@@ -60,9 +60,9 @@ class IndexedGrammar(object):
             rule.getProduction(), [])
         # l_rules contains the left symbol plus what is marked on
         # the right side
-        l_temp = [(x.getLeft(),
+        l_temp = [(x.getLeftTerm(),
                   self.marked[x.getRight()]) for x in f_rules]
-        marked_symbols = [x.getLeft() for x in f_rules]
+        marked_symbols = [x.getLeftTerm() for x in f_rules]
         # Process all combinations of consumption rule
         was_modified |= addrec_bis(l_temp,
                                    self.marked[rule.getLeftTerm()],

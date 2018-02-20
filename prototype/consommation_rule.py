@@ -20,11 +20,8 @@ class ConsommationRule(ReducedRule):
         """getRight Gets the symbole on the right of the rule"""
         return self.right
 
-    def getLeft(self):
-        """getLeft Gets the symbole on the left of the rule"""
-        return self.left
-
     def getLeftTerm(self):
+        """getLeftTerm Gets the symbole on the left of the rule"""
         return self.left
 
     def __init__(self, f, left, right):
