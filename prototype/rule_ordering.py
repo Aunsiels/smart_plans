@@ -4,15 +4,27 @@ import random
 
 
 class RuleOrdering(object):
+    """RuleOrdering A class to order rules in an indexed grammar"""
 
     def __init__(self, rules, conso_rules):
+        """__init__
+        Initializes the ordering class
+        :param rules: The non consommation rules of the indexed grammar
+        :param conso_rules: The consommation rules of the indexed grammar
+        """
         self.rules = rules
         self.conso_rules = conso_rules
 
     def reverse(self):
+        """reverse The reverser ordering, simply reverse the order. Might be
+        efficient as rules are generated in a certain order, from functions in
+        our case"""
         return self.rules[::1]
 
     def get_graph(self):
+        """get_graph Get the graph of the non-terminals in the rules. If there
+        there is a link between A and B (oriented), it means that modifying A
+        may modify B"""
         DG = nx.DiGraph()
         for rule in self.rules:
             if rule.isDuplication():
@@ -29,6 +41,10 @@ class RuleOrdering(object):
         return DG
 
     def order_by_core(self, reverse=False):
+        """order_by_core
+        Order the rules using the core numbers
+        :param reverse: Boolean to know if we should reverse the order
+        """
         # Graph construction
         DG = self.get_graph()
         # Get core number, careful the degree is in + out
@@ -41,6 +57,10 @@ class RuleOrdering(object):
         return new_order
 
     def order_by_arborescence(self, reverse=True):
+        """order_by_arborescence
+        Order the rules using the arborescence method.
+        :param reverse: Boolean to know if we should reverse the order
+        """
         DG = self.get_graph()
         # arborescence = nx.minimum_spanning_arborescence(DG)
         arborescence = nx.minimum_spanning_tree(DG.to_undirected())
@@ -68,12 +88,22 @@ class RuleOrdering(object):
         return new_order
 
     def get_len_out(self, DG, x):
+        """get_len_out
+        Get the number of out edges of a rule (more exactly, the non terminal at
+        its left.
+        :param DG: A directed graph
+        :param x: The rule
+        """
         if x.getLeftTerm() in DG:
             return len(DG[x.getLeftTerm()])
         else:
             return 0
 
     def order_by_edges(self, reverse=False):
+        """order_by_edges
+        Order using the number of edges.
+        :param reverse: Boolean to know if we should reverse the order
+        """
         DG = self.get_graph()
         new_order = sorted(self.rules, key=lambda x:
                            self.get_len_out(DG, x))
@@ -82,5 +112,6 @@ class RuleOrdering(object):
         return new_order
 
     def order_random(self):
+        """order_random The random ordering"""
         random.shuffle(self.rules)
         return self.rules

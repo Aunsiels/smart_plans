@@ -9,11 +9,10 @@ class TreeFunction(object):
 
     def __init__(self, data, sons=[], name="tf"):
         """__init__
-        Initialize a tree function. For now, the order of the nodes which are
-        not the head is not important.
+        Initialize a tree function.
         :param head: The head of the tree. It is a Function (linear function)
-        :param others:
-        :param name:
+        :param sons: The sons trees
+        :param name: The name of the function
         """
         self.name = name
         if type(data) == str:
@@ -29,6 +28,10 @@ class TreeFunction(object):
         self.part1 = self.head.part1
 
     def set_data(self, data):
+        """set_data
+        Set the data value of the current node
+        :param data: The data
+        """
         self.data = data
         self.head = self.data
         self.part0 = self.head.part0
@@ -208,6 +211,11 @@ class TreeFunction(object):
         return (rules, counter)
 
     def generate_fake_tree_functions(self, counter, empty=False):
+        """generate_fake_tree_functions
+        Generate all the rules which have part of the sons in it.
+        :param counter: A counter to avoid duplicate
+        :param empty: Whether to use C[sigma] -> ... or not.
+        """
         rules = []
         for f_other in self.others:
             other = f_other.to_list()
@@ -231,7 +239,7 @@ class TreeFunction(object):
                 ft = FakeTreeFunction([x + "-" for x in other[:end]]
                                       + self.head.to_list(),
                                       new_others)
-                temp = ft.generate_reduced_rules(counter)
+                temp = ft.generate_reduced_rules(counter, empty)
                 rules += temp[0]
                 counter = temp[1]
         return (rules, counter)

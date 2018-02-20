@@ -1,3 +1,8 @@
+"""
+Testing of single input linear function, tree functions and equivalence rules
+"""
+
+
 from function_indexed_grammar import FunctionIndexedGrammar
 from function import Function
 from equivalence_rule import EquivalenceRule

@@ -31,6 +31,11 @@ class MultipleInputFunction (Function):
             " " + str(self.n_inputs) + " inputs"
 
     def get_part0_combinations(self, i, j):
+        """get_part0_combinations
+        Function for implementation purposes
+        :param i: Begin
+        :param j: End
+        """
         if i >= j:
             return [[]]
         temp = []

@@ -128,6 +128,10 @@ class FunctionIndexedGrammar(IndexedGrammar):
             return super(FunctionIndexedGrammar, self).is_empty(debug)
 
     def get_prolog_rules(self, max_depth):
+        """get_prolog_rules
+        Gives the prolog rules. Be Careful, it does not work for everything
+        :param max_depth: The maximum depth in the search.
+        """
         # CAREFUL DO NOT WORK WITH MULTIPLE INPUT FUNCTION
         # AND WITH QUERY WITH MORE THAN ONE RELATION
         # Stop rules
@@ -145,4 +149,5 @@ class FunctionIndexedGrammar(IndexedGrammar):
         return res
 
     def get_n_rules(self):
+        """get_n_rules Get the number of rules"""
         return self.rules.get_length()

@@ -79,6 +79,7 @@ for i in range(0, 1000):
                           str(res4), str(delta_t4), str(n_rules4),
                           str(res5), str(delta_t5), str(n_rules5)
                           ]) + "\n")
+    # Additional testing is always good
     assert res0 == res1, functions
     assert res2 == res3, functions
     assert res4 == res5, functions

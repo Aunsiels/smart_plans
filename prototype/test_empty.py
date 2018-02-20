@@ -1,3 +1,8 @@
+"""
+Testing of indexed grammar, with manual rules
+"""
+
+
 from rules import Rules
 from consommation_rule import ConsommationRule
 from end_rule import EndRule

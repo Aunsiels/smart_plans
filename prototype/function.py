@@ -73,6 +73,7 @@ class Function (object):
         return len(self.relations)
 
     def __repr__(self):
+        """__repr__ String representation of a function"""
         return self.to_string()
 
     def to_string(self):
@@ -132,6 +133,7 @@ class Function (object):
         return rules
 
     def generate_middle_rules(self):
+        """generate_middle_rules Generates Prolog middle rules"""
         rules = []
         for i in range(self.n_relations()):
             for j in range(i, self.n_relations()):
@@ -139,8 +141,8 @@ class Function (object):
         return rules
 
     def generate_middle_rules_sub(self, i, j):
-        """generate_middle_rules
-        Generate the general middle rules
+        """generate_middle_rules_sub
+        Generates the general middle rules
         :param i: The beginning index
         :param j: The ending symbol
         """
@@ -294,27 +296,3 @@ class Function (object):
     def get_last(self):
         """get_last Gets the last relation of the function"""
         return self.relations[-1][0] + 'm' * self.relations[-1][1]
-
-
-def test():
-    """test Performs some basic tests"""
-    relations = ['a', 'b--', 'c-']
-    f = Function(relations, "f1")
-    print("The function is:")
-    print(f.to_string())
-    assert(f.n_relations() == 3)
-    print("Rules:")
-    print(f.generate_left_rules())
-    print(f.generate_right_rules())
-    print("Left reduced rules")
-    left_red = f.generate_left_reduced_rules(0)
-    for rule in left_red[0]:
-        print(rule)
-    print(left_red[1])
-    print("Right reduced rules")
-    right_red = f.generate_right_reduced_rules(0, ["a", "b", "c", "am", "bm",
-                                                   "cm"])
-    for rule in right_red[0]:
-        print(rule)
-    print(right_red[1])
-    print("All is good")

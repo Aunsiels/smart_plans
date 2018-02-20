@@ -1,3 +1,8 @@
+"""
+Testing of linear function, Multiple input functions, and equivalence rules
+"""
+
+
 from function_indexed_grammar import FunctionIndexedGrammar
 from multiple_input_function import MultipleInputFunction
 from equivalence_rule import EquivalenceRule

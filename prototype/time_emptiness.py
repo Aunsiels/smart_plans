@@ -1,3 +1,7 @@
+"""
+Tests the time it takes to get the emptyness
+"""
+
 import time
 from function_generator import FunctionGenerator
 from function_indexed_grammar import FunctionIndexedGrammar

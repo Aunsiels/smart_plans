@@ -11,7 +11,8 @@ def main():
         * A file containing the query, on a single line
     """
     if len(sys.argv) != 4:
-        sys.exit("Correct usage: python main.py max_depth function_file query")
+        sys.exit("Correct usage: \
+                 python prolog_preparation.py max_depth function_file query")
 
     max_depth = int(sys.argv[1])
     # Read all functions
@@ -46,7 +47,8 @@ def main():
     print("q(_).")
     # To start automatically the program in prolog
     print(":- initialization main.")
-    print("main :- q(1), halt(0).")
+    print("main :- q(1), print(\"A Smart Plan\"), halt(0).")
+    print("main :- print(\"No Smart Plan\"), halt(0).")
 
 
 main()

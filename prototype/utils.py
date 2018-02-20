@@ -1,3 +1,8 @@
+"""
+Some functions which are often useful
+"""
+
+
 from consommation_rule import ConsommationRule
 from production_rule import ProductionRule
 from duplication_rule import DuplicationRule

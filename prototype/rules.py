@@ -13,6 +13,7 @@ class Rules(object):
         return self.rules
 
     def get_length(self):
+        """get_length Get the total number of rules"""
         return (len(self.rules), len(self.consommationRules.values()))
 
     def getConsommationRules(self):

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Currently not working"
+
 # Parameters max_depth n_relations n_functions max_size_functions
 
 mkdir -p data
@@ -10,7 +12,7 @@ mkdir -p tmp
 
 python3 function_generator_main.py $2 $3 $4 tmp/functions$1-$2-$3-$4.fct tmp/query$1-$2-$3-$4.txt
 
-RESULT=$(python3 main.py $1 tmp/functions$1-$2-$3-$4.fct tmp/query$1-$2-$3-$4.txt > tmp/temp_rules$1-$2-$3-$4.pl && swipl -f tmp/temp_rules$1-$2-$3-$4.pl -q main)
+RESULT=$(python3 prolog_preparation.py $1 tmp/functions$1-$2-$3-$4.fct tmp/query$1-$2-$3-$4.txt > tmp/temp_rules$1-$2-$3-$4.pl && swipl -f tmp/temp_rules$1-$2-$3-$4.pl -q main)
 
 echo $RESULT
 

@@ -6,7 +6,8 @@ from function import Function
 
 class FunctionGenerator(object):
     """FunctionGenerator
-    This class generates random functions from random relations
+    This class generates random single input linearfunctions from random
+    relations
     """
 
     def __init__(self, n_relations):

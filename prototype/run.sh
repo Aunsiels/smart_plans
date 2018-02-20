@@ -4,6 +4,6 @@
 
 mkdir -p tmp
 
-python main.py $1 $2 $3 > tmp/temp_rules.pl && swipl -f tmp/temp_rules.pl -q main
+python prolog_preparation.py $1 $2 $3 > tmp/temp_rules.pl && swipl -f tmp/temp_rules.pl -q main
 
 echo ""

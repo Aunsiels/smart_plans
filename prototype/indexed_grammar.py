@@ -1,6 +1,6 @@
 class IndexedGrammar(object):
     """IndexedGrammar
-    Describes the indexed grammar.
+    Describes an indexed grammar.
     """
 
     def __init__(self, rules):
@@ -27,6 +27,7 @@ class IndexedGrammar(object):
                 self.marked[A].add(frozenset())
 
     def get_terminals(self):
+        """get_terminals Get all the terminals in the grammar"""
         return self.rules.getTerminals()
 
     def duplication_processing(self, rule):
