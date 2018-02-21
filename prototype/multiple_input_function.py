@@ -22,7 +22,12 @@ class MultipleInputFunction (Function):
             self.init_from_list(relations)
         self.part0 = [r[0] + 'm' * r[1] for r in self.relations]
         self.part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
-        self.n_inputs = n_inputs
+        if type(n_inputs) == int:
+            self.n_inputs = n_inputs
+            self.inputs = set(range(n_inputs - 1))
+        else:
+            self.n_inputs = max(n_inputs)
+            self.inputs = set(n_inputs)
 
     def to_string(self):
         """to_string Gives the string representation of the function"""
@@ -40,7 +45,8 @@ class MultipleInputFunction (Function):
             return [[]]
         temp = []
         for p in self.get_part0_combinations(i+1, j):
-            if i >= self.n_inputs - 1:
+            # if i >= self.n_inputs - 1:
+            if i not in self.inputs:
                 temp.append([self.part0[i]] + p)
             temp.append([self.part0[i] + "_IN"] + p)
         return temp

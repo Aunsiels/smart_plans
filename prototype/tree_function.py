@@ -2,6 +2,7 @@ from duplication_rule import DuplicationRule
 from function import Function
 from fake_tree_function import FakeTreeFunction
 from utils import stack, unstack
+from graphviz import Digraph
 
 
 class TreeFunction(object):
@@ -26,6 +27,23 @@ class TreeFunction(object):
             self.others.append(Function([]))
         self.part0 = self.head.part0
         self.part1 = self.head.part1
+
+    def save_png(self, filename):
+        dot = Digraph("G", filename=filename, format='png')
+        counter = 0
+        dot.node(str(counter), str(self.data))
+        to_process = []
+        for son in self.sons:
+            to_process.append((counter, son))
+        counter += 1
+        while len(to_process) != 0:
+            current = to_process.pop()
+            dot.node(str(counter), str(current[1].data))
+            dot.edge(str(current[0]), str(counter))
+            for son in current[1].sons:
+                to_process.append((counter, son))
+            counter += 1
+        dot.render(filename)
 
     def set_data(self, data):
         """set_data
@@ -134,7 +152,7 @@ class TreeFunction(object):
                 current_stack += c
         if current_stack == "":
             raise ValueError
-        self.set_data(Function(current_stack))
+        self.set_data(Function(current_stack, name=self.name))
 
     def n_relations(self):
         """n_relations Gives the number of relations in the function"""
