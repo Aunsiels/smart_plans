@@ -33,6 +33,9 @@ functions.append(["c", "c"])  # 20
 functions.append(["b", "a", "q"])  # 21
 functions.append(["a-", "c", "d"])  # 22
 functions.append(["d-", "c-", "b-"])  # 23
+functions.append(["b-", "a-"])  # 24
+functions.append(["a-"])  # 25
+functions.append(["c-", "b-", "a-"])  # 26
 
 mifunctions = []
 
@@ -51,6 +54,12 @@ for i in range(len(functions)):
 for i in range(len(mifunctions)):
     mifunctions[i] = MultipleInputFunction(mifunctions[i],
                                            "f" + str(i + len(functions)), 2)
+
+mifunctions.append(MultipleInputFunction(["a", "b", "c"], "f",
+                                         [1]))  # 2
+mifunctions.append(MultipleInputFunction(["a", "b", "c", "d"], "f",
+                                         [1, 2]))  # 3
+
 
 print("Test -1")
 
@@ -181,3 +190,31 @@ i_grammar = FunctionIndexedGrammar([functions[x] for x in [21, 23]] +
                                    [mifunctions[x] for x in [1]],
                                    [["q"]])
 assert i_grammar.is_empty(), "Error21"
+
+print("Test 22")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [24]] +
+                                   [mifunctions[x] for x in [2]],
+                                   [["c"]])
+assert not i_grammar.is_empty(), "Error22"
+
+print("Test 23")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [25]] +
+                                   [mifunctions[x] for x in [2]],
+                                   [["b", "c"]])
+assert i_grammar.is_empty(), "Error23"
+
+print("Test 24")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [26]] +
+                                   [mifunctions[x] for x in [3]],
+                                   [["d"]])
+assert not i_grammar.is_empty(), "Error24"
+
+print("Test 25")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [24]] +
+                                   [mifunctions[x] for x in [3]],
+                                   [["c", "d"]])
+assert i_grammar.is_empty(), "Error25"

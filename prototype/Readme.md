@@ -1,5 +1,9 @@
 # How To
 
+## Prerequisites
+
+python3, networkx, tkinter, graphviz
+
 ## Smart Plan existence
 
 Run the GUI by using the command:
