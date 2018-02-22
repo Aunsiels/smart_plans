@@ -47,8 +47,7 @@ def main():
     print("q(_).")
     # To start automatically the program in prolog
     print(":- initialization main.")
-    print("main :- q(1), print(\"A Smart Plan\"), halt(0).")
-    print("main :- print(\"No Smart Plan\"), halt(0).")
+    print("main :- q(1), halt(0).")
 
 
 main()

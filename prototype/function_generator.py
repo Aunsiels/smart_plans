@@ -28,7 +28,7 @@ class FunctionGenerator(object):
                              for _ in range(int(math.log(n_relations, 20) +
                                                 1))]))
 
-    def generate(self, n_functions, max_size_functions):
+    def generate(self, n_functions, max_size_functions, min_size_functions=2):
         """generate
         Generates random functions
         :param n_functions: The number of functions to generate
@@ -37,7 +37,7 @@ class FunctionGenerator(object):
         functions = []
         for i in range(n_functions):
             # Remove size 1 to prevent too easy examples
-            size = random.randint(2, max_size_functions)
+            size = random.randint(min_size_functions, max_size_functions)
             function_name = "f" + str(i)
             # minus relations are random too
             f_rel = Function([random.choice(self.relations) +

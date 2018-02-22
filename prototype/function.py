@@ -290,9 +290,9 @@ class Function (object):
         """get_prolog Generate a string which represents the function as a
         prolog rule"""
         return self.name + " :- " + ", ".join([r[0] +
-                                               'm' * r[1]
+                                               '-' * r[1]
                                                for r in self.relations]) + ".\n"
 
     def get_last(self):
         """get_last Gets the last relation of the function"""
-        return self.relations[-1][0] + 'm' * self.relations[-1][1]
+        return self.relations[-1][0] + '-' * self.relations[-1][1]

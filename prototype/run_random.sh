@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "Currently not working"
-
 # Parameters max_depth n_relations n_functions max_size_functions
 
 mkdir -p data
