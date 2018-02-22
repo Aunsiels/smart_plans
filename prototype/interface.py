@@ -37,7 +37,7 @@ canevas0.pack(side=RIGHT, expand=True, fill=BOTH)
 def get_functions():
     l_f = input_functions.get('1.0', END).split("\n")
     # Remove empty lines
-    l_f = filter(lambda x: len(x) > 1, l_f)
+    l_f = filter(lambda x: len(x) > 0, l_f)
     # '#' is used for comments
     l_f = filter(lambda x: x[0] != '#', l_f)
     functions = []
@@ -191,9 +191,11 @@ dicimg = {}
 def show_functions(event=None):
     counter = 0
     h = 0
+    for key in dicimg:
+        dicimg[key] = None
     for function in get_functions():
-        function.save_png("temp_graph")
-        img = PhotoImage(file="temp_graph.png")
+        function.save_gif("temp_graph")
+        img = PhotoImage(file="temp_graph.gif")
         dicimg['img' + str(counter)] = img
         counter += 1
         canevas0.create_image(0, h, image=img, anchor=NW)

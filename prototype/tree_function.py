@@ -28,8 +28,8 @@ class TreeFunction(object):
         self.part0 = self.head.part0
         self.part1 = self.head.part1
 
-    def save_png(self, filename):
-        dot = Digraph("G", filename=filename, format='png')
+    def save_gif(self, filename):
+        dot = Digraph("G", filename=filename, format='gif')
         counter = 0
         dot.node(str(counter), str(self.data))
         to_process = []
