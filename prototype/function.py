@@ -296,3 +296,7 @@ class Function (object):
     def get_last(self):
         """get_last Gets the last relation of the function"""
         return self.relations[-1][0] + '-' * self.relations[-1][1]
+
+    def get_prolog_rules(self):
+        """get_prolog_rules generates the prolog rules"""
+        return self.generate_middle_rules()

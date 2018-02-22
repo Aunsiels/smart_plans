@@ -12,6 +12,8 @@ from tkinter.messagebox import showinfo, askokcancel
 from tkinter.scrolledtext import ScrolledText
 from tkinter import filedialog, PhotoImage, RIGHT, Y, Scrollbar
 from tkinter import Canvas, BOTH, NW
+import re
+import subprocess
 
 # The general window
 window = Tk(className=" Smart Plan Demo")
@@ -130,6 +132,59 @@ def new_command(event=None):
     query.set("query")
 
 
+def write_prolog(functions, query, max_depth, filename):
+    with open(filename, "w") as f:
+        # Stop rules
+        f.write("p([], _, []).\n")
+        f.write("p(_, Counter, _) :- Counter =< 0, !, fail.\n")
+
+        # Produce all the rules from the function
+        for function in functions:
+            f.write("\n".join(function.data.get_prolog_rules()) + "\n")
+
+        query = ",".join([re.sub("-", "", r) + "m" * (r.count("-") % 2)
+                          for r in [re.sub("\s+", ",", x.strip())
+                                    for x in query.split(',')]])
+
+        # Initialization rules
+        f.write("q(X) :- p([" + query + "], X, L), print(L).\n")
+        f.write("q(X) :- X < " + str(max_depth) + ", q(X + 1).\n")
+        f.write("q(_).\n")
+        # To start automatically the program in prolog
+        f.write(":- initialization main.\n")
+        f.write("main :- q(1), halt(0).\n")
+
+
+def read_output(output):
+    functions = []
+    state = False
+    current_function = []
+    for c in output.decode('UTF-8'):
+        if c == '"' or c == '"':
+            if state:
+                functions.append("".join(current_function).strip())
+                current_function = []
+            state = not state
+        elif state:
+            current_function.append(c)
+    return functions
+
+
+def find_prolog(event=None):
+    functions = get_functions()
+    q = query.get()
+    write_prolog(functions, q, 3, "tmp_prolog.pl")
+    p = subprocess.Popen(["swipl", "-f", "tmp_prolog.pl", "-q", "main"],
+                         stdout=subprocess.PIPE)
+    output, err = p.communicate()
+    if (len(output) == 0):
+        showinfo("Prolog",
+                 "No plan found by Prolog")
+    else:
+        showinfo("Prolog",
+                 "The found plan:\n" + ",".join(read_output(output)))
+
+
 dicimg = {}
 
 
@@ -159,6 +214,7 @@ runmenu = Menu(menu)
 menu.add_cascade(label="Run", menu=runmenu)
 runmenu.add_command(label="Existence   F1", command=print_var)
 runmenu.add_command(label="Show Functions   F2", command=show_functions)
+runmenu.add_command(label="Prolog   F3", command=find_prolog)
 helpmenu = Menu(menu)
 menu.add_cascade(label="Help", menu=helpmenu)
 helpmenu.add_command(label="About...", command=about_command)
@@ -172,6 +228,7 @@ window.bind('<Control-n>', new_command)
 window.bind('<Control-q>', exit_command)
 window.bind('<F1>', print_var)
 window.bind('<F2>', show_functions)
+window.bind('<F3>', find_prolog)
 
 
 window.mainloop()
