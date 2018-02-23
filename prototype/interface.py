@@ -11,7 +11,7 @@ from function_indexed_grammar import FunctionIndexedGrammar
 from tkinter.messagebox import showinfo, askokcancel
 from tkinter.scrolledtext import ScrolledText
 from tkinter import filedialog, PhotoImage, RIGHT, Y, Scrollbar
-from tkinter import Canvas, BOTH, NW
+from tkinter import Canvas, BOTH, NW, Toplevel, Text, LEFT, YES
 import re
 import subprocess
 
@@ -182,6 +182,12 @@ def read_output(output):
 def find_prolog(event=None):
     functions = get_functions()
     q = query.get()
+    q_g = query.get().split(",")
+    i_grammar = FunctionIndexedGrammar(functions, [q_g])
+    if i_grammar.is_empty():
+        showinfo("Prolog",
+                 "There exists no smart plan")
+        return
     write_prolog(functions, q, 10, "tmp_prolog.pl")
     p = subprocess.Popen(["swipl", "-f", "tmp_prolog.pl", "-q", "main"],
                          stdout=subprocess.PIPE)
@@ -192,6 +198,18 @@ def find_prolog(event=None):
     else:
         showinfo("Prolog",
                  "The found plan:\n" + read_output(output))
+
+
+def show_prolog_rules(event=None):
+    functions = get_functions()
+    q = query.get()
+    write_prolog(functions, q, 10, "tmp_prolog.pl")
+    rule_window = Toplevel(window)
+    text = Text(rule_window)
+    with open("tmp_prolog.pl") as f:
+        for line in f:
+            text.insert(END, line)
+    text.pack(side=LEFT, fill=BOTH, expand=YES)
 
 
 dicimg = {}
@@ -226,6 +244,7 @@ menu.add_cascade(label="Run", menu=runmenu)
 runmenu.add_command(label="Existence   F1", command=print_var)
 runmenu.add_command(label="Show Functions   F2", command=show_functions)
 runmenu.add_command(label="Prolog   F3", command=find_prolog)
+runmenu.add_command(label="Show Prolog Rules  F4", command=show_prolog_rules)
 helpmenu = Menu(menu)
 menu.add_cascade(label="Help", menu=helpmenu)
 helpmenu.add_command(label="About...", command=about_command)
@@ -240,6 +259,7 @@ window.bind('<Control-q>', exit_command)
 window.bind('<F1>', print_var)
 window.bind('<F2>', show_functions)
 window.bind('<F3>', find_prolog)
+window.bind('<F4>', show_prolog_rules)
 
 
 window.mainloop()
