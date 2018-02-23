@@ -140,7 +140,7 @@ def write_prolog(functions, query, max_depth, filename):
 
         # Produce all the rules from the function
         for function in functions:
-            f.write("\n".join(function.data.get_prolog_rules()) + "\n")
+            f.write("\n".join(function.get_prolog_rules()) + "\n")
 
         query = ",".join([re.sub("-", "", r) + "m" * (r.count("-") % 2)
                           for r in [re.sub("\s+", ",", x.strip())
@@ -161,19 +161,28 @@ def read_output(output):
     current_function = []
     for c in output.decode('UTF-8'):
         if c == '"' or c == '"':
-            if state:
+            if state and (("(" not in current_function and
+                           ")" not in current_function)
+                          or len(current_function) > 1):
                 functions.append("".join(current_function).strip())
                 current_function = []
             state = not state
-        elif state:
+        elif state and c != " ":
             current_function.append(c)
-    return functions
+    res = ",".join(functions)
+    res = re.sub("\(\,", "(", res)
+    res = re.sub("\,\(", "(", res)
+    res = re.sub("\,\)", ")", res)
+    res = re.sub("\)\,", ")", res)
+    res = re.sub("\;\,", ";", res)
+    res = re.sub("\,\;", ";", res)
+    return res
 
 
 def find_prolog(event=None):
     functions = get_functions()
     q = query.get()
-    write_prolog(functions, q, 3, "tmp_prolog.pl")
+    write_prolog(functions, q, 10, "tmp_prolog.pl")
     p = subprocess.Popen(["swipl", "-f", "tmp_prolog.pl", "-q", "main"],
                          stdout=subprocess.PIPE)
     output, err = p.communicate()
@@ -182,7 +191,7 @@ def find_prolog(event=None):
                  "No plan found by Prolog")
     else:
         showinfo("Prolog",
-                 "The found plan:\n" + ",".join(read_output(output)))
+                 "The found plan:\n" + read_output(output))
 
 
 dicimg = {}

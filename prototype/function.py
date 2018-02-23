@@ -59,14 +59,14 @@ class Function (object):
         self.part0 = [r[0] + 'm' * r[1] for r in self.relations]
         self.part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
 
-    def get_inverse_function(self):
+    def get_inverse_function(self, symbol="-"):
         """get_inverse_function Get the list representation of the inverse
         function"""
-        return [r[0] + "-" * r[1] for r in self.minus_relations[::-1]]
+        return [r[0] + symbol * r[1] for r in self.minus_relations[::-1]]
 
-    def to_list(self):
+    def to_list(self, symbol="-"):
         """to_list Gives the list representation of the function"""
-        return [r[0] + "-" * r[1] for r in self.relations]
+        return [r[0] + symbol * r[1] for r in self.relations]
 
     def n_relations(self):
         """n_relations Gives the number of relations in the function"""

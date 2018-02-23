@@ -77,16 +77,16 @@ class TreeFunction(object):
         """is_leave Gives if we are in a leave"""
         return len(self.sons) == 0
 
-    def get_paths_to_leaves(self, level=0):
+    def get_paths_to_leaves(self, level=0, symbol="-"):
         """get_paths_to_leaves Get all paths to the leaves"""
         if self.is_leave():
             if level == 0:
                 return []
-            return [self.data.get_inverse_function()]
+            return [self.data.get_inverse_function(symbol)]
         res = []
         for son in self.sons:
-            l_relations = self.data.get_inverse_function()
-            for paths in son.get_paths_to_leaves(level + 1):
+            l_relations = self.data.get_inverse_function(symbol)
+            for paths in son.get_paths_to_leaves(level + 1, symbol):
                 if level > 0:
                     res.append(l_relations + paths)
                 else:
@@ -295,3 +295,97 @@ class TreeFunction(object):
         rules += temp[0]
         counter = temp[1]
         return (rules, counter)
+
+    def generate_middle_rule_prolog(self, i, j):
+        part0 = [r[0] + 'm' * r[1] for r in self.data.relations]
+        part1 = [r[0] + 'm' * r[1] for r in self.data.minus_relations]
+        part1.reverse()
+        new_rule = "p(["
+        new_rule += ", ".join(part0[i:j+1])
+        new_rule += "|R], Counter, L) "
+        new_rule += " :- "
+        paths_leaves = self.get_paths_to_leaves(symbol="m")
+        counter = 0
+        reduction = ""
+        if len(paths_leaves) == 0:
+            new_rule += " p("
+            new_rule += "["
+            new_rule += ", ".join(part1[self.n_relations() - i:])
+            new_rule += "], Counter - 1, L0), length(L0, K0),"
+            reduction = " - K0"
+            counter += 1
+        else:
+            for idx in range(len(paths_leaves)):
+                path = paths_leaves[idx]
+                new_rule += " p("
+                new_rule += "["
+                new_rule += ", ".join(path +
+                                      part1[self.n_relations() - i:])
+                new_rule += "], Counter - 1 " +\
+                    reduction + ", L" + str(counter) + "), length(L" +\
+                    str(counter) + ", K" +\
+                    str(counter) + "),"
+                reduction += " - K" + str(counter)
+                counter += 1
+        new_rule += " p("
+        if j != self.n_relations() - 1:
+            new_rule += "["
+            new_rule += ", ".join(part1[:self.n_relations() - j - 1])
+            new_rule += "|R]"
+        else:
+            new_rule += "R"
+        new_rule += ", Counter - 1 " + reduction + ", L" + str(counter) + "), "
+        if counter == 1:
+            new_rule += "append(L0, [\"" + self.name + "\"|L1], L)."
+        else:
+            new_rule += "LTEMP0 = [\"(\"], "
+            for idx in range(counter):
+                if idx == 0:
+                    new_rule += "append(LTEMP" + str(idx) +\
+                        ", L" + str(idx) + ", LTEMP" + str(idx + 1) +\
+                        "), "
+                else:
+                    new_rule += "append(LTEMP" + str(idx) +\
+                        ", [\";\"|L" + str(idx) + "], LTEMP" + str(idx + 1) +\
+                        "), "
+            new_rule += "append(LTEMP" + str(counter) +\
+                ", [\")" + self.name + "\"|L" + str(counter) + "], L)."
+        return new_rule
+
+    def generate_fake_tree_functions_prolog(self):
+        """generate_fake_tree_functions_prolog Rules from fake trees in
+        prolog"""
+        rules = []
+        for f_other in self.others:
+            other = f_other.to_list()
+            for end in range(1, len(other) + 1):
+                new_others = []
+                for f_other1 in self.others:
+                    other1 = f_other1.to_list()
+                    last = 0
+                    for e in range(end):
+                        last = e
+                        if other[e] != other1[e]:
+                            break
+                        last = e + 1
+                    if last != 0:
+                        new_others.append(([x + "-"
+                                           for x in other[end-1:last-1:-1]] +
+                                           other1[last:])[::-1])
+                    else:
+                        new_others.append(([x + "-" for x in other[end-1::-1]] +
+                                           other1[last:])[::-1])
+                ft = FakeTreeFunction([x + "-" for x in other[:end]]
+                                      + self.head.to_list(),
+                                      new_others, name=self.name)
+                rules += ft.get_prolog_rules()
+        return rules
+
+    def get_prolog_rules(self):
+        rules = []
+        max_i = self.n_relations()
+        for i in range(0, max_i):
+            for j in range(i, self.n_relations()):
+                rules.append(self.generate_middle_rule_prolog(i, j))
+        rules += self.generate_fake_tree_functions_prolog()
+        return rules
