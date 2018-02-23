@@ -10,7 +10,7 @@ from tree_function import TreeFunction
 from function_indexed_grammar import FunctionIndexedGrammar
 from tkinter.messagebox import showinfo, askokcancel
 from tkinter.scrolledtext import ScrolledText
-from tkinter import filedialog, PhotoImage, RIGHT, Y, Scrollbar
+from tkinter import filedialog, PhotoImage, RIGHT, Y, Scrollbar, VERTICAL
 from tkinter import Canvas, BOTH, NW, Toplevel, Text, LEFT, YES
 import re
 import subprocess
@@ -58,7 +58,7 @@ def print_var(event=None):
     :param event: The event which called the function
     """
     functions = get_functions()
-    q = query.get().split(",")
+    q = [x.strip() for x in query.get().split(",")]
     i_grammar = FunctionIndexedGrammar(functions, [q])
     if i_grammar.is_empty():
         showinfo("Emptyness", "There exists no smart plan")
@@ -182,7 +182,7 @@ def read_output(output):
 def find_prolog(event=None):
     functions = get_functions()
     q = query.get()
-    q_g = query.get().split(",")
+    q_g = [x.strip() for x in query.get().split(",")]
     i_grammar = FunctionIndexedGrammar(functions, [q_g])
     if i_grammar.is_empty():
         showinfo("Prolog",
@@ -210,6 +210,9 @@ def show_prolog_rules(event=None):
         for line in f:
             text.insert(END, line)
     text.pack(side=LEFT, fill=BOTH, expand=YES)
+    yscrollbar = Scrollbar(rule_window, orient=VERTICAL, command=text.yview)
+    yscrollbar.pack(side=RIGHT, fill=Y)
+    text["yscrollcommand"] = yscrollbar.set
 
 
 dicimg = {}
