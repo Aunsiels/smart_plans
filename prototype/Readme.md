@@ -4,21 +4,39 @@
 
 python3, networkx, tkinter, graphviz
 
-## Smart Plan existence
+## Interface
+
+### Running the Interface
 
 Run the GUI by using the command:
 
 ``` bash
-python3 interface.py
+./interface.sh
 ```
 
-Then, you can edit the query and the functions. The query is of the form r1, r2, ..., rn. The function are of the form f :- r1, r2, ..., rn for the linear ones (prolog notation). For tree function, the notation is similar to the Newick format inverted where all nodes are named [Wikipidia Article](https://en.wikipedia.org/wiki/Newick_format). The nodes are separated by ";" whereas the relations are separated with ",". For example:
-f :- ((f;g)a,b;e)c,d.
+### Function Definitions
 
+Then, you can edit the query and the functions. The query is of the form r1, r2, ..., rn. The functions are of the form f :- r1, r2, ..., rn for the linear ones (prolog notation). For tree function, the notation is similar to the Newick format where all nodes are named [Wikipidia Article](https://en.wikipedia.org/wiki/Newick_format). The nodes are separated by ";" whereas the relations are separated with ",". For example:
 
-## Prolog
+f1 :- ((f;g)a,b;e)c,d.
 
-Currently not working
+### Function Visualization
+
+To visualize function, go to "Run > Show Functions" or press <F2>.
+
+### Existence of Smart Plan
+
+To check whether a smart plan can be built with the given functions for the query, go to "Run > Existence" or press <F2>.
+
+### Find a Plan
+
+To get one of the smart plan out of the functions, go to "Run > Prolog" or press <F3>.
+
+### Get the Rules in the Grammar
+
+To get the rules used in the grammar and which are given to Prolog, go to "Run > Show Prolog Rules" or press <F4>.
+
+## Other Informations
 
 ### Function files
 
