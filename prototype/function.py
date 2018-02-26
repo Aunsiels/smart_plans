@@ -76,6 +76,15 @@ class Function (object):
         """__repr__ String representation of a function"""
         return self.to_string()
 
+    def __eq__(self, other):
+        return self.relations == other.relations
+
+    def __neq__(self, other):
+        return self.relations != other.relations
+
+    def __hash__(self):
+        return hash(frozenset(self.relations))
+
     def to_string(self):
         """to_string Gives the string representation of the function"""
         return self.name + " :- " + \

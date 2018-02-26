@@ -56,9 +56,10 @@ tree_functions.append(TreeFunction(Function(["c", "b", "a"]), []))  # 7
 
 equivalence_rules = []
 
-equivalence_rules.append(EquivalenceRule(["a", "b"], ["d-", "c-"], "r0"))
-equivalence_rules.append(EquivalenceRule(["c"], ["q"], "r1"))
-equivalence_rules.append(EquivalenceRule(["b", "c"], ["c", "b"], "r2"))
+equivalence_rules.append(EquivalenceRule(["a", "b"], ["d-", "c-"], "r0"))  # 0
+equivalence_rules.append(EquivalenceRule(["c"], ["q"], "r1"))  # 1
+equivalence_rules.append(EquivalenceRule(["b", "c"], ["c", "b"], "r2"))  # 2
+equivalence_rules.append(EquivalenceRule(["b", "a"], ["a"], "r3"))  # 3
 
 counter = 0
 
@@ -297,3 +298,37 @@ i_grammar = FunctionIndexedGrammar([tree_functions[x] for x in [6]],
                                    [["c-"]])
 
 assert i_grammar.is_empty(), "Error34"
+
+print("Test 35")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [14]],
+                                   [["a", "b"]],
+                                   eq_rules=[equivalence_rules[x] for x in [3]])
+
+assert not i_grammar.is_empty(), "Error35"
+
+print("Test 36")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [14]],
+                                   [["a", "a", "b"]],
+                                   eq_rules=[equivalence_rules[x] for x in [3]])
+
+assert not i_grammar.is_empty(), "Error36"
+
+print("Test 37")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [14]],
+                                   [["a", "a", "a", "b"]],
+                                   eq_rules=[equivalence_rules[x] for x in [3]],
+                                   eq_depth=1)
+
+assert i_grammar.is_empty(), "Error37"
+
+print("Test 38")
+
+i_grammar = FunctionIndexedGrammar([functions[x] for x in [14]],
+                                   [["a", "a", "a", "b"]],
+                                   eq_rules=[equivalence_rules[x] for x in [3]],
+                                   eq_depth=2)
+
+assert not i_grammar.is_empty(), "Error38"

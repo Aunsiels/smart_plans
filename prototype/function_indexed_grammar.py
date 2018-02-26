@@ -10,7 +10,8 @@ class FunctionIndexedGrammar(IndexedGrammar):
     Represents a grammar generated from functions as presented in our paper
     """
 
-    def __init__(self, functions, query, optim=7, empty=False, eq_rules=[]):
+    def __init__(self, functions, query, optim=7, empty=False, eq_rules=[],
+                 eq_depth=1):
         """__init__
         Initializes the indexed grammar from a set of functions
         :param functions: a list of Functions
@@ -46,9 +47,21 @@ class FunctionIndexedGrammar(IndexedGrammar):
         initial_rules.append(EndRule("T", "epsilon"))
         # Rules from functions
         f_rules = []
-        # Apply equivalence rules
-        for eq_rule in eq_rules:
-            functions = eq_rule.transform_function_set(functions)
+        for _ in range(eq_depth):
+            if len(eq_rules) == 0:
+                functions = list(set(functions))
+                break
+            temp_functions = []
+            # Apply equivalence rules
+            for eq_rule in eq_rules:
+                temp_functions.append(eq_rule.transform_function_set(functions))
+            temp_union = set()
+            for l_f in temp_functions:
+                for f in l_f:
+                    temp_union.add(f)
+            if len(temp_union) == len(functions):
+                break
+            functions = list(temp_union)
         # Generate the rules
         counter = 0
         self.functions = functions

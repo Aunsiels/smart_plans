@@ -55,14 +55,16 @@ class EquivalenceRule (object):
         included
         :param functions: a set of functions
         """
-        final_functions = []
+        final_functions = set()
         to_process = []
+        counter = 0
         # We initialize the stack of function to process. The elements have the
         # form (function, start, length_first)
         for function in functions:
             l_function = function.to_list()
             to_process.append((l_function, 0, len(l_function)))
-            final_functions.append(l_function)
+            final_functions.add(Function(l_function, "f" + str(counter)))
+            counter += 1
         # We process the functions
         while len(to_process) != 0:
             function = to_process.pop()
@@ -80,24 +82,27 @@ class EquivalenceRule (object):
             if len(self.l0) + function[1] <= len(function[0]):
                 if function[0][function[1]:function[1] + len(self.l0)] == \
                         self.l0:
-                    final_functions.append(function[0][:function[1]] +
-                                           self.l1 +
-                                           function[0][function[1] +
-                                                       len(self.l0):])
+                    final_functions.add(Function(function[0][:function[1]] +
+                                                 self.l1 +
+                                                 function[0][function[1] +
+                                                             len(self.l0):],
+                                                 "f" + str(counter)))
+                    counter += 1
             # Same for l1
             if len(self.l1) + function[1] <= len(function[0]):
                 if function[0][function[1]:function[1] + len(self.l1)] == \
                         self.l1:
-                    final_functions.append(function[0][:function[1]] +
-                                           self.l0 +
-                                           function[0][function[1] +
-                                                       len(self.l1):])
+                    final_functions.add(Function(function[0][:function[1]] +
+                                                 self.l0 +
+                                                 function[0][function[1] +
+                                                             len(self.l1):],
+                                                 "f" + str(counter)))
+                    counter += 1
             # Add one step futher
             to_process.append((function[0],
                                function[1] + 1,
                                function[2]))
-        return [Function(final_functions[i], "f" + str(i))
-                for i in range(len(final_functions))]
+        return list(final_functions)
 
     def get_all_terminals(self):
         """get_all_terminals Returns all terminals used and their opposite"""
