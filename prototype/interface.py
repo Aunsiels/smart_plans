@@ -188,8 +188,8 @@ def find_prolog(event=None):
         showinfo("Prolog",
                  "There exists no smart plan")
         return
-    write_prolog(functions, q, 10, "tmp_prolog.pl")
-    p = subprocess.Popen(["swipl", "-f", "tmp_prolog.pl", "-q", "main"],
+    write_prolog(functions, q, 10, "tmp/tmp_prolog.pl")
+    p = subprocess.Popen(["swipl", "-f", "tmp/tmp_prolog.pl", "-q", "main"],
                          stdout=subprocess.PIPE)
     output, err = p.communicate()
     if (len(output) == 0):
@@ -203,10 +203,10 @@ def find_prolog(event=None):
 def show_prolog_rules(event=None):
     functions = get_functions()
     q = query.get()
-    write_prolog(functions, q, 10, "tmp_prolog.pl")
+    write_prolog(functions, q, 10, "tmp/tmp_prolog.pl")
     rule_window = Toplevel(window)
     text = Text(rule_window)
-    with open("tmp_prolog.pl") as f:
+    with open("tmp/tmp_prolog.pl") as f:
         for line in f:
             text.insert(END, line)
     text.pack(side=LEFT, fill=BOTH, expand=YES)
@@ -224,8 +224,8 @@ def show_functions(event=None):
     for key in dicimg:
         dicimg[key] = None
     for function in get_functions():
-        function.save_gif("temp_graph")
-        img = PhotoImage(file="temp_graph.gif")
+        function.save_gif("tmp/temp_graph")
+        img = PhotoImage(file="tmp/temp_graph.gif")
         dicimg['img' + str(counter)] = img
         counter += 1
         canevas0.create_image(0, h, image=img, anchor=NW)
