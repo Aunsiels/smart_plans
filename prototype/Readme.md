@@ -22,19 +22,19 @@ f1 :- ((f;g)a,b;e)c,d.
 
 ### Function Visualization
 
-To visualize function, go to "Run > Show Functions" or press <F2>.
+To visualize function, go to "Run > Show Functions" or press &lt;F2&gt;.
 
 ### Existence of Smart Plan
 
-To check whether a smart plan can be built with the given functions for the query, go to "Run > Existence" or press <F2>.
+To check whether a smart plan can be built with the given functions for the query, go to "Run > Existence" or press &lt;F1&gt;.
 
 ### Find a Plan
 
-To get one of the smart plan out of the functions, go to "Run > Prolog" or press <F3>.
+To get one of the smart plan out of the functions, go to "Run > Prolog" or press &lt;F3&gt;.
 
 ### Get the Rules in the Grammar
 
-To get the rules used in the grammar and which are given to Prolog, go to "Run > Show Prolog Rules" or press <F4>.
+To get the rules used in the grammar and which are given to Prolog, go to "Run > Show Prolog Rules" or press &lt;F4&gt;.
 
 ## Other Informations
 
