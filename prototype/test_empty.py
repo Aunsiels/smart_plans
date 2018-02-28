@@ -179,3 +179,24 @@ l_rules.append(DuplicationRule("B0", "A0", "C"))
 rules = Rules(l_rules)
 i_grammar = IndexedGrammar(rules)
 assert(not i_grammar.is_empty())
+
+# Test for regular expression functions
+
+l_rules = []
+l_rules.append(ProductionRule("S", "Ci", "end"))
+l_rules.append(ProductionRule("Ci", "C", "q"))
+l_rules.append(ConsommationRule("q", "C", "C0"))
+l_rules.append(ProductionRule("C0", "C0", "a-"))
+l_rules.append(DuplicationRule("C0", "T", "C"))
+l_rules.append(EndRule("T", "epsilon"))
+l_rules.append(ConsommationRule("end", "C", "Cend"))
+l_rules.append(EndRule("Cend", "epsilon"))
+l_rules.append(ConsommationRule("a-", "C", "C1"))
+l_rules.append(ConsommationRule("a-", "C1", "C2"))
+l_rules.append(ConsommationRule("a-", "C2", "C3"))
+l_rules.append(ConsommationRule("a-", "C3", "C4"))
+l_rules.append(ConsommationRule("a-", "C4", "C"))
+
+rules = Rules(l_rules)
+i_grammar = IndexedGrammar(rules)
+assert(not i_grammar.is_empty())
