@@ -51,7 +51,7 @@ class Function (object):
         relations are represented with a -, e.g. r-
         :param name: The name of the function
         """
-        if type(relations) == str:
+        if type(relations) == str and len(relations.strip()) > 0:
             self.init_from_string(relations, name)
         else:
             self.name = name
