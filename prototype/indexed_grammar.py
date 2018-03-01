@@ -37,16 +37,28 @@ class IndexedGrammar(object):
         """
         was_modified = False
         need_stop = False
+        right_term_marked0 = []
         for x in self.marked[rule.getRightTerms()[0]]:
+            right_term_marked1 = []
             for y in self.marked[rule.getRightTerms()[1]]:
                 temp = x.union(y)
                 # Check if it was marked before
                 if temp not in self.marked[rule.getLeftTerm()]:
                     was_modified = True
-                    self.marked[rule.getLeftTerm()].add(temp)
+                    if rule.getLeftTerm() == rule.getRightTerms()[0]:
+                        right_term_marked0.append(temp)
+                    elif rule.getLeftTerm() == rule.getRightTerms()[1]:
+                        right_term_marked1.append(temp)
+                    else:
+                        self.marked[rule.getLeftTerm()].add(temp)
                     # Stop condition, no need to continuer
                     if rule.getLeftTerm() == "S" and len(temp) == 0:
                         need_stop = True
+            for temp in right_term_marked1:
+                self.marked[rule.getRightTerms()[1]].add(temp)
+        for temp in right_term_marked0:
+            self.marked[rule.getRightTerms()[0]].add(temp)
+
         return (was_modified, need_stop)
 
     def production_process(self, rule):
