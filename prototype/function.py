@@ -14,6 +14,11 @@ class Function (object):
         Initializes the function from a list of relations
         :param l_relations:
         """
+        relations = list(filter(lambda x: len(x) > 0, relations))
+        if ("$" in relations or "$m" in relations) and \
+                len(relations) > relations.count("$") + relations.count("$m"):
+            relations = list(filter(lambda x: x != "$" and x != "$m",
+                                    relations))
         # We separate the relation name from its direction by counting "-"
         self.relations = [(re.sub("-", "", r), r.count("-") % 2)
                           for r in relations]

@@ -5,7 +5,6 @@ Testing of linear function, Multiple input functions, and equivalence rules
 
 from function_indexed_grammar import FunctionIndexedGrammar
 from multiple_input_function import MultipleInputFunction
-from equivalence_rule import EquivalenceRule
 
 functions = []
 
@@ -41,10 +40,6 @@ mifunctions = []
 
 mifunctions.append(["d-", "c-", "b-"])  # 0
 mifunctions.append(["a-", "c", "d"])  # 1
-
-equivalence_rules = []
-
-equivalence_rules.append(EquivalenceRule(["a", "b"], ["d-", "c-"], "r0"))
 
 counter = 0
 
@@ -132,14 +127,6 @@ print("Test 12")
 i_grammar = FunctionIndexedGrammar([functions[x] for x in [12, 13]],
                                    [["xm"]])
 assert i_grammar.is_empty(), "Error12"
-
-# print("Test 13")
-#
-# i_grammar = FunctionIndexedGrammar([functions[x] for x in [14, 15]] +
-#                                    [equivalence_rules[x] for x in [0]],
-#                                    [["q"]])
-#
-# assert not i_grammar.is_empty(), "Error13"
 
 print("Test 14")
 

@@ -3,6 +3,7 @@ from duplication_rule import DuplicationRule
 from function import Function
 from production_rule import ProductionRule
 import function
+from fsm import FSM
 
 
 class RegexTree(object):
@@ -10,11 +11,16 @@ class RegexTree(object):
     def post_processing(self):
         new_sons = []
         for son in self.sons:
+            son.post_processing()
             if type(son.head) == function.Function and \
                     son.head.n_relations() == 0:
                 continue
+            elif type(son.head) == str and len(son.sons) == 0:
+                continue
+            elif type(son.head) == str and son.head == "." and \
+                    len(son.sons) == 1:
+                new_sons.append(son.sons[0])
             else:
-                son.post_processing()
                 new_sons.append(son)
         self.sons = new_sons
 
@@ -117,6 +123,16 @@ class RegexTree(object):
             if counter == 0:
                 return i
 
+    def to_str(self):
+        if type(self.head) == Function:
+            return ",".join(self.head.to_list())
+        elif self.head == ".":
+            return ",".join([son.to_str() for son in self.sons])
+        elif self.head == "*":
+            return "(" + self.sons[0] + ")*"
+        elif self.head == "|":
+            return "(" + ")|(".join([son.to_str() for son in self.sons]) + ")"
+
     def print_tree(self, level=0):
         """print_tree
         Recursive method to get the tree as a string
@@ -138,7 +154,8 @@ class RegexTree(object):
         res = []
         for i in range(len(s)):
             if i + 1 < len(s) and \
-                    (s[i + 1] == "|" or s[i+1] == "*") and s[i] != ")":
+                    (s[i + 1] == "|" or s[i+1] == "*") and s[i] != ")" and\
+                    s[i] != "*" and s[i] != "|":
                 res.append("(")
                 res.append(s[i])
                 res.append(")")
@@ -168,7 +185,7 @@ class RegexTree(object):
             s = self.preprocess(s[0])
         i = 0
         s = list(s) + [""]
-        while i < len(s):
+        while i < len(s) - 1:
             c = s[i]
             if c == '(':
                 if current_stack != "":
@@ -199,16 +216,24 @@ class RegexTree(object):
                     new_node.add_son(temp_node)
                     new_node.head = "|"
                     self.add_son(new_node)
-                elif s[end + 1] == "*":
-                    new_node = RegexTree("".join(s[i + 1: end]))
-                    new_node.head = "*"
-                    current_node.add_son(new_node)
-                    i = end + 1
+                else:
+                    new_node = RegexTree("".join(s[i + 1:end]))
+                    if s[end + 1] == "*":
+                        new_node2 = RegexTree("*")
+                        # self.head = "*"
+                        i = end + 1
+                    else:
+                        new_node2 = RegexTree(".")
+                        # self.head = "."
+                        i = end
+                    new_node2.add_son(new_node)
+                    current_node.add_son(new_node2)
                 current_stack = ""
-            elif c != ' ':
+            elif c != ' ' and c != ")" and c != "(":
                 current_stack += c
             i += 1
         # if current_stack != "":
+        #     self.head = "."
         new_node = RegexTree(Function(current_stack))
         current_node.add_son(new_node)
 
@@ -230,13 +255,17 @@ class RegexTree(object):
                     continue
                 t0 = RegexTree(cut2[0])
                 t1 = RegexTree(cut2[1])
-                res = t0.push_tree("C", "C", counter, end=True)
+                c_left = "Cleft" + str(counter)
+                c_right = "Cright" + str(counter)
+                c_inter = "Cinter" + str(counter)
+                rules.append(DuplicationRule("C", c_left, c_right))
+                res = t0.push_tree(c_left, "C", counter, end=True)
                 rules += res[0]
                 counter = res[1]
-                res = t1.consume_tree("C", "C", counter)
+                res = t1.consume_tree(c_right, c_inter, counter)
                 rules += res[0]
                 counter = res[1]
-                res = t2.push_tree("C", "C", counter, end=False)
+                res = t2.push_tree(c_inter, "C", counter, end=False)
                 rules += res[0]
                 counter = res[1]
         return (rules, counter)
@@ -258,6 +287,15 @@ class RegexTree(object):
                     representation.append("(" + son.get_representation() + ")")
             return "|".join(representation)
 
+    def replace_comma_in_tuple(self, x):
+        res0 = x[0]
+        if res0 == ",":
+            res0 = ""
+        res1 = x[1]
+        if res1 == ",":
+            res1 = ""
+        return (res0, res1)
+
     def get_cuts(self):
         cuts = []
         if type(self.head) == Function:
@@ -269,11 +307,15 @@ class RegexTree(object):
             cuts = []
             for i in range(len(self.sons)):
                 prev_cuts = self.sons[i].get_cuts()
-                cuts += [("".join([son.get_representation()
-                                   for son in self.sons[:i]]) + prev_cut[0],
-                          prev_cut[1] + "".join([son.get_representation()
-                                                 for son in self.sons[i+1:]]))
+                cuts += [(",".join([son.get_representation()
+                                   for son in self.sons[:i]]) + "," +
+                          prev_cut[0],
+                          prev_cut[1] + "," +
+                          ",".join([son.get_representation()
+                                    for son in self.sons[i+1:]]))
                          for prev_cut in prev_cuts]
+                cuts = list(map(lambda x: self.replace_comma_in_tuple(x),
+                                cuts))
             return cuts
         elif self.head == "*":
             prev_cuts = self.sons[0].get_cuts()
@@ -299,6 +341,144 @@ class RegexTree(object):
             self.sons = self.sons[::-1]
             for son in self.sons:
                 son.inverse()
+
+    def get_alphabet(self):
+        if type(self.head) == Function:
+            return self.head.get_all_terminals()
+        else:
+            s_res = set()
+            for son in self.sons:
+                s_res = s_res.union(son.get_alphabet())
+        return list(s_res)
+
+    def to_fsm(self):
+        alphabet = self.get_alphabet()
+        alphabet.append("$")  # epsilon symbol
+        states = [0]
+        initial = 0
+        finals = []
+        transitions = dict()
+        fsm = FSM(alphabet, states, initial, finals, transitions)
+        self.to_fsm_sub(0, [], 1, fsm, True)
+        return fsm
+
+    def continue_final(self):
+        if type(self.head) == Function:
+            return False
+        if self.head == "*":
+            return True
+        if self.head == ".":
+            res = True
+            for son in self.sons:
+                res &= son.continue_final()
+            return res
+        if self.head == "|":
+            res = False
+            for son in self.sons:
+                res |= son.continue_final()
+            return res
+
+    def need_jump(self):
+        if type(self.head) == Function:
+            return True
+        if self.head == "*":
+            return False
+        if self.head == ".":
+            res = False
+            for son in self.sons:
+                res |= son.need_jump()
+            return res
+        if self.head == "|":
+            res = False
+            for son in self.sons:
+                res |= son.need_jump()
+            return res
+
+    def or_star(self):
+        if type(self.head) == Function:
+            return False
+        if self.head == "*":
+            return True
+        if self.head == ".":
+            res = False
+            for son in self.sons:
+                # Could be optimized
+                res |= son.or_star()
+            return res
+        if self.head == "|":
+            return False
+
+    def to_fsm_sub_dot(self, first, lasts, counter, fsm, is_final):
+        last_final = len(self.sons) + 1
+        if is_final:
+            for last_final in range(len(self.sons) - 1, -1, -1):
+                if not self.sons[last_final].continue_final():
+                    break
+        jumps = list(range(counter, counter + len(self.sons) - 1))
+        counter = counter + len(self.sons) - 1
+        prev_first = first
+        for i in range(len(self.sons) - 1):
+            if self.sons[i].need_jump():
+                counter = self.sons[i].to_fsm_sub(prev_first,
+                                                  [jumps[i]],
+                                                  counter,
+                                                  fsm,
+                                                  i >= last_final)
+                prev_first = jumps[i]
+            else:
+                counter = self.sons[i].to_fsm_sub(prev_first,
+                                                  [prev_first],
+                                                  counter,
+                                                  fsm,
+                                                  i >= last_final)
+        if len(lasts) == 0:
+            lasts = [counter]
+            counter += 1
+        counter = self.sons[-1].to_fsm_sub(prev_first,
+                                           lasts,
+                                           counter,
+                                           fsm, is_final)
+        return counter
+
+    def to_fsm_sub(self, first, lasts, counter, fsm, is_final):
+        if type(self.head) == Function:
+            l_f = self.head.to_list()
+            prev_state = first
+            for i in range(len(l_f) - 1):
+                fsm.add_transition(prev_state, counter, l_f[i])
+                prev_state = counter
+                counter += 1
+            for last in lasts:
+                fsm.add_transition(prev_state, last, l_f[-1])
+                if is_final:
+                    fsm.add_final(last)
+        elif self.head == ".":
+            return self.to_fsm_sub_dot(first, lasts, counter, fsm, is_final)
+        elif self.head == "*":
+            new_lasts = lasts[:]
+            new_lasts.append(first)
+            for son in self.sons:
+                counter = son.to_fsm_sub(first,
+                                         new_lasts,
+                                         counter,
+                                         fsm,
+                                         is_final)
+        elif self.head == "|":
+            for son in self.sons:
+                if son.or_star():
+                    fsm.add_transition(first, counter, "$")
+                    counter = son.to_fsm_sub(counter,
+                                             lasts,
+                                             counter + 1,
+                                             fsm,
+                                             is_final)
+                else:
+                    counter = son.to_fsm_sub(first,
+                                             lasts,
+                                             counter + 1,
+                                             fsm,
+                                             is_final)
+        return counter
 
 
 def test():

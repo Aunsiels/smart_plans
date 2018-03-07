@@ -5,7 +5,7 @@ Testing of single input linear function, tree functions and equivalence rules
 
 from function_indexed_grammar import FunctionIndexedGrammar
 from function import Function
-from equivalence_rule import EquivalenceRule
+from horn_rule import HornRule
 from tree_function import TreeFunction
 
 functions = []
@@ -58,11 +58,13 @@ tree_functions.append(TreeFunction(Function(["c", "b", "a"]), []))  # 7
 
 equivalence_rules = []
 
-equivalence_rules.append(EquivalenceRule(["a", "b"], ["d-", "c-"], "r0"))  # 0
-equivalence_rules.append(EquivalenceRule(["c"], ["q"], "r1"))  # 1
-equivalence_rules.append(EquivalenceRule(["b", "c"], ["c", "b"], "r2"))  # 2
-equivalence_rules.append(EquivalenceRule(["b", "a"], ["a"], "r3"))  # 3
-equivalence_rules.append(EquivalenceRule(["c", "c", "c"], ["d"], "r4"))  # 4
+# forbidden
+equivalence_rules.append(HornRule(["a", "b"], ["d-", "c-"], "r0"))  # 0
+equivalence_rules.append(HornRule(["c"], ["q"], "r1"))  # 1
+# forbidden
+equivalence_rules.append(HornRule(["b", "c"], ["c", "b"], "r2"))  # 2
+equivalence_rules.append(HornRule(["b", "a"], ["a"], "r3"))  # 3
+equivalence_rules.append(HornRule(["c", "c", "c"], ["d"], "r4"))  # 4
 
 counter = 0
 
@@ -141,13 +143,14 @@ i_grammar = FunctionIndexedGrammar([functions[x] for x in [12, 13]],
                                    [["xm"]])
 assert i_grammar.is_empty(), "Error12"
 
-print("Test 13")
-
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [14, 15]],
-                                   [["q"]],
-                                   eq_rules=[equivalence_rules[x] for x in [0]])
-
-assert not i_grammar.is_empty(), "Error13"
+# print("Test 13")
+#
+# i_grammar = FunctionIndexedGrammar([functions[x] for x in [14, 15]],
+#                                    [["q"]],
+#                                    eq_rules=[equivalence_rules[x]
+#                                            for x in [0]])
+#
+# assert not i_grammar.is_empty(), "Error13"
 
 print("Test 14")
 
@@ -193,13 +196,14 @@ i_grammar = FunctionIndexedGrammar([functions[x] for x in [20]],
 
 assert not i_grammar.is_empty(), "Error20"
 
-print("Test 21")
-
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [21, 22]],
-                                   [["a", "c", "b", "d"]],
-                                   eq_rules=[equivalence_rules[x] for x in [2]])
-
-assert not i_grammar.is_empty(), "Error21"
+# print("Test 21")
+#
+# i_grammar = FunctionIndexedGrammar([functions[x] for x in [21, 22]],
+#                                    [["a", "c", "b", "d"]],
+#                                    eq_rules=[equivalence_rules[x]
+# for x in [2]])
+#
+# assert not i_grammar.is_empty(), "Error21"
 
 print("Test 22")
 
@@ -209,13 +213,14 @@ i_grammar = FunctionIndexedGrammar([functions[x] for x in [21, 22]],
 
 assert i_grammar.is_empty(), "Error22"
 
-print("Test 23")
-
-i_grammar = FunctionIndexedGrammar([functions[x] for x in [23, 24]],
-                                   [["a", "b", "c", "d"]],
-                                   eq_rules=[equivalence_rules[x] for x in [2]])
-
-assert not i_grammar.is_empty(), "Error23"
+# print("Test 23")
+#
+# i_grammar = FunctionIndexedGrammar([functions[x] for x in [23, 24]],
+#                                    [["a", "b", "c", "d"]],
+#                                    eq_rules=[equivalence_rules[x]
+# for x in [2]])
+#
+# assert not i_grammar.is_empty(), "Error23"
 
 print("Test 24")
 
@@ -322,17 +327,15 @@ print("Test 37")
 
 i_grammar = FunctionIndexedGrammar([functions[x] for x in [14]],
                                    [["a", "a", "a", "b"]],
-                                   eq_rules=[equivalence_rules[x] for x in [3]],
-                                   eq_depth=1)
+                                   eq_rules=[equivalence_rules[x] for x in [3]])
 
-assert i_grammar.is_empty(), "Error37"
+assert not i_grammar.is_empty(), "Error37"
 
 print("Test 38")
 
 i_grammar = FunctionIndexedGrammar([functions[x] for x in [14]],
                                    [["a", "a", "a", "b"]],
-                                   eq_rules=[equivalence_rules[x] for x in [3]],
-                                   eq_depth=2)
+                                   eq_rules=[equivalence_rules[x] for x in [3]])
 
 assert not i_grammar.is_empty(), "Error38"
 
@@ -340,8 +343,7 @@ print("Test 39")
 
 i_grammar = FunctionIndexedGrammar([functions[x] for x in [32, 33]],
                                    [["a", "d", "c", "b"]],
-                                   eq_rules=[equivalence_rules[x] for x in [4]],
-                                   eq_depth=1)
+                                   eq_rules=[equivalence_rules[x] for x in [4]])
 
 assert not i_grammar.is_empty(), "Error39"
 
@@ -349,7 +351,6 @@ print("Test 40")
 
 i_grammar = FunctionIndexedGrammar([functions[x] for x in [32, 33]],
                                    [["a", "c", "d", "b"]],
-                                   eq_rules=[equivalence_rules[x] for x in [4]],
-                                   eq_depth=1)
+                                   eq_rules=[equivalence_rules[x] for x in [4]])
 
 assert not i_grammar.is_empty(), "Error40"
