@@ -3,6 +3,7 @@ from consommation_rule import ConsommationRule
 from end_rule import EndRule
 from rules import Rules
 from regex_tree import RegexTree
+from node import Node
 from production_rule import ProductionRule
 
 
@@ -51,7 +52,7 @@ class FunctionIndexedGrammar(IndexedGrammar):
             new_function = "|".join(["(" +
                                      ",".join(function.to_list()) +
                                      ")" for function in functions])
-            regex_function = RegexTree(new_function)
+            regex_function = RegexTree(Node(new_function))
             fsm = regex_function.to_fsm()
             fsm.close()
             was_modified = True

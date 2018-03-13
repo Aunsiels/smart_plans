@@ -56,11 +56,19 @@ class Function (object):
         relations are represented with a -, e.g. r-
         :param name: The name of the function
         """
+        self.name = ""
         if type(relations) == str and len(relations.strip()) > 0:
             self.init_from_string(relations, name)
-        else:
+        elif type(relations) == list:
             self.name = name
             self.init_from_list(relations)
+        elif type(relations) == Function:
+            self.name = relations.name
+            self.relations = relations.relations
+            self.minus_relations = relations.minus_relations
+        else:
+            self.relations = []
+            self.minus_relations = []
         self.part0 = [r[0] + 'm' * r[1] for r in self.relations]
         self.part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
 
