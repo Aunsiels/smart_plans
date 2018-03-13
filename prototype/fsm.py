@@ -33,6 +33,13 @@ class FSM(object):
         self.finals = finals
         self.transitions = transitions
 
+    def add_state(self, x):
+        if x not in states:
+            self.states.append(x)
+
+    def get_next_state(self):
+        return max(self.states) + 1
+
     def add_transition(self, x, y, a):
         """add_transition
         Adds a transition from x to y through a to the fsm
