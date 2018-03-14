@@ -11,3 +11,5 @@ tmp/
 *csv
 paper/figure.odp
 paper/nicoletta/
+prototype/.mypy_cache/
+prototype/test_greenery.ipynb

@@ -519,8 +519,7 @@ class RegexTree(object):
         states = [0]
         initial = 0
         finals: List[int] = []
-        transitions: Mapping[int, int] = dict()
-        fsm = FSM(alphabet, states, initial, finals, transitions)
+        fsm = FSM(alphabet, states, initial, finals)
         self.to_fsm_sub((0, []), 1, fsm, True)
         return fsm
 
