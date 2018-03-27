@@ -16,7 +16,7 @@ class MultipleInputFunction (Function):
         :param name: The name of the function
         """
         if type(relations) == str:
-            self.init_from_string(relations)
+            self.init_from_string(relations, name)
         else:
             self.name = name
             self.init_from_list(relations)
@@ -28,6 +28,21 @@ class MultipleInputFunction (Function):
         else:
             self.n_inputs = max(n_inputs)
             self.inputs = set(n_inputs)
+
+    def get_sub_functions(self):
+        res = []
+        for i in range(self.n_inputs - 1, len(self.part0)):
+            f_temp = MultipleInputFunction([], self.name + "sub" + str(i),
+                                           self.n_inputs)
+            f_temp.relations = self.relations[:i]
+            f_temp.minus_relations = self.minus_relations[:i]
+            f_temp.n_inputs = self.n_inputs
+            f_temp.inputs = self.inputs
+            f_temp.part0 = self.part0[:i]
+            f_temp.part1 = self.part1[:i]
+            res.append(f_temp)
+        return res
+
 
     def to_string(self):
         """to_string Gives the string representation of the function"""
@@ -106,6 +121,40 @@ class MultipleInputFunction (Function):
                 temp = self.generate_general_reduced_rules(counter, i, j)
                 rules = rules + temp[0]
                 counter = temp[1]
+        return (rules, counter)
+
+    def generate_palindrome_rules(self, counter):
+        rules = []
+        if self.n_inputs < 2:
+            temp = stack(self.part1,
+                         counter,
+                         "Cforward",
+                         "Cforward")
+            counter = temp[1]
+            rules = rules + temp[0]
+        else:
+            c_temp = "C_inter" + str(counter)
+            counter += 1
+            temp = unstack(self.part1[self.n_inputs - 2::-1],
+                           self.part1,
+                           counter,
+                           "Cforward",
+                           c_temp)
+            counter = temp[1]
+            rules = rules + temp[0]
+            temp = stack(self.part1,
+                         counter,
+                         c_temp,
+                         "Cforward")
+            counter = temp[1]
+            rules = rules + temp[0]
+        temp = unstack(self.part0,
+                       self.part0,
+                       counter,
+                       "Cbackward",
+                       "Cforward")
+        counter = temp[1]
+        rules = rules + temp[0]
         return (rules, counter)
 
     def get_all_terminals(self):

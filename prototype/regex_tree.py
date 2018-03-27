@@ -7,9 +7,9 @@ import utils
 from duplication_rule import DuplicationRule
 from function import Function
 from production_rule import ProductionRule
-from fsm import FSM
 from reduced_rule import ReducedRule
 from node import Node
+from fsm import FSM
 
 
 class RegexTree(object):

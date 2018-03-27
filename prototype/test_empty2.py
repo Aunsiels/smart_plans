@@ -141,6 +141,7 @@ print("Test 12")
 
 i_grammar = FunctionIndexedGrammar([functions[x] for x in [12, 13]],
                                    [["xm"]])
+# empty without subfunctions
 assert i_grammar.is_empty(), "Error12"
 
 # print("Test 13")

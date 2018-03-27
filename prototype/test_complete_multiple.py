@@ -5,248 +5,236 @@ Testing on real world data, with multiple inputs.
 
 from function_indexed_grammar import FunctionIndexedGrammar
 from multiple_input_function import MultipleInputFunction
+from regex_tree import RegexTree
+from node import Node
 import sys
 import time
 
-# Books
-FUNLIBTH = False
-FUNABE = False
-FUNISBN1 = False
-# Music
-FUNLF1 = False
-FUNMB1 = True
-FUNLYRIC1 = False
+functions = dict()
 
-functions = []
+functions["FUNLIBTH"] = []
+# FUNLIBTHGetAuthorInfoByName
+functions["FUNLIBTH"].append(["hasWonPrize"])
+functions["FUNLIBTH"].append(["hasIdAuthor"])
+functions["FUNLIBTH"].append(["isCitizenOf"])
+functions["FUNLIBTH"].append(["bornOnDate"])
+functions["FUNLIBTH"].append(["graduatedFroM"])
+functions["FUNLIBTH"].append(["hasGender"])
+functions["FUNLIBTH"].append(["livesIn"])
+# FUNLIBTHGetBookInfoByISBN
+functions["FUNLIBTH"].append(["hasISBN-"])
+functions["FUNLIBTH"].append(["hasISBN-", "isTitledOf"])
+functions["FUNLIBTH"].append(["hasISBN-", "hasIdBook"])
+functions["FUNLIBTH"].append(["hasISBN-", "publishedOnDate"])
+functions["FUNLIBTH"].append(["hasISBN-", "wrote-"])
+functions["FUNLIBTH"].append(["hasISBN-", "wrote-", "hasWonPrize"])
+functions["FUNLIBTH"].append(["hasISBN-", "wrote-", "hasIdAuthor"])
+# FUNLIBTHGetBookInfoByName
+functions["FUNLIBTH"].append(["hasIdBook"])
+functions["FUNLIBTH"].append(["isTitledOf"])
+functions["FUNLIBTH"].append(["publishedOnDate"])
+functions["FUNLIBTH"].append(["wrote-"])
+functions["FUNLIBTH"].append(["wrote-", "hasIdAuthor"])
+functions["FUNLIBTH"].append(["wrote-", "hasWonPrize"])
+# FUNLIBTHGetAuthorInfoByName
+functions["FUNLIBTH"].append(["hasIdAuthor"])
+functions["FUNLIBTH"].append(["livesIn"])
+functions["FUNLIBTH"].append(["bornOnDate"])
+functions["FUNLIBTH"].append(["graduatedFroM"])
+functions["FUNLIBTH"].append(["hasGender"])
+functions["FUNLIBTH"].append(["isCitizenOf"])
+functions["FUNLIBTH"].append(["hasWonPrize"])
+# FUNLIBTHGetBookInfoByID
+functions["FUNLIBTH"].append(["hasIdBook-"])
+functions["FUNLIBTH"].append(["hasIdBook-", "wrote-"])
+functions["FUNLIBTH"].append(["hasIdBook-", "wrote-", "hasWonPrize"])
+functions["FUNLIBTH"].append(["hasIdBook-", "wrote-", "hasIdAuthor"])
+functions["FUNLIBTH"].append(["hasIdBook-", "publishedOnDate"])
+functions["FUNLIBTH"].append(["hasIdBook-", "isTitledOf"])
 
-if FUNLIBTH:
-    # FUNLIBTHGetAuthorInfoByName
-    functions.append(["hasWonPrize"])
-    functions.append(["hasIdAuthor"])
-    functions.append(["isCitizenOf"])
-    functions.append(["bornOnDate"])
-    functions.append(["graduatedFroM"])
-    functions.append(["hasGender"])
-    functions.append(["livesIn"])
-    # FUNLIBTHGetBookInfoByISBN
-    functions.append(["hasISBN-"])
-    functions.append(["hasISBN-", "isTitledOf"])
-    functions.append(["hasISBN-", "hasIdBook"])
-    functions.append(["hasISBN-", "publishedOnDate"])
-    functions.append(["hasISBN-", "wrote-"])
-    functions.append(["hasISBN-", "wrote-", "hasWonPrize"])
-    functions.append(["hasISBN-", "wrote-", "hasIdAuthor"])
-    # FUNLIBTHGetBookInfoByName
-    functions.append(["hasIdBook"])
-    functions.append(["isTitledOf"])
-    functions.append(["publishedOnDate"])
-    functions.append(["wrote-"])
-    functions.append(["wrote-", "hasIdAuthor"])
-    functions.append(["wrote-", "hasWonPrize"])
-    # FUNLIBTHGetAuthorInfoByName
-    functions.append(["hasIdAuthor"])
-    functions.append(["livesIn"])
-    functions.append(["bornOnDate"])
-    functions.append(["graduatedFroM"])
-    functions.append(["hasGender"])
-    functions.append(["isCitizenOf"])
-    functions.append(["hasWonPrize"])
-    # FUNLIBTHGetBookInfoByID
-    functions.append(["hasIdBook-"])
-    functions.append(["hasIdBook-", "wrote-"])
-    functions.append(["hasIdBook-", "wrote-", "hasWonPrize"])
-    functions.append(["hasIdBook-", "wrote-", "hasIdAuthor"])
-    functions.append(["hasIdBook-", "publishedOnDate"])
-    functions.append(["hasIdBook-", "isTitledOf"])
-if FUNABE:
-    # FUNABEGetBookInfoByISBN
-    functions.append(["hasISBN-"])
-    functions.append(["hasISBN-", "wrote-"])
-    functions.append(["hasISBN-", "published"])
-    # FUNABEGetBookInfoByTitle
-    functions.append(["hasISBN"])
-    functions.append(["isTitled"])
-    functions.append(["published-"])
-    functions.append(["wrote-"])
-    # FUNABEGetBooksByAuthorName
-    functions.append(["wrote"])
-    functions.append(["wrote", "isTitled"])
-    functions.append(["wrote", "published-"])
-    functions.append(["wrote", "wrote-"])
-if FUNISBN1:
-    # FUNISBN1GetBooksByAuthorID
-    functions.append(["hasId-"])
-    functions.append(["hasId-", "wrote"])
-    functions.append(["hasId-", "wrote", "hasIdBook"])
-    functions.append(["hasId-", "wrote", "isTitled"])
-    functions.append(["hasId-", "wrote", "hasISBN"])
-    # FUNISBN1GetBooksByName
-    functions.append(["isTitled-"])
-    functions.append(["isTitled-", "hasIdBook"])
-    functions.append(["isTitled-", "hasISBN"])
-    functions.append(["isTitled-", "wrote-"])
-    functions.append(["isTitled-", "wrote-", "hasIdAuthor"])
+functions["FUNABE"] = []
+# FUNABEGetBookInfoByISBN
+functions["FUNABE"].append(["hasISBN-"])
+functions["FUNABE"].append(["hasISBN-", "wrote-"])
+functions["FUNABE"].append(["hasISBN-", "published"])
+# FUNABEGetBookInfoByTitle
+functions["FUNABE"].append(["hasISBN"])
+functions["FUNABE"].append(["isTitled"])
+functions["FUNABE"].append(["published-"])
+functions["FUNABE"].append(["wrote-"])
+# FUNABEGetBooksByAuthorName
+functions["FUNABE"].append(["wrote"])
+functions["FUNABE"].append(["wrote", "isTitled"])
+functions["FUNABE"].append(["wrote", "published-"])
+functions["FUNABE"].append(["wrote", "wrote-"])
 
-if FUNMB1:
-    # FUNMB1GetArtistInfoByID
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "describes-"])
-    functions.append(["hasIdArtist-", "rated"])
-    functions.append(["hasIdArtist-", "diedOnDate"])
-    functions.append(["hasIdArtist-", "bornOnDate"])
-    # FUNMB1GetArtistInfoByName
-    functions.append(["hasIdArtist"])
-    functions.append(["diedOnDate"])
-    functions.append(["bornOnDate"])
-    # FUNMB1GetArtistsByRealeaseID
-    functions.append(["hasIdRelease-"])
-    functions.append(["hasIdRelease-", "inLanguage"])
-    functions.append(["hasIdRelease-", "sang-"])
-    functions.append(["hasIdRelease-", "produced-"])
-    functions.append(["hasIdRelease-", "lyricsBy"])
-    # FUNMB1GetCollaboratorInfoById
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "isMemberOf-"])
-    functions.append(["hasIdArtist-", "isMemberOf-", "hasIdArtist"])
-    # FUNMB1GetCollaboratorsByID
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "isMemberOf"])
-    functions.append(["hasIdArtist-", "isMemberOf", "hasIdCollab"])
-    # FUNMB1GetRelativesByID
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "hasSiblings"])
-    functions.append(["hasIdArtist-", "hasSiblings", "hasIdSibling"])
-    functions.append(["hasIdArtist-", "isMarriedTo"])
-    functions.append(["hasIdArtist-", "isMarriedTo", "hasIdSpouse"])
-    functions.append(["hasIdArtist-", "hasChild"])
-    functions.append(["hasIdArtist-", "hasChild", "hasIdChild"])
-    functions.append(["hasIdArtist-", "divorcedOn"])
-    functions.append(["hasIdArtist-", "marriedOn"])
-    # FUNMB1GetReleaseInfoByID
-    functions.append(["hasIdRelease-"])
-    functions.append(["hasIdRelease-", "inLanguage"])
-    functions.append(["hasIdRelease-", "happenedIn"])
-    functions.append(["hasIdRelease-", "hasTrackNumber"])
-    functions.append(["hasIdRelease-", "happenedOnDate"])
-    functions.append(["hasIdRelease-", "hasDiscNumber"])
-    functions.append(["hasIdRelease-", "describes-"])
-    functions.append(["hasIdRelease-", "released-"])
-    functions.append(["hasIdRelease-", "released-", "hasIdArtist"])
-    # FUNMB1GetReleaseInfoByTitle
-    functions.append(["hasIdRelease"])
-    functions.append(["inLanguage"])
-    functions.append(["released-"])
-    # FUNMB1GetRealeaseByArtistID
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "released"])
-    functions.append(["hasIdArtist-", "released", "hasIdRelease"])
-    functions.append(["hasIdArtist-", "released", "inLanguage"])
-    # FUNMB1GetTrackInfoByID
-    functions.append(["hasIdTrack-"])
-    functions.append(["hasIdTrack-", "hasDuration"])
-    functions.append(["hasIdTrack-", "sang-"])
-    functions.append(["hasIdTrack-", "hasValue"])
-    functions.append(["hasIdTrack-", "isMemberOf"])
-    # FUNMB1GetTrackInfoByName
-    functions.append(["hasIdTrack"])
-    functions.append(["isMemberOf"])
-    functions.append(["sang-"])
-    functions.append(["hasValue"])
-    functions.append(["hasDuration"])
-    # FUNMB1GetTracksByReleaseID
-    functions.append(["hasIdRelease-"])
-    functions.append(["hasIdRelease-", "inLanguage"])
-    functions.append(["hasIdRelease-", "isMemberOf-"])
-    functions.append(["hasIdRelease-", "isMemberOf-", "hasDuration"])
-    functions.append(["hasIdRelease-", "isMemberOf-", "hasIdTrack"])
-    # FUNMB1GetTracksByArtistId
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "sang"])
-if FUNLYRIC1:
-    # FUNMB1GetRealeaseByArtistID
-    functions.append(["hasIdArtist-"])
-    functions.append(["hasIdArtist-", "released", "hasIdRelease"])
-    functions.append(["hasIdArtist-", "released", "inLanguage"])
-    # FUNLYRIC1GetLyricsInfoByArtistTrackName
-    functions.append(["hasLyrics"])
-    functions.append(["hasLyrics", "describes-"])
-    # FUNMB1GetArtistInfoByName
-    functions.append(["hasIdArtist"])
-if FUNLF1:
-    # FUNLF1GetReleaseInfoByName
-    functions.append(["released-"])
-    functions.append(["describes-"])
-    functions.append(["happenedOnDate"])
-    # FUNLF1GetTrackInfoById
-    functions.append(["hasIdTrack-"])
-    functions.append(["hasIdTrack-", "isMemberOf"])
-    functions.append(["hasIdTrack-", "isMemberOf", "hasIdRelease"])
-    functions.append(["hasIdTrack-", "describes-"])
-    functions.append(["hasIdTrack-", "hasDuration"])
-    functions.append(["hasIdTrack-", "sang-"])
-    functions.append(["hasIdTrack-", "sang-", "hasIdArtist"])
-    # FUNLF1GetArtistInfoByName
-    functions.append(["hasIdArtist"])
-    functions.append(["describes-"])
-    # FUNLF1GetReleaseInfoByID
-    functions.append(["hasIdRelease-"])
-    functions.append(["hasIdRelease-", "released-"])
-    functions.append(["hasIdRelease-", "describes-"])
-    functions.append(["hasIdRelease-", "happenedOnDate"])
-    # FUNLF1GetTrackInfoByName
-    # functions.append(["sang-"])
-    functions.append(["describes-"])
-    # FUNF1GetArtistInfoByID
-    functions.append(["hasIdArtist-"])
-    functions.append(["describes-"])
+functions["FUNISBN1"] = []
+# FUNISBN1GetBooksByAuthorID
+functions["FUNISBN1"].append(["hasId-"])
+functions["FUNISBN1"].append(["hasId-", "wrote"])
+functions["FUNISBN1"].append(["hasId-", "wrote", "hasIdBook"])
+functions["FUNISBN1"].append(["hasId-", "wrote", "isTitled"])
+functions["FUNISBN1"].append(["hasId-", "wrote", "hasISBN"])
+# FUNISBN1GetBooksByName
+functions["FUNISBN1"].append(["isTitled-"])
+functions["FUNISBN1"].append(["isTitled-", "hasIdBook"])
+functions["FUNISBN1"].append(["isTitled-", "hasISBN"])
+functions["FUNISBN1"].append(["isTitled-", "wrote-"])
+functions["FUNISBN1"].append(["isTitled-", "wrote-", "hasIdAuthor"])
+
+functions["FUNMB1"] = []
+# FUNMB1GetArtistInfoByID
+functions["FUNMB1"].append(["hasIdArtist-"])
+functions["FUNMB1"].append(["hasIdArtist-", "describes-"])
+functions["FUNMB1"].append(["hasIdArtist-", "rated"])
+functions["FUNMB1"].append(["hasIdArtist-", "diedOnDate"])
+functions["FUNMB1"].append(["hasIdArtist-", "bornOnDate"])
+# FUNMB1etArtistInfoByName
+functions["FUNMB1"].append(["hasIdArtist"])
+functions["FUNMB1"].append(["diedOnDate"])
+functions["FUNMB1"].append(["bornOnDate"])
+# FUNMB1setArtistsByRealeaseID
+functions["FUNMB1"].append(["hasIdRelease-"])
+functions["FUNMB1"].append(["hasIdRelease-", "inLanguage"])
+functions["FUNMB1"].append(["hasIdRelease-", "sang-"])
+functions["FUNMB1"].append(["hasIdRelease-", "produced-"])
+functions["FUNMB1"].append(["hasIdRelease-", "lyricsBy"])
+# FUNMB1setCollaboratorInfoById
+functions["FUNMB1"].append(["hasIdArtist-"])
+functions["FUNMB1"].append(["hasIdArtist-", "isMemberOf-"])
+functions["FUNMB1"].append(["hasIdArtist-", "isMemberOf-", "hasIdArtist"])
+# FUNMB1setCollaboratorsByID
+functions["FUNMB1"].append(["hasIdArtist-"])
+functions["FUNMB1"].append(["hasIdArtist-", "isMemberOf"])
+functions["FUNMB1"].append(["hasIdArtist-", "isMemberOf", "hasIdCollab"])
+# FUNMB1setRelativesByID
+functions["FUNMB1"].append(["hasIdArtist-"])
+functions["FUNMB1"].append(["hasIdArtist-", "hasSiblings"])
+functions["FUNMB1"].append(["hasIdArtist-", "hasSiblings", "hasIdSibling"])
+functions["FUNMB1"].append(["hasIdArtist-", "isMarriedTo"])
+functions["FUNMB1"].append(["hasIdArtist-", "isMarriedTo", "hasIdSpouse"])
+functions["FUNMB1"].append(["hasIdArtist-", "hasChild"])
+functions["FUNMB1"].append(["hasIdArtist-", "hasChild", "hasIdChild"])
+functions["FUNMB1"].append(["hasIdArtist-", "divorcedOn"])
+functions["FUNMB1"].append(["hasIdArtist-", "marriedOn"])
+# FUNMB1setReleaseInfoByID
+functions["FUNMB1"].append(["hasIdRelease-"])
+functions["FUNMB1"].append(["hasIdRelease-", "inLanguage"])
+functions["FUNMB1"].append(["hasIdRelease-", "happenedIn"])
+functions["FUNMB1"].append(["hasIdRelease-", "hasTrackNumber"])
+functions["FUNMB1"].append(["hasIdRelease-", "happenedOnDate"])
+functions["FUNMB1"].append(["hasIdRelease-", "hasDiscNumber"])
+functions["FUNMB1"].append(["hasIdRelease-", "describes-"])
+functions["FUNMB1"].append(["hasIdRelease-", "released-"])
+functions["FUNMB1"].append(["hasIdRelease-", "released-", "hasIdArtist"])
+# FUNMB1setReleaseInfoByTitle
+functions["FUNMB1"].append(["hasIdRelease"])
+functions["FUNMB1"].append(["inLanguage"])
+functions["FUNMB1"].append(["released-"])
+# FUNMB1setRealeaseByArtistID
+functions["FUNMB1"].append(["hasIdArtist-"])
+functions["FUNMB1"].append(["hasIdArtist-", "released"])
+functions["FUNMB1"].append(["hasIdArtist-", "released", "hasIdRelease"])
+functions["FUNMB1"].append(["hasIdArtist-", "released", "inLanguage"])
+# FUNMB1setTrackInfoByID
+functions["FUNMB1"].append(["hasIdTrack-"])
+functions["FUNMB1"].append(["hasIdTrack-", "hasDuration"])
+functions["FUNMB1"].append(["hasIdTrack-", "sang-"])
+functions["FUNMB1"].append(["hasIdTrack-", "hasValue"])
+functions["FUNMB1"].append(["hasIdTrack-", "isMemberOf"])
+# FUNMB1setTrackInfoByName
+functions["FUNMB1"].append(["hasIdTrack"])
+functions["FUNMB1"].append(["isMemberOf"])
+functions["FUNMB1"].append(["sang-"])
+functions["FUNMB1"].append(["hasValue"])
+functions["FUNMB1"].append(["hasDuration"])
+# FUNMB1setTracksByReleaseID
+functions["FUNMB1"].append(["hasIdRelease-"])
+functions["FUNMB1"].append(["hasIdRelease-", "inLanguage"])
+functions["FUNMB1"].append(["hasIdRelease-", "isMemberOf-"])
+functions["FUNMB1"].append(["hasIdRelease-", "isMemberOf-", "hasDuration"])
+functions["FUNMB1"].append(["hasIdRelease-", "isMemberOf-", "hasIdTrack"])
+# FUNMB1setTracksByArtistId
+functions["FUNMB1"].append(["hasIdArtist-"])
+functions["FUNMB1"].append(["hasIdArtist-", "sang"])
+
+functions["FUNLYRIC1"] = []
+# FUNMB1GetRealeaseByArtistID
+functions["FUNLYRIC1"].append(["hasIdArtist-"])
+functions["FUNLYRIC1"].append(["hasIdArtist-", "released", "hasIdRelease"])
+functions["FUNLYRIC1"].append(["hasIdArtist-", "released", "inLanguage"])
+# FUNLYRIC1GetLyricsInfoByArtistTrackName
+functions["FUNLYRIC1"].append(["hasLyrics"])
+functions["FUNLYRIC1"].append(["hasLyrics", "describes-"])
+# FUNMB1GetArtistInfoByName
+functions["FUNLYRIC1"].append(["hasIdArtist"])
+
+functions["FUNLF1"] = []
+# FUNLF1GetReleaseInfoByName
+functions["FUNLF1"].append(["released-"])
+functions["FUNLF1"].append(["describes-"])
+functions["FUNLF1"].append(["happenedOnDate"])
+# FUNLF1GetTrackInfoById
+functions["FUNLF1"].append(["hasIdTrack-"])
+functions["FUNLF1"].append(["hasIdTrack-", "isMemberOf"])
+functions["FUNLF1"].append(["hasIdTrack-", "isMemberOf", "hasIdRelease"])
+functions["FUNLF1"].append(["hasIdTrack-", "describes-"])
+functions["FUNLF1"].append(["hasIdTrack-", "hasDuration"])
+functions["FUNLF1"].append(["hasIdTrack-", "sang-"])
+functions["FUNLF1"].append(["hasIdTrack-", "sang-", "hasIdArtist"])
+# FUNLF1GetArtistInfoByName
+functions["FUNLF1"].append(["hasIdArtist"])
+functions["FUNLF1"].append(["describes-"])
+# FUNLF1GetReleaseInfoByID
+functions["FUNLF1"].append(["hasIdRelease-"])
+functions["FUNLF1"].append(["hasIdRelease-", "released-"])
+functions["FUNLF1"].append(["hasIdRelease-", "describes-"])
+functions["FUNLF1"].append(["hasIdRelease-", "happenedOnDate"])
+# FUNLF1GetTrackInfoByName
+# functions["FUNLF1"].append(["sang-"])
+functions["FUNLF1"].append(["describes-"])
+# FUNF1GetArtistInfoByID
+functions["FUNLF1"].append(["hasIdArtist-"])
+functions["FUNLF1"].append(["describes-"])
 
 # Make each function unique
 # print("Number functions:", len(functions))
-f_temp = []
-for f in functions:
-    if f not in f_temp:
-        f_temp.append(f)
-functions = f_temp
+for key in functions:
+    f_temp = []
+    for f in functions[key]:
+        if f not in f_temp:
+            f_temp.append(f)
+    functions[key] = f_temp
 
-for i in range(len(functions)):
-    functions[i] = MultipleInputFunction(functions[i], "f" + str(i), 1)
+for key in functions:
+    for i in range(len(functions[key])):
+        functions[key][i] = MultipleInputFunction(functions[key][i],
+                                                  "f" + str(i), 1)
 
 # Multiple Input functions
-if FUNABE:
-    functions.append(MultipleInputFunction(["wrote", "hasISBN"], "f", 2))
-    functions.append(MultipleInputFunction(["wrote", "published"], "f", 2))
-if FUNLF1:
-    # functions.append(MultipleInputFunction(["released", "hasIdRelease"],
-    #                                        "f", 2))
-    functions.append(MultipleInputFunction(["released", "describes-"],
-                                           "f", 2))
-    functions.append(MultipleInputFunction(["released", "happenedOnDate"],
-                                           "f", 2))
-    functions.append(MultipleInputFunction(["sang", "hasIdTrack"],
-                                           "f", 2))
-    functions.append(MultipleInputFunction(["sang", "hasDuration"],
-                                           "f", 2))
-    functions.append(MultipleInputFunction(["sang", "isMemberOf"],
-                                           "f", 2))
-    functions.append(MultipleInputFunction(["sang", "isMemberOf", "hasIdAlbum"],
-                                           "f", 2))
-    functions.append(MultipleInputFunction(["sang", "describes-"],
-                                           "f", 2))
-    functions.append(MultipleInputFunction(["sang-", "hasIdArtist"],
-                                           "f", 2))
+# functions["FUNABE"].append(MultipleInputFunction(["wrote", "hasISBN"], "f", 2))
+# functions["FUNABE"].append(MultipleInputFunction(["wrote", "published"], "f",
+#                                                  2))
+# functions.append(MultipleInputFunction(["released", "hasIdRelease"],
+#                                        "f", 2))
+# functions["FUNLF1"].append(MultipleInputFunction(["released", "describes-"],
+#                                                  "f", 2))
+# functions["FUNLF1"].append(MultipleInputFunction(["released", "happenedOnDate"],
+#                                                  "f", 2))
+# functions["FUNLF1"].append(MultipleInputFunction(["sang", "hasIdTrack"],
+#                                                  "f", 2))
+# functions["FUNLF1"].append(MultipleInputFunction(["sang", "hasDuration"],
+#                                                  "f", 2))
+# functions["FUNLF1"].append(MultipleInputFunction(["sang", "isMemberOf"],
+#                                                  "f", 2))
+# functions["FUNLF1"].append(MultipleInputFunction(["sang", "isMemberOf",
+#                                                   "hasIdAlbum"],
+#                                                  "f", 2))
+# functions["FUNLF1"].append(MultipleInputFunction(["sang", "describes-"],
+#                                                  "f", 2))
+# functions["FUNLF1"].append(MultipleInputFunction(["sang-", "hasIdArtist"],
+#                                            "f", 2))
 
-print("Number functions:", len(functions))
-
-for f in functions:
-    print(f)
-
-i_grammar = FunctionIndexedGrammar(functions, [[""]])
-
-terminals = i_grammar.get_terminals()
-terminals.remove("epsilon")
-terminals.remove("end")
-terminals.remove("query")
-terminals = list(filter(lambda x: "_IN" not in x, terminals))
 
 
 def remove_minus(rel):
@@ -256,31 +244,71 @@ def remove_minus(rel):
         return rel
 
 
-terminals = list(set(map(lambda x: remove_minus(x), terminals)))
+terminals = dict()
+for key in functions:
+    i_grammar = FunctionIndexedGrammar(functions[key], [[""]], palindrome=False)
 
-terminals = terminals + list(map(lambda x: x + "m", terminals))
+    terminals[key] = i_grammar.get_terminals()
+    terminals[key].remove("epsilon")
+    terminals[key].remove("end")
+    terminals[key].remove("query")
+    terminals[key] = list(filter(lambda x: "_IN" not in x, terminals[key]))
 
-n_reachable = 0
 
-current_time = time.time()
+    terminals[key] = list(set(map(lambda x: remove_minus(x), terminals[key])))
+    terminals[key] = terminals[key] + \
+        list(map(lambda x: x + "m", terminals[key]))
 
-for terminal in terminals:
-    # i_grammar.update([[terminal]])
-    i_grammar = FunctionIndexedGrammar(functions, [[terminal]])
-    if i_grammar.is_empty():
-        print(terminal, "Cannot be reached")
-    else:
-        print(terminal, "Can be reached")
-        n_reachable += 1
-        with open('prolog_web_services/' + terminal + '.pl', "w") as f:
-            f.write(i_grammar.get_prolog_rules(3))
-    sys.stdout.flush()
+for key in functions:
+    reachable = set()
 
-if n_reachable == 0:
-    print("No terminal was reachable")
-else:
-    print(str(n_reachable * 100.0 / float(len(terminals))) +
-          "% terminals reachable")
+    # With FSM
+    current_time = time.time()
+    functions_single = list(set(filter(lambda x: x.n_inputs == 1,
+                                      functions[key])))
+    new_function = "|".join(["(" +
+                             ",".join(function.to_list("m")) +
+                             ")" for function in functions_single])
+    regex_function = RegexTree(Node(new_function))
+    fsm = regex_function.to_fsm()
+    fsm.close()
+    n_reachable = 0
+    for terminal in terminals[key]:
+        pfsm = fsm.get_palindrome_fsm(terminal)
+        if not pfsm.is_empty():
+            n_reachable += 1
 
-delta_t = time.time() - current_time
-print("Elapsed time", delta_t)
+    print("With FSM")
+    print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
+                "% terminals reachable")
+    delta_t = time.time() - current_time
+    print("Elapsed time", delta_t)
+
+    for palindrome in [True, False]:
+        print(key, "with palindrome =", palindrome)
+        n_reachable = 0
+
+        current_time = time.time()
+
+        for terminal in terminals[key]:
+            i_grammar = FunctionIndexedGrammar(functions[key], [[terminal]],
+                                               palindrome=palindrome)
+            if i_grammar.is_empty():
+                if not palindrome and terminal in reachable:
+                    print(terminal, "was reachable")
+                pass
+            else:
+                # print(terminal, "Can be reached")
+                n_reachable += 1
+                if not palindrome and terminal not in reachable:
+                    print(terminal, "was not reachable")
+                reachable.add(terminal)
+                #with open('prolog_web_services/' + terminal + '.pl', "w") as f:
+                #    f.write(i_grammar.get_prolog_rules(3))
+            sys.stdout.flush()
+
+        print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
+                "% terminals reachable")
+
+        delta_t = time.time() - current_time
+        print("Elapsed time", delta_t)

@@ -5,6 +5,9 @@ from rules import Rules
 from regex_tree import RegexTree
 from node import Node
 from production_rule import ProductionRule
+from duplication_rule import DuplicationRule
+from function import Function
+from multiple_input_function import MultipleInputFunction
 
 
 class FunctionIndexedGrammar(IndexedGrammar):
@@ -12,14 +15,7 @@ class FunctionIndexedGrammar(IndexedGrammar):
     Represents a grammar generated from functions as presented in our paper
     """
 
-    def __init__(self, functions, query, optim=7, empty=False, eq_rules=[]):
-        """__init__
-        Initializes the indexed grammar from a set of functions
-        :param functions: a list of Functions
-        :param query: the query (one terminal for now)
-        :param all_relations: all terminals used (with - also)
-        """
-        # Initial rules
+    def __get_initial_rules(self, query):
         initial_rules = []
         self.init_counter = -1
         initial_rules.append(ProductionRule("S",
@@ -46,6 +42,63 @@ class FunctionIndexedGrammar(IndexedGrammar):
                 query[j][0]))
         initial_rules.append(ConsommationRule("end", "C", "T"))
         initial_rules.append(EndRule("T", "epsilon"))
+        return initial_rules
+
+    def __get_initial_palindrom_rules(self, query):
+        initial_rules = []
+        self.init_counter = -1
+        initial_rules.append(ProductionRule("S",
+                                            "Cinitquery",
+                                            "end"))
+        initial_rules.append(ProductionRule("Cinitquery",
+                                            "Cforward",
+                                            "query"))
+        for j in range(len(query)):
+            self.init_counter += 1
+            initial_rules.append(ConsommationRule(
+                "query",
+                "Cforward",
+                "Cinit" + str(self.init_counter)))
+            for i in range(len(query[j]) - 1):
+                initial_rules.append(ProductionRule(
+                    "Cinit" + str(self.init_counter),
+                    "Cinit" + str(self.init_counter + 1),
+                    query[j][len(query[j]) - i - 1]))
+                self.init_counter += 1
+            initial_rules.append(ProductionRule(
+                "Cinit" + str(self.init_counter),
+                "Cforward",
+                query[j][0]))
+        initial_rules.append(ConsommationRule("end", "Cbackward", "T"))
+        initial_rules.append(DuplicationRule("Cforward", "Cbackward", "T"))
+        initial_rules.append(EndRule("T", "epsilon"))
+        return initial_rules
+
+    def __get_sub_functions(self, functions):
+        res = []
+        for function in functions:
+            if type(function) == Function or \
+                    type(function) == MultipleInputFunction:
+                res += function.get_sub_functions()
+        return res
+
+    def __init__(self,
+                 functions,
+                 query,
+                 optim=7, empty=False, eq_rules=[], palindrome=False):
+        """__init__
+        Initializes the indexed grammar from a set of functions
+        :param functions: a list of Functions
+        :param query: the query (one terminal for now)
+        :param all_relations: all terminals used (with - also)
+        """
+        # functions += self.__get_sub_functions(functions)
+        functions = list(set(functions))
+        # Initial rules
+        if palindrome:
+            initial_rules = self.__get_initial_palindrom_rules(query)
+        else:
+            initial_rules = self.__get_initial_rules(query)
         # Rules from functions
         f_rules = []
         if len(eq_rules) != 0:
@@ -66,7 +119,10 @@ class FunctionIndexedGrammar(IndexedGrammar):
         counter = 0
         self.functions = functions
         for f in functions:
-            temp_rule = f.generate_reduced_rules(counter, empty)
+            if palindrome:
+                temp_rule = f.generate_palindrome_rules(counter)
+            else:
+                temp_rule = f.generate_reduced_rules(counter, empty)
             counter = temp_rule[1]
             f_rules += temp_rule[0]
         rules = Rules(f_rules + initial_rules, optim=optim)

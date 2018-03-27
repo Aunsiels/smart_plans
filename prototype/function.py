@@ -26,6 +26,19 @@ class Function (object):
         self.minus_relations = [(re.sub("-", "", r), (r.count("-") + 1) % 2)
                                 for r in relations]
 
+    def get_sub_functions(self):
+        res = []
+        for i in range(1, len(self.relations)):
+            f_temp = Function([], self.name + "sub" + str(i))
+            f_temp.relations = self.relations[:i]
+            f_temp.minus_relations = self.minus_relations[:i]
+            f_temp.n_relations = self.n_relations
+            f_temp.part0 = self.part0[:i]
+            f_temp.part1 = self.part1[:i]
+            res.append(f_temp)
+        return res
+
+
     def init_from_string(self, l_string, name):
         """init_from_string
         Initialization if a string description is given
@@ -71,6 +84,7 @@ class Function (object):
             self.minus_relations = []
         self.part0 = [r[0] + 'm' * r[1] for r in self.relations]
         self.part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
+        self.n_inputs = 1
 
     def get_inverse_function(self, symbol="-"):
         """get_inverse_function Get the list representation of the inverse
@@ -90,10 +104,12 @@ class Function (object):
         return self.to_string()
 
     def __eq__(self, other):
-        return self.relations == other.relations
+        return self.relations == other.relations and \
+            self.n_inputs == other.n_inputs
 
     def __neq__(self, other):
-        return self.relations != other.relations
+        return self.relations != other.relations or \
+            self.n_inputs != other.n_inputs
 
     def __hash__(self):
         return hash(frozenset(self.relations))
@@ -300,6 +316,23 @@ class Function (object):
             temp = self.generate_general_reduced_rules(counter, 0, -1)
             rules = rules + temp[0]
             counter = temp[1]
+        return (rules, counter)
+
+    def generate_palindrome_rules(self, counter):
+        rules = []
+        temp = stack(self.part1,
+                     counter,
+                     "Cforward",
+                     "Cforward")
+        counter = temp[1]
+        rules = rules + temp[0]
+        temp = unstack(self.part0,
+                       self.part0,
+                       counter,
+                       "Cbackward",
+                       "Cbackward")
+        counter = temp[1]
+        rules = rules + temp[0]
         return (rules, counter)
 
     def get_all_terminals(self):
