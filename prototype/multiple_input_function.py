@@ -123,7 +123,7 @@ class MultipleInputFunction (Function):
                 counter = temp[1]
         return (rules, counter)
 
-    def generate_palindrome_rules(self, counter):
+    def generate_palindrome_rules(self, counter, susie):
         rules = []
         if self.n_inputs < 2:
             temp = stack(self.part1,
@@ -148,11 +148,14 @@ class MultipleInputFunction (Function):
                          "Cforward")
             counter = temp[1]
             rules = rules + temp[0]
+        last = "Cbackward"
+        if susie:
+            last = "Cend"
         temp = unstack(self.part0,
                        self.part0,
                        counter,
                        "Cbackward",
-                       "Cforward")
+                       last)
         counter = temp[1]
         rules = rules + temp[0]
         return (rules, counter)

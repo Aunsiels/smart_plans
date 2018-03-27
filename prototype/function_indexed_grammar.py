@@ -70,6 +70,7 @@ class FunctionIndexedGrammar(IndexedGrammar):
                 "Cforward",
                 query[j][0]))
         initial_rules.append(ConsommationRule("end", "Cbackward", "T"))
+        initial_rules.append(ConsommationRule("end", "Cend", "T"))
         initial_rules.append(DuplicationRule("Cforward", "Cbackward", "T"))
         initial_rules.append(EndRule("T", "epsilon"))
         return initial_rules
@@ -85,7 +86,8 @@ class FunctionIndexedGrammar(IndexedGrammar):
     def __init__(self,
                  functions,
                  query,
-                 optim=7, empty=False, eq_rules=[], palindrome=False):
+                 optim=7, empty=False, eq_rules=[], palindrome=False,
+                 susie=False):
         """__init__
         Initializes the indexed grammar from a set of functions
         :param functions: a list of Functions
@@ -120,7 +122,7 @@ class FunctionIndexedGrammar(IndexedGrammar):
         self.functions = functions
         for f in functions:
             if palindrome:
-                temp_rule = f.generate_palindrome_rules(counter)
+                temp_rule = f.generate_palindrome_rules(counter, susie)
             else:
                 temp_rule = f.generate_reduced_rules(counter, empty)
             counter = temp_rule[1]

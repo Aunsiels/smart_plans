@@ -22,18 +22,18 @@ functions["FUNLIBTH"].append(["graduatedFroM"])
 functions["FUNLIBTH"].append(["hasGender"])
 functions["FUNLIBTH"].append(["livesIn"])
 # FUNLIBTHGetBookInfoByISBN
-functions["FUNLIBTH"].append(["hasISBN-"])
+# functions["FUNLIBTH"].append(["hasISBN-"])
 functions["FUNLIBTH"].append(["hasISBN-", "isTitledOf"])
 functions["FUNLIBTH"].append(["hasISBN-", "hasIdBook"])
 functions["FUNLIBTH"].append(["hasISBN-", "publishedOnDate"])
-functions["FUNLIBTH"].append(["hasISBN-", "wrote-"])
+# functions["FUNLIBTH"].append(["hasISBN-", "wrote-"])
 functions["FUNLIBTH"].append(["hasISBN-", "wrote-", "hasWonPrize"])
 functions["FUNLIBTH"].append(["hasISBN-", "wrote-", "hasIdAuthor"])
 # FUNLIBTHGetBookInfoByName
 functions["FUNLIBTH"].append(["hasIdBook"])
 functions["FUNLIBTH"].append(["isTitledOf"])
 functions["FUNLIBTH"].append(["publishedOnDate"])
-functions["FUNLIBTH"].append(["wrote-"])
+# functions["FUNLIBTH"].append(["wrote-"])
 functions["FUNLIBTH"].append(["wrote-", "hasIdAuthor"])
 functions["FUNLIBTH"].append(["wrote-", "hasWonPrize"])
 # FUNLIBTHGetAuthorInfoByName
@@ -45,8 +45,8 @@ functions["FUNLIBTH"].append(["hasGender"])
 functions["FUNLIBTH"].append(["isCitizenOf"])
 functions["FUNLIBTH"].append(["hasWonPrize"])
 # FUNLIBTHGetBookInfoByID
-functions["FUNLIBTH"].append(["hasIdBook-"])
-functions["FUNLIBTH"].append(["hasIdBook-", "wrote-"])
+# functions["FUNLIBTH"].append(["hasIdBook-"])
+# functions["FUNLIBTH"].append(["hasIdBook-", "wrote-"])
 functions["FUNLIBTH"].append(["hasIdBook-", "wrote-", "hasWonPrize"])
 functions["FUNLIBTH"].append(["hasIdBook-", "wrote-", "hasIdAuthor"])
 functions["FUNLIBTH"].append(["hasIdBook-", "publishedOnDate"])
@@ -54,7 +54,7 @@ functions["FUNLIBTH"].append(["hasIdBook-", "isTitledOf"])
 
 functions["FUNABE"] = []
 # FUNABEGetBookInfoByISBN
-functions["FUNABE"].append(["hasISBN-"])
+# functions["FUNABE"].append(["hasISBN-"])
 functions["FUNABE"].append(["hasISBN-", "wrote-"])
 functions["FUNABE"].append(["hasISBN-", "published"])
 # FUNABEGetBookInfoByTitle
@@ -63,28 +63,28 @@ functions["FUNABE"].append(["isTitled"])
 functions["FUNABE"].append(["published-"])
 functions["FUNABE"].append(["wrote-"])
 # FUNABEGetBooksByAuthorName
-functions["FUNABE"].append(["wrote"])
+# functions["FUNABE"].append(["wrote"])
 functions["FUNABE"].append(["wrote", "isTitled"])
 functions["FUNABE"].append(["wrote", "published-"])
-functions["FUNABE"].append(["wrote", "wrote-"])
+# functions["FUNABE"].append(["wrote", "wrote-"])
 
 functions["FUNISBN1"] = []
 # FUNISBN1GetBooksByAuthorID
-functions["FUNISBN1"].append(["hasId-"])
-functions["FUNISBN1"].append(["hasId-", "wrote"])
+# functions["FUNISBN1"].append(["hasId-"])
+# functions["FUNISBN1"].append(["hasId-", "wrote"])
 functions["FUNISBN1"].append(["hasId-", "wrote", "hasIdBook"])
 functions["FUNISBN1"].append(["hasId-", "wrote", "isTitled"])
 functions["FUNISBN1"].append(["hasId-", "wrote", "hasISBN"])
 # FUNISBN1GetBooksByName
-functions["FUNISBN1"].append(["isTitled-"])
+# functions["FUNISBN1"].append(["isTitled-"])
 functions["FUNISBN1"].append(["isTitled-", "hasIdBook"])
 functions["FUNISBN1"].append(["isTitled-", "hasISBN"])
-functions["FUNISBN1"].append(["isTitled-", "wrote-"])
+# functions["FUNISBN1"].append(["isTitled-", "wrote-"])
 functions["FUNISBN1"].append(["isTitled-", "wrote-", "hasIdAuthor"])
 
 functions["FUNMB1"] = []
 # FUNMB1GetArtistInfoByID
-functions["FUNMB1"].append(["hasIdArtist-"])
+# functions["FUNMB1"].append(["hasIdArtist-"])
 functions["FUNMB1"].append(["hasIdArtist-", "describes-"])
 functions["FUNMB1"].append(["hasIdArtist-", "rated"])
 functions["FUNMB1"].append(["hasIdArtist-", "diedOnDate"])
@@ -94,50 +94,50 @@ functions["FUNMB1"].append(["hasIdArtist"])
 functions["FUNMB1"].append(["diedOnDate"])
 functions["FUNMB1"].append(["bornOnDate"])
 # FUNMB1setArtistsByRealeaseID
-functions["FUNMB1"].append(["hasIdRelease-"])
+# functions["FUNMB1"].append(["hasIdRelease-"])
 functions["FUNMB1"].append(["hasIdRelease-", "inLanguage"])
 functions["FUNMB1"].append(["hasIdRelease-", "sang-"])
 functions["FUNMB1"].append(["hasIdRelease-", "produced-"])
 functions["FUNMB1"].append(["hasIdRelease-", "lyricsBy"])
 # FUNMB1setCollaboratorInfoById
-functions["FUNMB1"].append(["hasIdArtist-"])
-functions["FUNMB1"].append(["hasIdArtist-", "isMemberOf-"])
+# functions["FUNMB1"].append(["hasIdArtist-"])
+# functions["FUNMB1"].append(["hasIdArtist-", "isMemberOf-"])
 functions["FUNMB1"].append(["hasIdArtist-", "isMemberOf-", "hasIdArtist"])
 # FUNMB1setCollaboratorsByID
-functions["FUNMB1"].append(["hasIdArtist-"])
-functions["FUNMB1"].append(["hasIdArtist-", "isMemberOf"])
+# functions["FUNMB1"].append(["hasIdArtist-"])
+# functions["FUNMB1"].append(["hasIdArtist-", "isMemberOf"])
 functions["FUNMB1"].append(["hasIdArtist-", "isMemberOf", "hasIdCollab"])
 # FUNMB1setRelativesByID
-functions["FUNMB1"].append(["hasIdArtist-"])
-functions["FUNMB1"].append(["hasIdArtist-", "hasSiblings"])
+# functions["FUNMB1"].append(["hasIdArtist-"])
+# functions["FUNMB1"].append(["hasIdArtist-", "hasSiblings"])
 functions["FUNMB1"].append(["hasIdArtist-", "hasSiblings", "hasIdSibling"])
-functions["FUNMB1"].append(["hasIdArtist-", "isMarriedTo"])
+# functions["FUNMB1"].append(["hasIdArtist-", "isMarriedTo"])
 functions["FUNMB1"].append(["hasIdArtist-", "isMarriedTo", "hasIdSpouse"])
-functions["FUNMB1"].append(["hasIdArtist-", "hasChild"])
+# functions["FUNMB1"].append(["hasIdArtist-", "hasChild"])
 functions["FUNMB1"].append(["hasIdArtist-", "hasChild", "hasIdChild"])
 functions["FUNMB1"].append(["hasIdArtist-", "divorcedOn"])
 functions["FUNMB1"].append(["hasIdArtist-", "marriedOn"])
 # FUNMB1setReleaseInfoByID
-functions["FUNMB1"].append(["hasIdRelease-"])
+# functions["FUNMB1"].append(["hasIdRelease-"])
 functions["FUNMB1"].append(["hasIdRelease-", "inLanguage"])
 functions["FUNMB1"].append(["hasIdRelease-", "happenedIn"])
 functions["FUNMB1"].append(["hasIdRelease-", "hasTrackNumber"])
 functions["FUNMB1"].append(["hasIdRelease-", "happenedOnDate"])
 functions["FUNMB1"].append(["hasIdRelease-", "hasDiscNumber"])
 functions["FUNMB1"].append(["hasIdRelease-", "describes-"])
-functions["FUNMB1"].append(["hasIdRelease-", "released-"])
+# functions["FUNMB1"].append(["hasIdRelease-", "released-"])
 functions["FUNMB1"].append(["hasIdRelease-", "released-", "hasIdArtist"])
 # FUNMB1setReleaseInfoByTitle
 functions["FUNMB1"].append(["hasIdRelease"])
 functions["FUNMB1"].append(["inLanguage"])
 functions["FUNMB1"].append(["released-"])
 # FUNMB1setRealeaseByArtistID
-functions["FUNMB1"].append(["hasIdArtist-"])
-functions["FUNMB1"].append(["hasIdArtist-", "released"])
+# functions["FUNMB1"].append(["hasIdArtist-"])
+# functions["FUNMB1"].append(["hasIdArtist-", "released"])
 functions["FUNMB1"].append(["hasIdArtist-", "released", "hasIdRelease"])
 functions["FUNMB1"].append(["hasIdArtist-", "released", "inLanguage"])
 # FUNMB1setTrackInfoByID
-functions["FUNMB1"].append(["hasIdTrack-"])
+# functions["FUNMB1"].append(["hasIdTrack-"])
 functions["FUNMB1"].append(["hasIdTrack-", "hasDuration"])
 functions["FUNMB1"].append(["hasIdTrack-", "sang-"])
 functions["FUNMB1"].append(["hasIdTrack-", "hasValue"])
@@ -149,22 +149,22 @@ functions["FUNMB1"].append(["sang-"])
 functions["FUNMB1"].append(["hasValue"])
 functions["FUNMB1"].append(["hasDuration"])
 # FUNMB1setTracksByReleaseID
-functions["FUNMB1"].append(["hasIdRelease-"])
+# functions["FUNMB1"].append(["hasIdRelease-"])
 functions["FUNMB1"].append(["hasIdRelease-", "inLanguage"])
-functions["FUNMB1"].append(["hasIdRelease-", "isMemberOf-"])
+# functions["FUNMB1"].append(["hasIdRelease-", "isMemberOf-"])
 functions["FUNMB1"].append(["hasIdRelease-", "isMemberOf-", "hasDuration"])
 functions["FUNMB1"].append(["hasIdRelease-", "isMemberOf-", "hasIdTrack"])
 # FUNMB1setTracksByArtistId
-functions["FUNMB1"].append(["hasIdArtist-"])
+# functions["FUNMB1"].append(["hasIdArtist-"])
 functions["FUNMB1"].append(["hasIdArtist-", "sang"])
 
 functions["FUNLYRIC1"] = []
 # FUNMB1GetRealeaseByArtistID
-functions["FUNLYRIC1"].append(["hasIdArtist-"])
+# functions["FUNLYRIC1"].append(["hasIdArtist-"])
 functions["FUNLYRIC1"].append(["hasIdArtist-", "released", "hasIdRelease"])
 functions["FUNLYRIC1"].append(["hasIdArtist-", "released", "inLanguage"])
 # FUNLYRIC1GetLyricsInfoByArtistTrackName
-functions["FUNLYRIC1"].append(["hasLyrics"])
+# functions["FUNLYRIC1"].append(["hasLyrics"])
 functions["FUNLYRIC1"].append(["hasLyrics", "describes-"])
 # FUNMB1GetArtistInfoByName
 functions["FUNLYRIC1"].append(["hasIdArtist"])
@@ -175,23 +175,23 @@ functions["FUNLF1"].append(["released-"])
 functions["FUNLF1"].append(["describes-"])
 functions["FUNLF1"].append(["happenedOnDate"])
 # FUNLF1GetTrackInfoById
-functions["FUNLF1"].append(["hasIdTrack-"])
-functions["FUNLF1"].append(["hasIdTrack-", "isMemberOf"])
+# functions["FUNLF1"].append(["hasIdTrack-"])
+# functions["FUNLF1"].append(["hasIdTrack-", "isMemberOf"])
 functions["FUNLF1"].append(["hasIdTrack-", "isMemberOf", "hasIdRelease"])
 functions["FUNLF1"].append(["hasIdTrack-", "describes-"])
 functions["FUNLF1"].append(["hasIdTrack-", "hasDuration"])
-functions["FUNLF1"].append(["hasIdTrack-", "sang-"])
+# functions["FUNLF1"].append(["hasIdTrack-", "sang-"])
 functions["FUNLF1"].append(["hasIdTrack-", "sang-", "hasIdArtist"])
 # FUNLF1GetArtistInfoByName
 functions["FUNLF1"].append(["hasIdArtist"])
 functions["FUNLF1"].append(["describes-"])
 # FUNLF1GetReleaseInfoByID
-functions["FUNLF1"].append(["hasIdRelease-"])
+# functions["FUNLF1"].append(["hasIdRelease-"])
 functions["FUNLF1"].append(["hasIdRelease-", "released-"])
 functions["FUNLF1"].append(["hasIdRelease-", "describes-"])
 functions["FUNLF1"].append(["hasIdRelease-", "happenedOnDate"])
 # FUNLF1GetTrackInfoByName
-# functions["FUNLF1"].append(["sang-"])
+functions["FUNLF1"].append(["sang-"])
 functions["FUNLF1"].append(["describes-"])
 # FUNF1GetArtistInfoByID
 functions["FUNLF1"].append(["hasIdArtist-"])
@@ -292,7 +292,8 @@ for key in functions:
 
         for terminal in terminals[key]:
             i_grammar = FunctionIndexedGrammar(functions[key], [[terminal]],
-                                               palindrome=palindrome)
+                                               palindrome=palindrome,
+                                               susie=True)
             if i_grammar.is_empty():
                 if not palindrome and terminal in reachable:
                     print(terminal, "was reachable")

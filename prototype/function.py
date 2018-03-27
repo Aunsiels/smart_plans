@@ -318,7 +318,7 @@ class Function (object):
             counter = temp[1]
         return (rules, counter)
 
-    def generate_palindrome_rules(self, counter):
+    def generate_palindrome_rules(self, counter, susie=False):
         rules = []
         temp = stack(self.part1,
                      counter,
@@ -326,11 +326,14 @@ class Function (object):
                      "Cforward")
         counter = temp[1]
         rules = rules + temp[0]
+        last = "Cbackward"
+        if susie:
+            last = "Cend"
         temp = unstack(self.part0,
                        self.part0,
                        counter,
                        "Cbackward",
-                       "Cbackward")
+                       last)
         counter = temp[1]
         rules = rules + temp[0]
         return (rules, counter)
