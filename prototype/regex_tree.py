@@ -514,7 +514,7 @@ class RegexTree(object):
         :return: The FSM corresponding to the current regex
         :rtype: FSM
         """
-        alphabet = self.get_alphabet()
+        alphabet = list(self.get_alphabet())
         alphabet.append("$")  # epsilon symbol
         states = [0]
         initial = 0
