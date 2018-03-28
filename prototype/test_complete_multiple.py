@@ -197,6 +197,16 @@ functions["FUNLF1"].append(["describes-"])
 functions["FUNLF1"].append(["hasIdArtist-"])
 functions["FUNLF1"].append(["describes-"])
 
+functions["Test"] = []
+functions["Test"].append(["b-", "a-", "q"])
+functions["Test"].append(["b", "c"])
+functions["Test"].append(["a"])
+functions["Test"].append(["c-"])
+
+functions["Test2"] = []
+functions["Test2"].append(["a", "b"])
+functions["Test2"].append(["b-"])
+
 # Make each function unique
 # print("Number functions:", len(functions))
 for key in functions:
@@ -262,6 +272,8 @@ for key in functions:
 for key in functions:
     reachable = set()
 
+    print("====", key, "====")
+
     # With FSM
     current_time = time.time()
     functions_single = list(set(filter(lambda x: x.n_inputs == 1,
@@ -277,6 +289,8 @@ for key in functions:
         pfsm = fsm.get_palindrome_fsm(terminal)
         if not pfsm.is_empty():
             n_reachable += 1
+        # else:
+        #     print(terminal, "was not reached")
 
     print("With FSM")
     print(str(n_reachable * 100.0 / float(len(terminals[key]))) +

@@ -116,7 +116,7 @@ class FSM(object):
         """
         res = []
         res.append("#states")
-        for state in self.states:
+        for state in set(self.states):
             res.append(self.__transform_state(state))
         res.append("#initial")
         res.append(self.__transform_state(self.initial))
@@ -311,8 +311,6 @@ class FSM(object):
                             fsm.add_transition(state, s_to, a)
         return fsm
 
-
-
     def get_palindrome_fsm(self, query=""):
         # Not sure it works well with epsilon transitions
         fsm_no_e = self.remove_epsilon_transitions()
@@ -336,6 +334,11 @@ class FSM(object):
                     if q in fsm_no_e.transitions.setdefault(p, dict()) and\
                             query in fsm_no_e.transitions[p][q]:
                         fsm.add_transition(initial, (fsm_no_e.initial, p), "$")
+                for p in fsm_no_e.transitions.setdefault(fsm_no_e.initial,
+                                                         dict()):
+                    if query in fsm_no_e.transitions[fsm_no_e.initial][p]:
+                        fsm.add_transition(initial, (p, q), "$")
+
         for p in fsm_no_e.states:
             for s in fsm_no_e.states:
                 for r in fsm_no_e.transitions.setdefault(p, dict()):
