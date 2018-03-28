@@ -2,6 +2,7 @@ import random
 import string
 import math
 from function import Function
+from horn_rule import HornRule
 
 
 class FunctionGenerator(object):
@@ -45,6 +46,20 @@ class FunctionGenerator(object):
                               for _ in range(size)], function_name)
             functions.append(f_rel)
         return functions
+
+    def generate_horn(self, n_horns, max_size_horn, min_size_horn=1):
+        horns = []
+        for i in range(n_horns):
+            size = random.randint(min_size_horn, max_size_horn)
+            horn_name = "h" + str(i)
+            f_rel = HornRule([random.choice(self.relations) +
+                              ('-' * random.randint(0, 1))
+                              for _ in range(size)],
+                             [random.choice(self.relations) +
+                              ("-" * random.randint(0, 1))],
+                             horn_name)
+            horns.append(f_rel)
+        return horns
 
     def get_random_query(self, functions=[]):
         """get_random_query
