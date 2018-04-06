@@ -274,31 +274,41 @@ for key in functions:
 
     print("====", key, "====")
 
-    # With FSM
-    current_time = time.time()
     functions_single = list(set(filter(lambda x: x.n_inputs == 1,
                                       functions[key])))
     new_function = "|".join(["(" +
                              ",".join(function.to_list("m")) +
                              ")" for function in functions_single])
-    regex_function = RegexTree(Node(new_function))
-    fsm = regex_function.to_fsm()
-    fsm.close()
-    n_reachable = 0
-    for terminal in terminals[key]:
-        pfsm = fsm.get_palindrome_fsm(terminal)
-        if not pfsm.is_empty():
-            n_reachable += 1
-        # else:
-        #     print(terminal, "was not reached")
+    print(len(functions_single), "functions")
+    relations = set()
+    for f in functions_single:
+        relations = relations.union(set(f.get_all_terminals()))
+    print(len(relations), "relations")
 
-    print("With FSM")
-    print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
-                "% terminals reachable")
-    delta_t = time.time() - current_time
-    print("Elapsed time", delta_t)
+    for sub_functions in [True, False]:
+        # With FSM
+        current_time = time.time()
+        regex_function = RegexTree(Node(new_function))
+        fsm = regex_function.to_fsm()
+        fsm.close()
+        n_reachable = 0
+        for terminal in terminals[key]:
+            pfsm = fsm.get_palindrome_fsm(terminal, sub_functions=sub_functions)
+            if not pfsm.is_empty():
+                n_reachable += 1
+            # else:
+            #     print(terminal, "was not reached")
 
-    for palindrome in [True, False]:
+        if sub_functions:
+            print("Pali - with subfunctions")
+        else:
+            print("Pali - no subfunctions")
+        print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
+                    "% terminals reachable")
+        delta_t = (time.time() - current_time) * 1000.0
+        print("Elapsed time", delta_t, 'ms')
+
+    for palindrome in []:
         print(key, "with palindrome =", palindrome)
         n_reachable = 0
 

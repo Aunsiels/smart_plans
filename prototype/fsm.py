@@ -311,7 +311,7 @@ class FSM(object):
                             fsm.add_transition(state, s_to, a)
         return fsm
 
-    def get_palindrome_fsm(self, query=""):
+    def get_palindrome_fsm(self, query="", weak=False, sub_functions=False):
         # Not sure it works well with epsilon transitions
         fsm_no_e = self.remove_epsilon_transitions()
         alphabet = fsm_no_e.alphabet[:]
@@ -326,7 +326,11 @@ class FSM(object):
         #     finals.append((final, fsm_no_e.initial))
         #     finals.append((fsm_no_e.initial, final))
         fsm = FSM(alphabet, states, initial, finals)
-        for q in fsm_no_e.finals:
+        if sub_functions:
+            finals_no_e = fsm_no_e.states
+        else:
+            finals_no_e = fsm_no_e.finals
+        for q in finals_no_e:
             if query == "":
                 fsm.add_transition(initial, (fsm_no_e.initial, q), "$")
             else:
@@ -334,10 +338,11 @@ class FSM(object):
                     if q in fsm_no_e.transitions.setdefault(p, dict()) and\
                             query in fsm_no_e.transitions[p][q]:
                         fsm.add_transition(initial, (fsm_no_e.initial, p), "$")
-                for p in fsm_no_e.transitions.setdefault(fsm_no_e.initial,
-                                                         dict()):
-                    if query in fsm_no_e.transitions[fsm_no_e.initial][p]:
-                        fsm.add_transition(initial, (p, q), "$")
+                if weak:
+                    for p in fsm_no_e.transitions.setdefault(fsm_no_e.initial,
+                                                             dict()):
+                        if query in fsm_no_e.transitions[fsm_no_e.initial][p]:
+                            fsm.add_transition(initial, (p, q), "$")
 
         for p in fsm_no_e.states:
             for s in fsm_no_e.states:
