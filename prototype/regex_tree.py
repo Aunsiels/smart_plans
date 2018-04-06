@@ -19,7 +19,7 @@ class RegexTree(object):
         """post_processing
         Postprocess the tree after it was created
         """
-        new_sons: List['RegexTree'] = []
+        new_sons = []
         for son in self.sons:
             son.post_processing()
             # remove son if it is a function with no relation
@@ -35,11 +35,11 @@ class RegexTree(object):
                 new_sons.append(son.sons[0])
             else:
                 new_sons.append(son)
-        self.sons: List['RegexTree'] = new_sons
+        self.sons = new_sons
 
     def __init__(self,
                  head: Node,
-                 sons: List['RegexTree'] = None, name: str = "regf") -> None:
+                 sons = None, name: str = "regf") -> None:
         """__init__
         Initialize the synthax tree
         :param head: The head of the tree
@@ -56,9 +56,9 @@ class RegexTree(object):
             # If the head is the empty string, we stop
             self.head = Node(Function([]))
             if sons:
-                self.sons: List['RegexTree'] = sons[:]
+                self.sons = sons[:]
             else:
-                self.sons: List['RegexTree'] = []
+                self.sons = []
             self.original_string = ""
         elif head.is_str() and head.get_str() not in ["|", "*", "."]:
             # We have a string representing a regex to parse
@@ -69,9 +69,9 @@ class RegexTree(object):
         else:
             self.head = head
             if sons:
-                self.sons: List['RegexTree'] = sons[:]
+                self.sons = sons[:]
             else:
-                self.sons: List['RegexTree'] = []
+                self.sons = []
             self.original_string = ""
 
     def add_son(self, son: 'RegexTree') -> None:
@@ -98,7 +98,7 @@ class RegexTree(object):
                     the next counter to use
         :rtype: A couple of a list of Reduced rules and an int
         """
-        rules: List[ReducedRule] = []
+        rules = []
         if not self.head.is_str():
             # It means we have a function...
             return utils.unstack(self.head.get_function().part0,
@@ -163,7 +163,7 @@ class RegexTree(object):
                     the next counter to use
         :rtype: A couple of a list of Reduced rules and an int
         """
-        rules: List[ReducedRule] = []
+        rules = []
         # We begin by pushing the end symbol if necessary
         if end:
             rules.append(ProductionRule(first, "Ce" + str(counter), "end"))
@@ -323,7 +323,7 @@ class RegexTree(object):
         """
         # By default the head is a concatenation
         self.head = Node(".")
-        self.sons: List['RegexTree'] = []
+        self.sons = []
         current_node = self
         current_stack = ""
         # In case a name was given
@@ -374,7 +374,7 @@ class RegexTree(object):
         :return: A tuple with rules and the new counter
         :rtype: Tuple[List[ReducedRule], int]
         """
-        rules: List[ReducedRule] = []
+        rules = []
         # We will cut the function into 3 parts and use these parts to generate
         # the rules of the grammar
         cuts = self.get_cuts()
@@ -489,7 +489,7 @@ class RegexTree(object):
             self.head = Node(Function(
                 self.head.get_function().get_inverse_function()))
         else:
-            self.sons: List['RegexTree'] = self.sons[::-1]
+            self.sons = self.sons[::-1]
             for son in self.sons:
                 son.inverse()
 
@@ -502,7 +502,7 @@ class RegexTree(object):
         if self.head.is_function():
             return self.head.get_function().get_all_terminals()
         else:
-            s_res: Set[str] = set()
+            s_res = set()
             for son in self.sons:
                 s_res = s_res.union(son.get_alphabet())
         return list(s_res)
@@ -518,7 +518,7 @@ class RegexTree(object):
         alphabet.append("$")  # epsilon symbol
         states = [0]
         initial = 0
-        finals: List[int] = []
+        finals = []
         fsm = FSM(alphabet, states, initial, finals)
         self.to_fsm_sub((0, []), 1, fsm, True)
         return fsm

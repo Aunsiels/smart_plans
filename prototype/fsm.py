@@ -4,7 +4,7 @@ We represents here a FSM for our regex. It will not be a general one. In \
 """
 
 
-from typing import List, Dict, Any
+from typing import List, Any
 from round_list import RoundList
 from node import Node
 
@@ -29,7 +29,7 @@ class FSM(object):
         :type finals: A list of state names (Any, str, ...)
         """
         if alphabet:
-            self.alphabet = alphabet
+            self.alphabet = list(map(lambda x: x.replace("-", "m"), alphabet))
         else:
             self.alphabet = ["$"]
         if states:
@@ -43,7 +43,7 @@ class FSM(object):
             self.finals = finals
         else:
             self.finals = list()
-        self.transitions: Dict[Any, Dict[Any, List[str]]] = dict()
+        self.transitions = dict()
 
     def add_state(self, state: Any) -> None:
         """add_state
@@ -75,6 +75,7 @@ class FSM(object):
         :param t_by: The symbol of the transition
         :return: Nothing
         """
+        t_by = t_by.replace("-", "m")
         if s_from not in self.states:
             self.states.append(s_from)
         if s_to not in self.states:
@@ -334,6 +335,7 @@ class FSM(object):
             if query == "":
                 fsm.add_transition(initial, (fsm_no_e.initial, q), "$")
             else:
+                # Ends with query
                 for p in fsm_no_e.states:
                     if q in fsm_no_e.transitions.setdefault(p, dict()) and\
                             query in fsm_no_e.transitions[p][q]:
@@ -471,46 +473,46 @@ class FSM(object):
                        rule_left: List[str],
                        rule_right: List[str]) -> bool:
         """apply_rule_sub
-        Make one pass of the Horn rule transformation
+        make one pass of the horn rule transformation
         :param rule_left: left part of the horn rule
         :param rule_right: right part of the horn rule
-        :return: Whether the FSM was modified
-        :rtype: Boolean
+        :return: whether the fsm was modified
+        :rtype: boolean
         """
         # rule_left => rule_right
-        # Keep track of all previous states encountered when a given node was
+        # keep track of all previous states encountered when a given node was
         # reached
-        seen_before: Dict[Any, List[RoundList]] = dict()
-        # Nothing was seen before
+        seen_before = dict()
+        # nothing was seen before
         for state in self.states:
             seen_before[state] = []
-        # A stack of elements to process (DFS)
-        # We use RoundLists which are list which keep track only of the last
+        # a stack of elements to process (dfs)
+        # we use roundlists which are list which keep track only of the last
         # elements inserted
         to_process = [(self.initial, RoundList(len(rule_left)), False)]
-        # Counter to prevent the duplication of nodes
-        # Should be useless for horn rules
+        # counter to prevent the duplication of nodes
+        # should be useless for horn rules
         counter = max(self.states) + 1
-        # Whether there was a modification done
+        # whether there was a modification done
         was_modified = False
         while to_process:
             current = to_process.pop()
             current_node = current[0]
             current_rl = current[1]
             should_be_processed = current[2]
-            # State already reached
+            # state already reached
             if current_rl in seen_before[current_node]:
                 continue
             seen_before[current_node].append(current_rl)
             current_l = current_rl.get()
-            # Should we add a new link?
+            # should we add a new link?
             if rule_left == list(map(lambda x: x[1], current_l)) and\
                     not self.exists_path(current_l[0][0],
                                          current_node,
                                          rule_right) and\
                     should_be_processed:
                 prev_first = current_l[0][0]
-                # Should not be useful for Horn rule. It is here for testing
+                # should not be useful for horn rule. it is here for testing
                 # purposes
                 for i in range(len(rule_right) - 1):
                     self.add_transition(prev_first, counter, rule_right[i])
@@ -519,15 +521,92 @@ class FSM(object):
                     counter += 1
                 self.add_transition(prev_first, current_node, rule_right[-1])
                 was_modified = True
-            # Continue exploration
+            # continue exploration
             if current_node in self.transitions.keys():
                 for s_to in self.transitions[current_node]:
                     for letter in self.transitions[current_node][s_to]:
                         next_rl = current_rl.copy()
-                        # The empty symbols should be ignored
+                        # the empty symbols should be ignored
                         if letter != "$":
                             next_rl.push((current_node, letter))
                             to_process.append((s_to, next_rl, True))
                         if letter == "$":
                             to_process.append((s_to, next_rl, False))
         return was_modified
+
+    def accepts(self, word):
+        if len(word) == 0:
+            return self.initial in self.finals
+        to_process = [self.initial]
+        for rel in word:
+            next_process = set()
+            for x in to_process:
+                for y in self.transitions.setdefault(x, dict()):
+                    if rel in self.transitions[x][y]:
+                        next_process.add(y)
+                        for z in self.__get_reachables(y):
+                            next_process.add(z)
+            to_process = next_process
+        return len(to_process.intersection(set(self.finals))) > 0
+
+    def make_dangie_ready(self):
+        was_modified = True
+        counter = 0
+        while was_modified:
+            print(counter)
+            counter += 1
+            was_modified = self.process_dangie()
+        return self.remove_epsilon_transitions()
+
+    def process_dangie(self) -> bool:
+        # keep track of all previous states encountered when a given node was
+        # reached
+        seen_before = dict()
+        # nothing was seen before
+        for state in self.states:
+            seen_before[state] = []
+        # a stack of elements to process (dfs)
+        # we use roundlists which are list which keep track only of the last
+        # elements inserted
+        to_process = [(self.initial, RoundList(2), False)]
+        # whether there was a modification done
+        was_modified = False
+        while to_process:
+            current = to_process.pop()
+            current_node = current[0]
+            current_rl = current[1]
+            should_be_processed = current[2]
+            # state already reached
+            if current_rl in seen_before[current_node]:
+                continue
+            seen_before[current_node].append(current_rl)
+            current_l = current_rl.get()
+            # should we add a new link?
+            if is_palindrome(current_l) and\
+                    not self.exists_path(current_l[0][0],
+                                         current_node,
+                                         "$") and\
+                    should_be_processed:
+                prev_first = current_l[0][0]
+                # should not be useful for horn rule. it is here for testing
+                # purposes
+                self.add_transition(prev_first, current_node, "$")
+                was_modified = True
+            # continue exploration
+            if current_node in self.transitions.keys():
+                for s_to in self.transitions[current_node]:
+                    for letter in self.transitions[current_node][s_to]:
+                        next_rl = current_rl.copy()
+                        # the empty symbols should be ignored
+                        if letter != "$":
+                            next_rl.push((current_node, letter))
+                            to_process.append((s_to, next_rl, True))
+                        if letter == "$":
+                            to_process.append((s_to, next_rl, False))
+        return was_modified
+
+
+def is_palindrome(l):
+    if len(l) != 2:
+        return False
+    return l[0][1] == l[1][1] + "m" or l[0][1] + "m" == l[1][1]

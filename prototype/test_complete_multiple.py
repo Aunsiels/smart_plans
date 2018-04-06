@@ -273,6 +273,7 @@ for key in functions:
     reachable = set()
 
     print("====", key, "====")
+    print("Number of functions:", len(functions[key]))
 
     functions_single = list(set(filter(lambda x: x.n_inputs == 1,
                                       functions[key])))
@@ -307,6 +308,20 @@ for key in functions:
                     "% terminals reachable")
         delta_t = (time.time() - current_time) * 1000.0
         print("Elapsed time", delta_t, 'ms')
+
+    # print("Dangie - with FSM")
+    # current_time = time.time()
+    # fsm = fsm.make_dangie_ready()
+    # n_reachable = 0
+
+    # for terminal in terminals[key]:
+    #     if fsm.accepts([terminal]):
+    #         n_reachable += 1
+
+    # print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
+    #       "% terminals reachable")
+    # delta_t = time.time() - current_time
+    # print("Elapsed time", delta_t)
 
     for palindrome in []:
         print(key, "with palindrome =", palindrome)
