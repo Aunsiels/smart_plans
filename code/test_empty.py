@@ -9,6 +9,8 @@ from end_rule import EndRule
 from production_rule import ProductionRule
 from duplication_rule import DuplicationRule
 from indexed_grammar import IndexedGrammar
+from function import Function
+from nft import NFT
 
 # Write rules
 
@@ -30,6 +32,42 @@ l_rules.append(EndRule("A0", "b"))
 rules = Rules(l_rules)
 i_grammar = IndexedGrammar(rules)
 assert(not i_grammar.is_empty())
+
+i_grammar_init = i_grammar
+
+print("Create NFT")
+nft = NFT()
+print("Add functions")
+nft.add_function(Function(["b"]))
+print("Generate Grammar")
+i_grammar = nft.intersect_indexed_grammar(i_grammar)
+print(i_grammar.rules.get_length(), "rules")
+# for rule in i_grammar.rules.getRules():
+#     print(rule)
+# for f in i_grammar.rules.getConsommationRules():
+#     print(f)
+#     for rule in i_grammar.rules.getConsommationRules()[f]:
+#         print(rule)
+print("Check emptiness")
+assert(not i_grammar.is_empty())
+
+i_grammar = i_grammar_init
+
+print("Create NFT")
+nft = NFT()
+print("Add functions")
+nft.add_function(Function(["c"]))
+print("Generate Grammar")
+i_grammar = nft.intersect_indexed_grammar(i_grammar)
+print(i_grammar.rules.get_length(), "rules")
+# for rule in i_grammar.rules.getRules():
+#     print(rule)
+# for f in i_grammar.rules.getConsommationRules():
+#     print(f)
+#     for rule in i_grammar.rules.getConsommationRules()[f]:
+#         print(rule)
+print("Check emptiness")
+assert(i_grammar.is_empty())
 
 # Write rules
 
@@ -68,6 +106,19 @@ l_rules.append(EndRule("F1", "b"))
 
 rules = Rules(l_rules)
 i_grammar = IndexedGrammar(rules)
+assert(not i_grammar.is_empty())
+
+print("Create NFT")
+nft = NFT()
+print("Add functions")
+nft.add_function(Function(["c", "c-"]))
+nft.add_function(Function(["b"]))
+print("Generate Grammar")
+i_grammar = nft.intersect_indexed_grammar(i_grammar)
+print(i_grammar.rules.get_length(), "rules")
+# for rule in i_grammar.rules.getRules():
+#     print(rule)
+print("Check emptiness")
 assert(not i_grammar.is_empty())
 
 # Write rules

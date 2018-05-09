@@ -35,7 +35,7 @@ class DuplicationRule(ReducedRule):
 
     def getNonTerminals(self):
         """getNonTerminals Gives the set of non-terminals used in this rule"""
-        return {self.leftTerm, self.rightTerms[0], self.rightTerms[1]}
+        return [self.leftTerm, self.rightTerms[0], self.rightTerms[1]]
 
     def getTerminals(self):
         """getTerminals Gets the terminals used in the rule"""
@@ -46,3 +46,7 @@ class DuplicationRule(ReducedRule):
         sigmas"""
         return self.leftTerm + " -> " + self.rightTerms[0] + \
             " " + self.rightTerms[1]
+
+    def __eq__(self, other):
+        return other.isDuplication() and other.getLeftTerm() == \
+            self.getLeftTerm() and other.getRightTerms() == self.getRightTerms()

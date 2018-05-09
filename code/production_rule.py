@@ -37,7 +37,7 @@ class ProductionRule(ReducedRule):
 
     def getNonTerminals(self):
         """getNonTerminals Gets the non-terminals used in the rule"""
-        return {self.leftTerm, self.rightTerm}
+        return [self.leftTerm, self.rightTerm]
 
     def getTerminals(self):
         """getTerminals Gets the terminals used in the rule"""
@@ -47,3 +47,8 @@ class ProductionRule(ReducedRule):
         """__repr__ Gets the string representation of the rule"""
         return self.leftTerm + " -> " + \
             self.rightTerm + "[ " + self.production + " ]"
+
+    def __eq__(self, other):
+        return other.isProduction() and other.getLeftTerm() == \
+            self.getLeftTerm() and other.getRightTerm() == self.getRightTerm()\
+            and other.getProduction() == self.getProduction()

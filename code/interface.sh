@@ -1,4 +1,4 @@
 #!/bin/bash
 
 mkdir -p tmp
-python3 interface.py
+python3.5 interface.py

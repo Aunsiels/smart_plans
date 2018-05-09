@@ -550,13 +550,80 @@ class FSM(object):
         return len(to_process.intersection(set(self.finals))) > 0
 
     def make_dangie_ready(self):
-        was_modified = True
-        counter = 0
-        while was_modified:
-            print(counter)
-            counter += 1
-            was_modified = self.process_dangie()
-        return self.remove_epsilon_transitions()
+        # was_modified = True
+        # counter = 0
+        # while was_modified:
+        #     print(counter)
+        #     counter += 1
+        #     was_modified = self.process_dangie()
+        # return self.remove_epsilon_transitions()
+        in_edges = dict()
+        out_edges = dict()
+        processed = set()
+        to_process = []
+        self.close()
+        fsm = self.remove_epsilon_transitions()
+        finals = set(fsm.finals[:])
+        alphabet = set(fsm.alphabet[:])
+        for state in fsm.states:
+            in_edges[state] = dict()
+            out_edges[state] = dict()
+            for a in fsm.alphabet:
+                in_edges[state][a] = []
+                out_edges[state][a] = []
+        for first in fsm.transitions:
+            for second in fsm.transitions[first]:
+                for a in fsm.transitions[first][second]:
+                    opposite = get_opposite(a)
+                    if first not in in_edges[second][a]:
+                        in_edges[second][a].append(first)
+                    if second not in out_edges[first][a]:
+                        out_edges[first][a].append(second)
+                    if opposite not in alphabet:
+                        continue
+                    for state in in_edges[first][opposite]:
+                        if (state, second) not in processed:
+                            to_process.append((state, second))
+                            processed.add((state, second))
+                    for state in out_edges[second][opposite]:
+                        if (first, state) not in processed:
+                            to_process.append((first, state))
+                            processed.add((first, state))
+        while to_process:
+            current = to_process.pop()
+            first = current[0]
+            second = current[1]
+            if first == second:
+                continue
+            if second in finals:
+                finals.add(first)
+            for a in out_edges[second]:
+                for state in out_edges[second][a]:
+                    if state not in out_edges[first][a]:
+                        out_edges[first][a].append(state)
+                    if first not in in_edges[state][a]:
+                        in_edges[state][a].append(first)
+                    opposite = get_opposite(a)
+                    if opposite in alphabet:
+                        for begin in in_edges[first][opposite]:
+                            if (begin, state) not in processed:
+                                to_process.append((begin, state))
+                                processed.add((begin, state))
+                        for end in out_edges[state][opposite]:
+                            if (first, end) not in processed:
+                                to_process.append((first, end))
+                                processed.add((first, end))
+        alphabet = list(alphabet)
+        states = fsm.states[:]
+        initial = fsm.initial
+        finals = list(finals)
+        new_fsm = FSM(alphabet, states, initial, finals)
+        for begin in out_edges:
+            for a in out_edges[begin]:
+                for end in out_edges[begin][a]:
+                    new_fsm.add_transition(begin, end, a)
+        return new_fsm
+
 
     def process_dangie(self) -> bool:
         # keep track of all previous states encountered when a given node was
@@ -606,7 +673,24 @@ class FSM(object):
         return was_modified
 
 
+def get_opposite(r):
+    if r[-1] == "m":
+        return r[:-1]
+    else:
+        return r + "m"
+
+
+def are_opposite(r0, r1):
+    return r0 == r1 + "m" or r1 == r0 + "m"
+
+
 def is_palindrome(l):
+    left = l[0][1]
+    right = l[1][1]
     if len(l) != 2:
         return False
-    return l[0][1] == l[1][1] + "m" or l[0][1] + "m" == l[1][1]
+    if "_IN" in left:
+        return False
+    if "_IN" in right:
+        right = right.replace("_IN", "_OUT")
+    return left == right + "m" or left + "m" == right

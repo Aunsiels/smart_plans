@@ -31,7 +31,7 @@ class EndRule(ReducedRule):
 
     def getNonTerminals(self):
         """getTerminals Gets the non-terminals used"""
-        return {self.leftTerm}
+        return [self.leftTerm]
 
     def getTerminals(self):
         """getTerminals Gets the terminals used"""
@@ -40,3 +40,7 @@ class EndRule(ReducedRule):
     def __repr__(self):
         """__repr__ Gets the string representation of the rule"""
         return self.leftTerm + " -> " + self.rightTerm
+
+    def __eq__(self, other):
+        return other.isEndRule() and other.getLeftTerm() == self.getLeftTerm()\
+            and other.getRightTerm() == self.getRightTerm()

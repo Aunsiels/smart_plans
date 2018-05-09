@@ -112,10 +112,13 @@ class IndexedGrammar(object):
             if debug:
                 print("Stage ", count, " number marked : ",
                       length_marked(self.marked))
-                print_marked(self.marked)
+                # print_marked(self.marked)
             count += 1
             was_modified = False
             for rule in self.rules.getRules():
+                if debug:
+                    print("Number marked : ",
+                          length_marked(self.marked))
                 # If we have a duplication rule, we mark all combinations of
                 # the sets marked on the right side for the symbole on the left
                 # side
@@ -141,7 +144,7 @@ class IndexedGrammar(object):
         if debug:
             print("Stage ", count, " number marked : ",
                   length_marked(self.marked))
-            print_marked(self.marked)
+            # print_marked(self.marked)
             print("number marked : ", length_marked(self.marked))
             print("EMPTY")
         return True

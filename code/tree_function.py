@@ -220,7 +220,7 @@ class TreeFunction(object):
                                          first_nt))
         # Stacking
         for i in range(len(self.others)):
-            temp = stack(["end"] + self.others[i].part0 + also,
+            temp = stack(["end"] + self.others[i].part0[::-1] + also,
                          counter,
                          "CD" + str(initial_counter + i),
                          "C")
@@ -254,6 +254,7 @@ class TreeFunction(object):
                     else:
                         new_others.append(([x + "-" for x in other[end-1::-1]] +
                                            other1[last:])[::-1])
+                # TODO Something is not clear with those FakeTreeFunctions
                 ft = FakeTreeFunction([x + "-" for x in other[:end]]
                                       + self.head.to_list(),
                                       new_others)

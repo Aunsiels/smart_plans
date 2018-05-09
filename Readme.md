@@ -2,4 +2,4 @@
 
 ## Content
 
-The paper and a small prototype which works with python3 and prolog.
+Source code of smart plan work which works with python3 and prolog.

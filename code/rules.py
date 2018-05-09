@@ -35,10 +35,19 @@ class Rules(object):
         terminals = set()
         for temp_rule in self.consommationRules.values():
             for rule in temp_rule:
-                terminals = terminals.union(rule.getNonTerminals())
+                terminals = terminals.union(set(rule.getNonTerminals()))
         for rule in self.rules:
-            terminals = terminals.union(rule.getNonTerminals())
+            terminals = terminals.union(set(rule.getNonTerminals()))
         return list(terminals)
+
+    def getNonTerminalsList(self):
+        terminals = list()
+        for temp_rule in self.consommationRules.values():
+            for rule in temp_rule:
+                terminals = terminals + rule.getNonTerminals()
+        for rule in self.rules:
+            terminals = terminals + rule.getNonTerminals()
+        return terminals
 
     def remove_production(self, left, right, prod):
         """remove_production
@@ -97,10 +106,12 @@ class Rules(object):
             # We separate consumption rule from other
             if rule.isConsommation():
                 temp = self.consommationRules.setdefault(rule.getF(), [])
-                temp.append(rule)
+                if rule not in temp:
+                    temp.append(rule)
                 self.consommationRules[rule.getF()] = temp
             else:
-                self.rules.append(rule)
+                if rule not in self.rules:
+                    self.rules.append(rule)
         ro = RuleOrdering(self.rules, self.consommationRules)
         if optim == 1:
             self.rules = ro.reverse()

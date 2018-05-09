@@ -39,9 +39,18 @@ for j in range(5, 70, 5):
         regex_function = RegexTree(Node(new_function))
         fsm = regex_function.to_fsm()
         fsm.close()
-        pfsm = fsm.get_palindrome_fsm(query)
-        fsm_res = pfsm.is_empty()
-        fsm_time = time.time() - current_time
+
+        # === NOT WEAK ===
+
+        pfsm = fsm.get_palindrome_fsm(query, weak=False)
+        fsm_not_weak_res = pfsm.is_empty()
+        fsm_not_weak_time = time.time() - current_time
+
+        # === WEAK ===
+
+        pfsm = fsm.get_palindrome_fsm(query, weak=True)
+        fsm_weak_res = pfsm.is_empty()
+        fsm_weak_time = time.time() - current_time
 
         # ==== SUSIE ====
 
@@ -52,10 +61,12 @@ for j in range(5, 70, 5):
         susie_res = i_grammar.is_empty()
         susie_time = time.time() - current_time
 
-        with open("pali_vs_susie_all.csv", "a") as f:
-            f.write(str(fsm_res) + "," +
+        with open("pali_vs_susie_weak.csv", "a") as f:
+            f.write(str(fsm_not_weak_res) + "," +
+                    str(fsm_weak_res) + "," +
                     str(susie_res) + "," +
-                    str(fsm_time) + "," +
+                    str(fsm_not_weak_time) + "," +
+                    str(fsm_weak_time) + "," +
                     str(susie_time) + "," +
                     str(n_relations) + "," +
                     str(size_max) + "," +

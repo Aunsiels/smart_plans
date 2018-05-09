@@ -7,6 +7,7 @@ from function_indexed_grammar import FunctionIndexedGrammar
 from multiple_input_function import MultipleInputFunction
 from regex_tree import RegexTree
 from node import Node
+from utils import dangie_fsm
 import sys
 import time
 
@@ -207,6 +208,10 @@ functions["Test2"] = []
 functions["Test2"].append(["a", "b"])
 functions["Test2"].append(["b-"])
 
+functions["Test3"] = []
+functions["Test3"].append(["a"])
+functions["Test3"].append(["b-", "a-", "q"])
+
 # Make each function unique
 # print("Number functions:", len(functions))
 for key in functions:
@@ -222,28 +227,32 @@ for key in functions:
                                                   "f" + str(i), 1)
 
 # Multiple Input functions
-# functions["FUNABE"].append(MultipleInputFunction(["wrote", "hasISBN"], "f", 2))
-# functions["FUNABE"].append(MultipleInputFunction(["wrote", "published"], "f",
-#                                                  2))
-# functions.append(MultipleInputFunction(["released", "hasIdRelease"],
-#                                        "f", 2))
-# functions["FUNLF1"].append(MultipleInputFunction(["released", "describes-"],
-#                                                  "f", 2))
-# functions["FUNLF1"].append(MultipleInputFunction(["released", "happenedOnDate"],
-#                                                  "f", 2))
-# functions["FUNLF1"].append(MultipleInputFunction(["sang", "hasIdTrack"],
-#                                                  "f", 2))
-# functions["FUNLF1"].append(MultipleInputFunction(["sang", "hasDuration"],
-#                                                  "f", 2))
-# functions["FUNLF1"].append(MultipleInputFunction(["sang", "isMemberOf"],
-#                                                  "f", 2))
-# functions["FUNLF1"].append(MultipleInputFunction(["sang", "isMemberOf",
-#                                                   "hasIdAlbum"],
-#                                                  "f", 2))
-# functions["FUNLF1"].append(MultipleInputFunction(["sang", "describes-"],
-#                                                  "f", 2))
-# functions["FUNLF1"].append(MultipleInputFunction(["sang-", "hasIdArtist"],
-#                                            "f", 2))
+functions["FUNABE"].append(MultipleInputFunction(["wrote", "hasISBN"], "f", 2))
+functions["FUNABE"].append(MultipleInputFunction(["wrote", "published"], "f",
+                                                 2))
+functions["FUNLF1"].append(MultipleInputFunction(["released", "hasIdRelease"],
+                                                  "f", 2))
+functions["FUNLF1"].append(MultipleInputFunction(["released", "describes-"],
+                                                 "f", 2))
+functions["FUNLF1"].append(MultipleInputFunction(["released", "happenedOnDate"],
+                                                 "f", 2))
+functions["FUNLF1"].append(MultipleInputFunction(["sang", "hasIdTrack"],
+                                                 "f", 2))
+functions["FUNLF1"].append(MultipleInputFunction(["sang", "hasDuration"],
+                                                 "f", 2))
+functions["FUNLF1"].append(MultipleInputFunction(["sang", "isMemberOf"],
+                                                 "f", 2))
+functions["FUNLF1"].append(MultipleInputFunction(["sang", "isMemberOf",
+                                                  "hasIdAlbuM"],
+                                                 "f", 2))
+functions["FUNLF1"].append(MultipleInputFunction(["sang", "describes-"],
+                                                 "f", 2))
+functions["FUNLF1"].append(MultipleInputFunction(["sang-", "hasIdArtist"],
+                                                 "f", 2))
+functions["Test3"].append(MultipleInputFunction(["a-"],
+                                                 "f", 2))
+functions["Test3"].append(MultipleInputFunction(["a", "b"],
+                                                 "f", 2))
 
 
 
@@ -281,10 +290,17 @@ for key in functions:
                              ",".join(function.to_list("m")) +
                              ")" for function in functions_single])
     print(len(functions_single), "functions")
-    relations = set()
-    for f in functions_single:
-        relations = relations.union(set(f.get_all_terminals()))
-    print(len(relations), "relations")
+    print(len(terminals[key]), "relations")
+
+    n_reachable = 0
+    for terminal in terminals[key]:
+        for f in functions_single:
+            if f.to_list("m")[0] == terminal:
+                n_reachable += 1
+                break
+    print("Naturally reachable with subfunctions")
+    print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
+                "% terminals reachable")
 
     for sub_functions in [True, False]:
         # With FSM
@@ -309,21 +325,28 @@ for key in functions:
         delta_t = (time.time() - current_time) * 1000.0
         print("Elapsed time", delta_t, 'ms')
 
-    # print("Dangie - with FSM")
-    # current_time = time.time()
-    # fsm = fsm.make_dangie_ready()
-    # n_reachable = 0
+    print("Dangie - with FSM")
+    current_time = time.time()
+    fsm = dangie_fsm(functions[key])
+    n_reachable = 0
 
-    # for terminal in terminals[key]:
-    #     if fsm.accepts([terminal]):
-    #         n_reachable += 1
+    for terminal in terminals[key]:
+        if terminal[-1] == "m":
+            terminal = terminal[:-1] + "_OUT" + "m"
+        else:
+            terminal = terminal + "_OUT"
+        if fsm.accepts([terminal]):
+            n_reachable += 1
+            reachable.add(terminal)
+        else:
+            print(terminal)
 
-    # print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
-    #       "% terminals reachable")
-    # delta_t = time.time() - current_time
-    # print("Elapsed time", delta_t)
+    print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
+          "% terminals reachable")
+    delta_t = time.time() - current_time
+    print("Elapsed time", delta_t)
 
-    for palindrome in []:
+    for palindrome in [True, False]:
         print(key, "with palindrome =", palindrome)
         n_reachable = 0
 
@@ -333,10 +356,11 @@ for key in functions:
             i_grammar = FunctionIndexedGrammar(functions[key], [[terminal]],
                                                palindrome=palindrome,
                                                susie=True)
+            print(i_grammar.rules.get_length(), "rules")
             if i_grammar.is_empty():
                 if not palindrome and terminal in reachable:
                     print(terminal, "was reachable")
-                pass
+                print(terminal)
             else:
                 # print(terminal, "Can be reached")
                 n_reachable += 1
