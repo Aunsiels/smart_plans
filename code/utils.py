@@ -99,11 +99,16 @@ def dangie_fsm(functions):
     fsm = fsm.make_dangie_ready()
     return fsm
 
-def inverse(relation):
-    if relation[-1] == "m":
+def inverse(relation, op="m"):
+    if relation[-1] == op:
         return relation[:-1]
     else:
-        return relation + "m"
+        return relation + op
+
+def inverse_path(path):
+    if type(path) == str:
+        path = path.split(" ")
+    return " ".join(map(lambda x: inverse(x, "-"), path))
 
 def get_ISWC_grammar(relations, query):
     rules = []
@@ -257,3 +262,95 @@ def rename_non_terminals(i_grammar):
         for rule in temp_rule:
             new_rules.append(get_translated_rule(rule, translator))
     return IndexedGrammar(Rules(new_rules))
+
+
+def make_DFS(functions, relation, weak=True):
+    from state import State
+    from backward_state import BackwardState
+    from forward_state import ForwardState
+    from backward_path import BackwardPath
+    # Compute the maximum size
+    maxi = -1
+    for f in functions:
+        maxi = max(maxi, f.n_relations())
+    # Create initial states
+    states = []
+    visited = set()
+    for f in functions:
+        f_l = f.to_list()
+        # Weak
+        if weak:
+            if f_l[0] == relation:
+                states.append((State(ForwardState(f_l[1:]),
+                                     BackwardState([])), []))
+                visited.add(states[-1][0])
+                # Initial Kinks starts
+                for i in range(2, len(f_l)):
+                    f_left = f_l[:i]
+                    f_right = f_l[i:]
+                    f_left_str = " ".join(f_left[1:])
+                    f_right_str = " ".join(map(lambda x: inverse(x, "-"),
+                                               f_right[::-1]))
+                    if starts_with(f_left_str, f_right_str):
+                        states.append((State(ForwardState(f_left_str),
+                                             BackwardState([
+                                             BackwardPath(f_right_str, "b")
+                                             ])), []))
+                        visited.add(states[-1][0])
+
+        if f_l[-1] == relation:
+            states.append((State(ForwardState(""), BackwardState(
+                [BackwardPath(f_l[-2::-1], "b")])), []))
+            visited.add(states[-1][0])
+            # Initial Kinks starts
+            for i in range(1, len(f_l) - 1):
+                f_left = f_l[:i]
+                f_right = f_l[i:]
+                f_left_str = " ".join(f_left)
+                f_right_str = " ".join(map(lambda x: inverse(x, "-"),
+                                           f_right[:-1][::-1]))
+                if starts_with(f_left_str, f_right_str):
+                    states.append((State(ForwardState(f_left_str),
+                                         BackwardState([
+                                         BackwardPath(f_right_str, "b")
+                                         ])), []))
+                    visited.add(states[-1][0])
+
+    # Explore
+    # print("INITIAL")
+    # print(states)
+    while states:
+        state_temp = states.pop()
+        state = state_temp[0]
+        prev = state_temp[1]
+        # print(states)
+        # print(state, len(states))
+        if state.is_end():
+            # print(prev)
+            return True
+        next_states = state.get_next_states(functions, maxi)
+        for s_temp in next_states:
+            if s_temp not in visited:
+                visited.add(s_temp)
+                states.append((s_temp, prev[:] + [state]))
+    return False
+
+
+def starts_with(f_str, cp):
+    if len(f_str) == 0 or len(cp) == 0:
+        return True
+    if len(f_str) > len(cp):
+        return f_str[len(cp)] == " " and f_str[:len(cp)] == cp
+    elif len(f_str) < len(cp):
+        return cp[len(f_str)] == " " and cp[:len(f_str)] == f_str
+    else:
+        return cp == f_str
+
+
+def get_sub_functions(functions):
+    from function import Function
+    res = []
+    for function in functions:
+        if isinstance(function, Function):
+            res += function.get_sub_functions()
+    return res

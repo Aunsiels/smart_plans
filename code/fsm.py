@@ -117,8 +117,8 @@ class FSM(object):
         """
         res = []
         res.append("#states")
-        for state in set(self.states):
-            res.append(self.__transform_state(state))
+        for state in set(map(self.__transform_state, self.states)):
+            res.append(state)
         res.append("#initial")
         res.append(self.__transform_state(self.initial))
         res.append("#accepting")
@@ -314,6 +314,7 @@ class FSM(object):
 
     def get_palindrome_fsm(self, query="", weak=False, sub_functions=False):
         # Not sure it works well with epsilon transitions
+        self.close()
         fsm_no_e = self.remove_epsilon_transitions()
         alphabet = fsm_no_e.alphabet[:]
         states = []
@@ -322,6 +323,7 @@ class FSM(object):
                 states.append((x, y))
         initial = (-1, -1)
         finals = [(x, x) for x in fsm_no_e.states]
+        # finals = [(x, x) for x in fsm_no_e.finals]
         # Compensate an epsilon between a final and a initial
         # for final in fsm_no_e.finals:
         #     finals.append((final, fsm_no_e.initial))
@@ -370,6 +372,23 @@ class FSM(object):
                     visited.add(x)
                     to_process.append(x)
         return True
+
+    def find_word(self):
+        to_process = []
+        visited = set()
+        to_process.append((self.initial, []))
+        visited.add(self.initial)
+        while to_process:
+            current, l = to_process.pop()
+            d = self.transitions.setdefault(current, dict())
+            for x in d:
+                if x in self.finals:
+                    print(self)
+                    return l + [d[x]]
+                if x not in visited:
+                    visited.add(x)
+                    to_process.append((x, l + [d[x]]))
+        return None
 
     def to_regex(self) -> Any:
         """to_regex Transforms the FSM to regex

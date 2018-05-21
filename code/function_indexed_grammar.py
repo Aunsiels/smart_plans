@@ -75,14 +75,6 @@ class FunctionIndexedGrammar(IndexedGrammar):
         initial_rules.append(EndRule("T", "epsilon"))
         return initial_rules
 
-    def __get_sub_functions(self, functions):
-        res = []
-        for function in functions:
-            if type(function) == Function or \
-                    type(function) == MultipleInputFunction:
-                res += function.get_sub_functions()
-        return res
-
     def __init__(self,
                  functions,
                  query,
