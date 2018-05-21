@@ -4,6 +4,22 @@
 
 python3, networkx, tkinter, graphviz
 
+## CIKM Paper
+
+### Abstract
+
+Many  data  sources  provide  access  to  their  data  through REST Web services. Such a service is a remote API that can be accessed via a parameterized URL. The Web services can be orchestrated together in execution plans in order to answer queries. In this paper, we show that some plans are guaranteed to deliver an answer to the query under certain conditions. We provide a correct and complete algorithm for finding these plans. Finally, we conduct a proof of concept for our method on real Web services.
+
+### Experiments
+
+Several experiments can be run using our code. To do so, we used WebServices provided by Preda et al. in their [Susie paper](http://www.prism.uvsq.fr/~preda/papers/ICDE13_conf_full_746.pdf). In particular, the access functions to [Abe Books](http://search2.abebooks.com/), [ISBNDB](http://isbndb.com/), [LibraryThing](http://www.librarything.com/), [MusicBrainz](http://musicbrainz.org/) and [AudioScrobbler](http://ws.audioscrobbler.com/2.0) were given.
+
+In general, we focused on the number of relations which can be found thanks to a smart plan. To run the experiments, type:
+
+``` bash
+python3 experiments_CIKM.py
+```
+
 ## Interface
 
 ### Running the Interface
