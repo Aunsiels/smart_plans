@@ -14,4 +14,5 @@ paper/nicoletta/
 code/.mypy_cache/
 code/test_greenery.ipynb
 paper
-temp
+temp*
+*.zip

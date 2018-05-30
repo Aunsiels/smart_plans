@@ -12,3 +12,4 @@ class CFG(object):
         res += "Productions:\n"
         res += "\n".join(map(str, self.productions)) + "\n"
         res += "Start: " + str(self.start)
+        return res

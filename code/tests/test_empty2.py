@@ -2,11 +2,14 @@
 Testing of single input linear function, tree functions and equivalence rules
 """
 
+import unittest
 
-from function_indexed_grammar import FunctionIndexedGrammar
-from function import Function
-from horn_rule import HornRule
-from tree_function import TreeFunction
+from experiments.function_indexed_grammar import FunctionIndexedGrammar
+from experiments.function import Function
+from experiments.horn_rule import HornRule
+from experiments.tree_function import TreeFunction
+
+
 
 functions = []
 
