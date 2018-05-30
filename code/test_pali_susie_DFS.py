@@ -19,10 +19,10 @@ generator = FunctionGenerator(n_relations)
 
 functions = []
 
-for j in range(5, 50, 5):
-    n_functions = j
-# for j in range(2, 20, 2):
-#     n_relations = j
+# for j in range(5, 50, 5):
+#     n_functions = j
+for j in range(2, 20, 2):
+    n_relations = j
     generator = FunctionGenerator(n_relations)
     for i in range(0, 200):
         # 1 function, size_max is 10

@@ -14,7 +14,11 @@ import pandas as pd
 
 functions = dict()
 
-webservices = ["FUNLIBTH", "FUNABE", "FUNMB1"]
+webservices = ["FUNLIBTH", "FUNABE", "FUNMB1", "FUNLF1",
+    "ISBNdb", "IVA"]
+
+for ws in webservices:
+    functions[ws] = []
 
 #Functions wrapping information extraction techniques from the Web:
 #have existential variables in the middle
@@ -155,6 +159,142 @@ functions["FUNMB1"].append(["hasChild"])
 
 functions["FUNMB1"].append(["producer", "country"])
 
+###############################
+# to add to IE
+# song title by lyrics
+functions["IE"].append(["lyrics-", "title"])
+functions["IE"].append(["lyricsBy-", "title"])
+
+
+###### FUNLYRIC1####################
+#most of the queries will not have smart plans as the plans are not linear
+# Lyrics does not know about the MB ids used by our global schema
+
+
+# lyrics artist id by artist name
+# functions["FUNLYRIC1"].append(["hasName-", "hasArtidstIdAtLyrics"])
+# # this function should not be split because the id in the middle is the
+# # MB id which is not known
+#
+#
+# # song by artist id
+# functions["FUNLYRIC1"].append(["hasArtidstIdAtLyrics-", "sang",
+#     "hasSongIdAtLyrics"])  # could not be split further as the
+# # intermediary variables (MB ids) are unknown at the source
+# functions["FUNLYRIC1"].append(["hasArtidstIdAtLyrics-", "sang", "language" ])
+# functions["FUNLYRIC1"].append(["hasArtidstIdAtLyrics-", "sang", "title" ])
+# functions["FUNLYRIC1"].append(["hasArtidstIdAtLyrics-", "sang", "lyricsBy" ])
+# functions["FUNLYRIC1"].append(["hasArtidstIdAtLyrics-", "sang",
+#     "lyrics" ]) # lyrics are the actual lyrics not the composer
+#
+#
+# # album by artist id
+# functions["FUNLYRIC1"].append(["hasArtidstIdAtLyrics-", "release",
+#     "hasAlbumIdAtLyrics"])  # could not be split further as the
+# # intermediary variables (MB ids) are unknown at the source
+# functions["FUNLYRIC1"].append(["hasArtidstIdAtLyrics-", "release", "language" ])
+# functions["FUNLYRIC1"].append(["hasArtidstIdAtLyrics-", "release", "title" ])
+# functions["FUNLYRIC1"].append(["hasArtidstIdAtLyrics-", "release", "lyricsBy" ])
+
+
+################## FUNLF1 ##################
+#last fm knows/stores mb ids so it's like MB
+
+
+#artist id by artist name
+functions["FUNLF1"].append(["hasName-"])
+
+#artist info by artist id
+functions["FUNLF1"].append(["bornOnDate"])
+functions["FUNLF1"].append(["hasName"])
+
+
+#get albums by artist id
+functions["FUNLF1"].append(["release"]) #the albums
+
+#album id by  album title
+functions["FUNLF1"].append(["title-"])
+
+#album info by album id
+functions["FUNLF1"].append(["language"])
+functions["FUNLF1"].append(["sang-", "hasName"])
+functions["FUNLF1"].append(["sang-"])
+functions["FUNLF1"].append(["producer"])
+functions["FUNLF1"].append(["releaseYear"])
+functions["FUNLF1"].append(["releaseCountry"])
+
+#song ids by album id
+functions["FUNLF1"].append(["track"])
+
+#song id by song  title
+functions["FUNLF1"].append(["title-"])
+
+#song info by song id
+functions["FUNLF1"].append(["language"])
+functions["FUNLF1"].append(["sang-", "hasName"])
+functions["FUNLF1"].append(["sang-"])
+functions["FUNLF1"].append(["composer"])
+functions["FUNLF1"].append(["lyricsBy"])
+functions["FUNLF1"].append(["songYear"])
+functions["FUNLF1"].append(["songCountry"])
+
+#get collaborator
+functions["FUNLF1"].append(["isMemberOf", "isMemberOf-"])
+
+################# ISBN ##########################
+#books by author id
+functions["ISBNdb"].append(["wrote"])
+
+
+#books by author name
+functions["ISBNdb"].append(["hasName-", "wrote"])
+functions["ISBNdb"].append(["hasName-"])
+
+
+#book info by ISBN
+functions["ISBNdb"].append(["title"])
+functions["ISBNdb"].append(["wrote-","hasName"])
+functions["ISBNdb"].append(["wrote-"])
+functions["ISBNdb"].append(["publisher"])
+functions["ISBNdb"].append(["publisher","publisherLocation"])
+functions["ISBNdb"].append(["publisher","publisherGenre"])
+functions["ISBNdb"].append(["editor"])
+functions["ISBNdb"].append(["isbn13"])
+functions["ISBNdb"].append(["pages"])
+
+
+#published info by publisher
+functions["ISBNdb"].append(["publisher-"]) #isbn of books
+functions["ISBNdb"].append(["name"])
+
+
+#############IVA###############
+#these functions are not defunct
+#a similar Web service API is themoviedb
+# https://www.themoviedb.org/documentation/api
+
+#get actor info
+functions["IVA"].append(["personWonPrize"])
+functions["IVA"].append(["personWonPrize", "prizeYear"])
+functions["IVA"].append(["actedIn", "title"])
+functions["IVA"].append(["actedIn"])
+functions["IVA"].append(["diedOnDate"])
+functions["IVA"].append(["bornOnDate"])
+functions["IVA"].append(["country"])
+
+
+#get movie details by IMDB
+functions["IVA"].append(["actedIn-"])
+functions["IVA"].append(["directed-"])
+functions["IVA"].append(["genre"])
+functions["IVA"].append(["title"])
+
+#get movie IMDB by movie title
+functions["IVA"].append(["title-"])
+
+#to add to the IE since the function get movies by directors is not provided
+functions["IE"].append(["directed", "title"])
+
 for key in functions:
     f_temp = []
     for f in functions[key]:
@@ -167,10 +307,11 @@ for key in functions:
         functions[key][i] = MultipleInputFunction(functions[key][i],
                                                   "f" + str(i), 1)
 
-for x in webservices:
-    functions[x] = list(set(filter(lambda x: x.n_relations() > 0,
-                                    get_sub_functions(functions[x]) +
-                             functions[x])))
+# For subfunctions
+# for x in webservices:
+#     functions[x] = list(set(filter(lambda x: x.n_relations() > 0,
+#                                     get_sub_functions(functions[x]) +
+#                              functions[x])))
 
 # x + IE
 for x in webservices:

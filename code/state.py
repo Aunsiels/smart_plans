@@ -156,8 +156,8 @@ def generate_all_states(state, functions, max_size):
     cp = state.get_constraint_path()
     bs = state.backward_state
 
-    def generate_all_states_rec(bs, functions):
-        if bs.total_length() >= max_size or len(functions) == 0:
+    def generate_all_states_rec(bs, functions, n_added=0):
+        if bs.total_length() >= max_size or len(functions) == 0 or n_added >= 2:
             res.append(bs)
             return
         cp_temp = bs.get_constraint_path()
@@ -168,13 +168,13 @@ def generate_all_states(state, functions, max_size):
                 starts_with(f_str, cp_temp):
             generate_all_states_rec(BackwardState(
                     bs.backward_paths[:] + [BackwardPath(f_str, "f")]),
-                functions[1:])
+                functions[1:], n_added + 1)
         f_str = " ".join(function.get_inverse_function())
         if starts_with(f_str, cp) and \
                 starts_with(f_str, cp_temp):
             generate_all_states_rec(BackwardState(
                     bs.backward_paths[:] + [BackwardPath(function, "b")]),
-                functions[1:])
+                functions[1:], n_added + 1)
         # kinks
         for i in range(1, len(f_l)):
             f_left = f_l[:i]
@@ -191,9 +191,9 @@ def generate_all_states(state, functions, max_size):
                         bs.backward_paths[:] +
                     [BackwardPath(f_left[::-1], "b"),
                      BackwardPath(f_right, "f")]),
-                    functions)
+                    functions, n_added)
 
-        generate_all_states_rec(bs, functions[1:])
+        generate_all_states_rec(bs, functions[1:], n_added)
 
     generate_all_states_rec(bs, functions)
     final_res = []
