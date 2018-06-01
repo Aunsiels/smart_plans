@@ -8,3 +8,8 @@ class CFGRule(object):
         res = str(self.head) + " -> "
         res += ", ".join(map(str, self.body))
         return res
+
+    def __eq__(self, other):
+        return isinstance(other, CFGRule) and\
+            self.head == other.head and\
+            self.body == other.body
