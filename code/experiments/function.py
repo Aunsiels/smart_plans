@@ -62,7 +62,7 @@ class Function (object):
                 sys.exit("No relation: " + l_string)
         self.init_from_list(relations)
 
-    def __init__(self, relations, name="f"):
+    def __init__(self, relations, name="f", outputs=None):
         """__init__
         Creates the function represented by a sequence of relations
         :param relations: the sequence of relations in the function, inverse
@@ -86,6 +86,10 @@ class Function (object):
         self.part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
         self.n_inputs = 1
         self.inputs = set()
+        if outputs is None:
+            self.outputs = [len(self.part0) - 1]
+        else:
+            self.outputs = list(outputs)
 
     def get_inverse_function(self, symbol="-"):
         """get_inverse_function Get the list representation of the inverse
@@ -384,7 +388,10 @@ class Function (object):
                                    self.relations[i][0] + "_OUT" +
                                    self.relations[i][1] * "m")
             current = next_node
+            if i in self.outputs:
+                fsm.add_final(next_node)
         last = len(self.relations) - 1
+        # Normally this is stupid...
         if last in self.inputs:
             fsm.add_transition(current,
                                final,

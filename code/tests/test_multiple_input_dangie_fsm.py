@@ -53,6 +53,11 @@ class TestMultipleInputDangieFSM(unittest.TestCase):
         for i in range(len(self.functions)):
             self.functions[i] = MultipleInputFunction(self.functions[i], "f" + str(i), 1)
 
+        self.functions.append(MultipleInputFunction(["a-", "c", "d"], "f28", 1,
+                                                    outputs=[1,2])) # 28
+        self.functions.append(MultipleInputFunction(["c-", "b-", "a-"], "f29",
+                                                    1, outputs=[0,2])) # 29
+
         for i in range(len(self.mifunctions)):
             self.mifunctions[i] = MultipleInputFunction(self.mifunctions[i],
                                                    "f" + str(i + len(self.functions)), 2)
@@ -154,9 +159,16 @@ class TestMultipleInputDangieFSM(unittest.TestCase):
                                            ["b", "a"])
         self.assertFalse(res)
 
-    def test_mif_21(self):
+    def test_mif_20(self):
 
         res = make_dangie([self.functions[x] for x in [21, 22]] +
+                                           [self.mifunctions[x] for x in [0]],
+                                           ["q"])
+        self.assertTrue(res)
+
+    def test_mif_21(self):
+
+        res = make_dangie([self.functions[x] for x in [21, 28]] +
                                            [self.mifunctions[x] for x in [0]],
                                            ["q"])
         self.assertFalse(res)
@@ -191,7 +203,15 @@ class TestMultipleInputDangieFSM(unittest.TestCase):
         res = make_dangie([self.functions[x] for x in [26]] +
                                            [self.mifunctions[x] for x in [3]],
                                            ["d"])
+        self.assertTrue(res)
+
+    def test_mif_18(self):
+
+        res = make_dangie([self.functions[x] for x in [29]] +
+                                           [self.mifunctions[x] for x in [3]],
+                                           ["d"])
         self.assertFalse(res)
+
 
 
     def test_mif_26(self):

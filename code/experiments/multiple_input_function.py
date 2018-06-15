@@ -8,7 +8,7 @@ class MultipleInputFunction (Function):
     Represents a multiple input function
     """
 
-    def __init__(self, relations, name, n_inputs):
+    def __init__(self, relations, name, n_inputs, outputs=None):
         """__init__
         Creates the function represented by a sequence of relations
         :param relations: the sequence of relations in the function, inverse
@@ -28,6 +28,10 @@ class MultipleInputFunction (Function):
         else:
             self.n_inputs = max(n_inputs)
             self.inputs = set(n_inputs)
+        if outputs is None:
+            self.outputs = [len(self.part0) - 1]
+        else:
+            self.outputs = list(outputs)
 
     def get_sub_functions(self):
         res = []

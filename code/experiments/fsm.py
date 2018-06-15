@@ -614,18 +614,20 @@ class FSM(object):
                                 to_process.append((first, state))
                                 processed.add((first, state))
                     # Multiple Inputs
-                    opposite = get_opposite_IN(a)
-                    if opposite is not None and opposite in alphabet:
-                        for state in out_edges[second][opposite]:
-                            if (first, state) not in processed:
-                                to_process.append((first, state))
-                                processed.add((first, state))
-                    opposite = get_as_input(a)
-                    if opposite is not None and opposite in alphabet:
-                        for state in out_edges[second][opposite]:
-                            if (second, state) not in processed:
-                                to_process.append((second, state))
-                                processed.add((second, state))
+                    if first == fsm.initial or first in fsm.finals:
+                        opposite = get_opposite_IN(a)
+                        if opposite is not None and opposite in alphabet:
+                            for state in out_edges[second][opposite]:
+                                if (first, state) not in processed:
+                                    to_process.append((first, state))
+                                    processed.add((first, state))
+                    if second in fsm.finals:
+                        opposite = get_as_input(a)
+                        if opposite is not None and opposite in alphabet:
+                            for state in out_edges[second][opposite]:
+                                if (second, state) not in processed:
+                                    to_process.append((second, state))
+                                    processed.add((second, state))
         while to_process:
             current = to_process.pop()
             first = current[0]
@@ -650,19 +652,22 @@ class FSM(object):
                             if (first, end) not in processed:
                                 to_process.append((first, end))
                                 processed.add((first, end))
+                    # Multiple inputs
                     opposite = get_opposite_OUT(a)
                     if opposite is not None and opposite in alphabet:
                         for begin in in_edges[first][opposite]:
-                            if (begin, state) not in processed:
+                            if (begin == fsm.initial or begin in fsm.finals) \
+                                    and (begin, state) not in processed:
                                 to_process.append((begin, state))
                                 processed.add((begin, state))
                     # Special case
-                    opposite = get_as_output(a)
-                    if opposite is not None and opposite in alphabet:
-                        for begin in in_edges[first][opposite]:
-                            if (first, state) not in processed:
-                                to_process.append((first, state))
-                                processed.add((first, state))
+                    if first == fsm.initial or first in fsm.finals:
+                        opposite = get_as_output(a)
+                        if opposite is not None and opposite in alphabet:
+                            for begin in in_edges[first][opposite]:
+                                if (first, state) not in processed:
+                                    to_process.append((first, state))
+                                    processed.add((first, state))
         alphabet = list(alphabet)
         states = fsm.states[:]
         initial = fsm.initial
