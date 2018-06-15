@@ -8,7 +8,8 @@ from function_indexed_grammar import FunctionIndexedGrammar
 import time
 from regex_tree import RegexTree
 from node import Node
-from utils import make_DFS, get_sub_functions
+from utils import make_DFS, get_sub_functions, dangie_fsm
+from multiple_input_function import MultipleInputFunction
 
 
 # number relations
@@ -19,10 +20,10 @@ generator = FunctionGenerator(n_relations)
 
 functions = []
 
-# for j in range(5, 50, 5):
-#     n_functions = j
-for j in range(2, 20, 2):
-    n_relations = j
+for j in range(5, 50, 5):
+    n_functions = j
+# for j in range(2, 20, 2):
+#     n_relations = j
     generator = FunctionGenerator(n_relations)
     for i in range(0, 200):
         # 1 function, size_max is 10
@@ -38,6 +39,10 @@ for j in range(2, 20, 2):
         else:
             susie_query = query
 
+        functions_dangie = []
+        for f in functions:
+            functions_dangie.append(MultipleInputFunction(
+                f.to_list("-"), f.name, 1))
 
         # ==== FSM ====
 
@@ -125,6 +130,19 @@ for j in range(2, 20, 2):
         susie_sub_res = i_grammar.is_empty()
         susie_sub_time = time.time() - current_time
 
+
+        # ==== Dangie - with FSM ====
+        current_time = time.time()
+        fsm = dangie_fsm(functions_dangie)
+
+        if susie_query[-1] == "m":
+            dangie_res = not fsm.accepts([susie_query[:-1] + "_OUT" + "m"])
+        else:
+            dangie_res = not fsm.accepts([susie_query + "_OUT"])
+        dangie_time = time.time() - current_time
+
+
+
         if not susie_res and dfs_strong_res:
             print("susie pb")
             print(functions)
@@ -151,8 +169,13 @@ for j in range(2, 20, 2):
             print(functions)
             print(query)
             exit()
+        if dangie_res and not dfs_weak_res:
+            print("dangie pb")
+            print(functions)
+            print(query)
+            exit()
 
-        with open("pali_vs_susie_vs_dfs.csv", "a") as f:
+        with open("results/pali_vs_susie_vs_dfs_vs_fsm.csv", "a") as f:
             f.write(str(fsm_not_weak_res) + "," +
                     str(fsm_weak_res) + "," +
                     str(fsm_not_weak_sub_res) + "," +
@@ -163,6 +186,7 @@ for j in range(2, 20, 2):
                     str(dfs_strong_sub_res) + "," +
                     str(susie_res) + "," +
                     str(susie_sub_res) + "," +
+                    str(dangie_res) + "," +
                     str(fsm_not_weak_time) + "," +
                     str(fsm_weak_time) + "," +
                     str(fsm_not_weak_sub_time) + "," +
@@ -173,6 +197,7 @@ for j in range(2, 20, 2):
                     str(dfs_strong_sub_time) + "," +
                     str(susie_time) + "," +
                     str(susie_sub_time) + "," +
+                    str(dangie_time) + "," +
                     str(n_relations) + "," +
                     str(size_max) + "," +
                     str(n_functions) + "\n")

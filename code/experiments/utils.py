@@ -91,6 +91,22 @@ def stack(s_relations, counter, start, end):
     return (rules, counter)
 
 
+def make_dangie(functions, query_l, eq_rules=[]):
+    fsm = dangie_fsm(functions)
+
+    for eq_rule in eq_rules:
+        fsm.apply_rule(eq_rule.l0, eq_rule.l1)
+
+
+    new_query = []
+
+    for query in query_l:
+        if query[-1] == "m":
+            new_query.append(query[:-1] + "_OUT" + "m")
+        else:
+            new_query.append(query + "_OUT")
+    return not fsm.accepts(new_query)
+
 def dangie_fsm(functions):
     from fsm import FSM
     fsm = FSM()
@@ -297,6 +313,8 @@ def make_DFS(functions, relation, weak=True):
                                              BackwardPath(f_right_str, "b")
                                              ])), []))
                         visited.add(states[-1][0])
+                if relation == "isMemberOf":
+                    print(states)
 
         if f_l[-1] == relation:
             states.append((State(ForwardState(""), BackwardState(
@@ -322,13 +340,21 @@ def make_DFS(functions, relation, weak=True):
     while states:
         state_temp = states.pop()
         state = state_temp[0]
+        if relation == "isMemberOf":
+            print("STATE!!!")
+            print(state)
         prev = state_temp[1]
         # print(states)
         # print(state, len(states))
         if state.is_end():
-            # print(prev)
+            if relation == "isMemberOf":
+                print("#######")
+                print(prev)
             return True
         next_states = state.get_next_states(functions, maxi)
+        if relation == "isMemberOf":
+            print("NEXT")
+            print(next_states)
         for s_temp in next_states:
             if s_temp not in visited:
                 visited.add(s_temp)

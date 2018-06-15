@@ -4,7 +4,7 @@ from utils import starts_with, inverse_path
 class BackwardState(object):
 
     def __init__(self, backward_paths):
-        self.backward_paths = backward_paths
+        self.backward_paths = backward_paths[:]
         ends_f, ends_b = self.number_ends()
         # remove the common ending forward and backward. Exploration of it
         # would result into a loop

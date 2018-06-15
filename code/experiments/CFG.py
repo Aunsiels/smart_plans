@@ -1,6 +1,7 @@
 from queue import Queue
 from pda_state import PDAState
 from pda_transition_function import PDATransitionFunction
+from collections import defaultdict
 
 class CFG(object):
 
@@ -23,17 +24,26 @@ class CFG(object):
         generating = self.get_reachable()
         return self.start not in generating
 
+    def __preprocess_get_reachable(self):
+        links = defaultdict(list)
+        for prod in self.productions:
+            for body_part in prod.body:
+                links[body_part].append(prod)
+            prod.init_generating()
+        return links
+
     def get_reachable(self):
-        generating = set(self.terminals[:])
-        modified = True
-        while modified:
-            modified = False
-            for rule in self.productions:
-                if all(map(lambda x: x in generating or x == "epsilon",
-                           rule.body)):
-                    if rule.head not in generating:
-                        generating.add(rule.head)
-                        modified = True
+        links = self.__preprocess_get_reachable()
+        generating = set(self.terminals)
+        to_process = list(generating)
+        to_process.append("epsilon")
+        while to_process:
+            current = to_process.pop()
+            for rule in links[current]:
+                rule.remove_one_remaining()
+                if rule.is_generating() and rule.head not in generating:
+                    generating.add(rule.head)
+                    to_process.append(rule.head)
         return generating
 
     def __is_final(self, states):

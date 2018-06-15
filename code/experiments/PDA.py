@@ -113,46 +113,110 @@ class PDA(object):
                                        new_stack))
         return False
 
-    def to_CFG(self):
-        from CFG import CFG
-        start = Variable("S")
-        variables = set()
-        variables.add(start)
-        terminals = list(map(Terminal, self.input_symbols[:]))
+    def __preprocess_to_CFG(self):
+        states = self.states[:]
+        input_symbols = self.input_symbols[:]
+        stack_alphabet = self.stack_alphabet[:]
+        transition_function = []
+        start_state = self.start_state
+        start_symbol = self.start_symbol
+        final_states = self.final_states[:]
+        counter = 0
+        for trans in self.transition_function:
+            if len(trans.stack_to) <= 2:
+                transition_function.append(trans)
+            else:
+                n_p = len(trans.stack_to)
+                new_states = []
+                for _ in range(n_p - 2):
+                    new_states.append("Prepro" + str(counter))
+                    counter += 1
+                    states.append(new_states[-1])
+                transition_function.append(PDATransitionFunction(
+                    trans.state_from, trans.input_symbol, trans.stack_from,
+                    new_states[-1], trans.stack_to[n_p - 2:]))
+                for i in range(1, n_p - 2):
+                    transition_function.append(PDATransitionFunction(
+                        new_states[i], "epsilon", trans.stack_to[i + 1],
+                        new_states[i - 1], trans.stack_to[i: i + 2]))
+                transition_function.append(PDATransitionFunction(
+                    new_states[0], "epsilon", trans.stack_to[1],
+                    trans.state_to, trans.stack_to[0: 2]))
+        return PDA(states, input_symbols, stack_alphabet, transition_function,
+                   start_state, start_symbol, final_states)
+
+    def __get_variable(self, name):
+        if name in self.__cache_variables:
+            return self.__cache_variables[name]
+        else:
+            temp = Variable(str(self.__cache_counter))
+            self.__cache_counter += 1
+            self.__cache_variables[name] = temp
+            return temp
+
+    def __init_productions_to_CFG(self, start):
         productions = []
         for p in self.states:
-            productions.append(CFGRule(start, [Variable(str(self.start_state) +
-                                                        "," +
-                                                        str(self.start_symbol) +
-                                                        "," +
-                                                        str(p))]))
+            productions.append(CFGRule(start, [self.__get_variable(
+                str(self.start_state) +
+                "," +
+                str(self.start_symbol) +
+                "," +
+                str(p))]))
+        return productions
+
+    def __get_body(self, trans, size, states):
+        body = []
+        if trans.input_symbol != "epsilon":
+            body.append(Terminal(trans.input_symbol))
+        else:
+            body.append(trans.input_symbol)
+        previous = trans.state_to
+        for i in range(size):
+            temp = self.__get_variable(str(previous) + "," +
+                                 str(trans.stack_to[i]) + "," +
+                                 str(states[i]))
+            body.append(temp)
+            previous = states[i]
+        return body
+
+    def __get_head(self, trans, size, states):
+        if size == 0:
+            return self.__get_variable(str(trans.state_from) + "," +
+                                       str(trans.stack_from) + "," +
+                                       str(trans.state_to))
+        return self.__get_variable(str(trans.state_from) + "," +
+                                   str(trans.stack_from) + "," +
+                                   str(states[-1]))
+
+    def __process_states_transition(self, trans,
+                                    productions, states, size):
+        head = self.__get_head(trans, size, states)
+        body = self.__get_body(trans, size, states)
+        productions.append(CFGRule(head, body))
+
+    def __process_transition_to_CFG(self, trans, productions):
+        size = len(trans.stack_to)
+        s_to = trans.stack_to
+        for states in product(self.states, repeat=size):
+            self.__process_states_transition(trans, productions,
+                                             states, size)
+
+    def to_CFG(self, preprocess=False):
+        if preprocess:
+            return self.__preprocess_to_CFG().to_CFG(False)
+        self.__cache_variables = dict()
+        self.__cache_counter = 0
+        from CFG import CFG
+        start = Variable("S")
+        terminals = list(map(Terminal, self.input_symbols[:]))
+        productions = self.__init_productions_to_CFG(start)
+        counter = 0.0
         for trans in self.transition_function:
-            size = len(trans.stack_to)
-            s_to = trans.stack_to
-            for states in product(self.states, repeat=size):
-                if size == 0:
-                    head = Variable(str(trans.state_from) + "," +
-                                    str(trans.stack_from) + "," +
-                                    str(trans.state_to))
-                else:
-                    head = Variable(str(trans.state_from) + "," +
-                                    str(trans.stack_from) + "," +
-                                    str(states[-1]))
-                variables.add(head)
-                body = []
-                if trans.input_symbol != "epsilon":
-                    body.append(Terminal(trans.input_symbol))
-                else:
-                    body.append(trans.input_symbol)
-                previous = trans.state_to
-                for i in range(size):
-                    body.append(Variable(str(previous) + "," +
-                                         str(s_to[i]) + "," +
-                                         str(states[i])))
-                    variables.add(body[-1])
-                    previous = states[i]
-                productions.append(CFGRule(head, body))
-        variables = list(variables)
+            counter += 1
+            self.__process_transition_to_CFG(trans, productions)
+        variables = list(self.__cache_variables.values())
+        variables.append(start)
         return CFG(variables, terminals, productions, start)
 
     def intersect(self, fsm):

@@ -85,6 +85,7 @@ class Function (object):
         self.part0 = [r[0] + 'm' * r[1] for r in self.relations]
         self.part1 = [r[0] + 'm' * r[1] for r in self.minus_relations]
         self.n_inputs = 1
+        self.inputs = set()
 
     def get_inverse_function(self, symbol="-"):
         """get_inverse_function Get the list representation of the inverse
@@ -358,3 +359,40 @@ class Function (object):
     def get_prolog_rules(self):
         """get_prolog_rules generates the prolog rules"""
         return self.generate_middle_rules()
+
+    def add_to_fsm(self, fsm):
+        """add_to_fsm
+        Adds the function to an FSM
+        :param fsm: The fsm to which we add the function
+        :return: The FSM
+        """
+        final = fsm.get_next_state()
+        if fsm.finals:
+            final = fsm.finals[0]
+        fsm.add_final(final)
+        current = fsm.initial
+        for i in range(len(self.relations) - 1):
+            next_node = fsm.get_next_state()
+            if i in self.inputs:
+                fsm.add_transition(current,
+                                   next_node,
+                                   self.relations[i][0] + "_IN" +
+                                   self.relations[i][1] * "m")
+            else:
+                fsm.add_transition(current,
+                                   next_node,
+                                   self.relations[i][0] + "_OUT" +
+                                   self.relations[i][1] * "m")
+            current = next_node
+        last = len(self.relations) - 1
+        if last in self.inputs:
+            fsm.add_transition(current,
+                               final,
+                               self.relations[last][0] + "_IN" +
+                               self.relations[last][1] * "m")
+        else:
+            fsm.add_transition(current,
+                               final,
+                               self.relations[last][0] + "_OUT" +
+                               self.relations[last][1] * "m")
+        return fsm

@@ -11,6 +11,7 @@ from utils import dangie_fsm, make_DFS, get_sub_functions
 import sys
 import time
 import pandas as pd
+from forward_backward_CFG import ForwardBackwardCFG
 
 functions = dict()
 
@@ -507,6 +508,29 @@ for key in functions:
                               qualitatif + " time")
             results_temp.append(delta_t)
 
+    # print("### CFG ###")
+    # current_time = time.time()
+    # n_reachable = 0
+
+    # for terminal in terminals[key]:
+    #     terminal = terminal
+    #     if not ForwardBackwardCFG(terminals[key], terminal).is_empty(
+    #         new_function):
+    #         n_reachable += 1
+    #     else:
+    #         print(terminal)
+    #     delta_t = time.time() - current_time
+    #     print(delta_t)
+
+    # print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
+    #       "% terminals reachable")
+    # delta_t = time.time() - current_time
+    # print("Elapsed time", delta_t)
+    # titles.append("CFG")
+    # results_temp.append(n_reachable * 100.0 / float(len(terminals[key])))
+    # titles.append("CFG time")
+    # results_temp.append(delta_t)
+
     print("### DFS Weak ###")
     current_time = time.time()
     n_reachable = 0
@@ -600,27 +624,32 @@ for key in functions:
     results_temp.append(delta_t)
 
 
-    # print("### Dangie - with FSM ###")
-    # current_time = time.time()
-    # fsm = dangie_fsm(functions[key])
-    # n_reachable = 0
+    print("### Dangie - with FSM ###")
+    current_time = time.time()
+    fsm = dangie_fsm(functions[key])
+    n_reachable = 0
 
-    # for terminal in terminals[key]:
-    #     if terminal[-1] == "m":
-    #         terminal = terminal[:-1] + "_OUT" + "m"
-    #     else:
-    #         terminal = terminal + "_OUT"
-    #     if fsm.accepts([terminal]):
-    #         n_reachable += 1
-    #         reachable.add(terminal)
-    #     else:
-    #         pass
-    #         # print(terminal)
+    for terminal in terminals[key]:
+        if terminal[-1] == "m":
+            terminal = terminal[:-1] + "_OUT" + "m"
+        else:
+            terminal = terminal + "_OUT"
+        if fsm.accepts([terminal]):
+            n_reachable += 1
+            reachable.add(terminal)
+        else:
+            pass
+            # print(terminal)
 
-    # print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
-    #       "% terminals reachable")
-    # delta_t = time.time() - current_time
-    # print("Elapsed time", delta_t)
+    print(str(n_reachable * 100.0 / float(len(terminals[key]))) +
+          "% terminals reachable")
+    delta_t = time.time() - current_time
+    print("Elapsed time", delta_t)
+
+    titles.append("Dangie FSM")
+    results_temp.append(n_reachable * 100.0 / float(len(terminals[key])))
+    titles.append("Dangie FSM time")
+    results_temp.append(delta_t)
 
     print(terminals[key])
 

@@ -590,24 +590,42 @@ class FSM(object):
             for a in fsm.alphabet:
                 in_edges[state][a] = []
                 out_edges[state][a] = []
+        # Construction
         for first in fsm.transitions:
             for second in fsm.transitions[first]:
                 for a in fsm.transitions[first][second]:
-                    opposite = get_opposite(a)
+                    # first -- a --> second
                     if first not in in_edges[second][a]:
                         in_edges[second][a].append(first)
                     if second not in out_edges[first][a]:
                         out_edges[first][a].append(second)
-                    if opposite not in alphabet:
-                        continue
-                    for state in in_edges[first][opposite]:
-                        if (state, second) not in processed:
-                            to_process.append((state, second))
-                            processed.add((state, second))
-                    for state in out_edges[second][opposite]:
-                        if (first, state) not in processed:
-                            to_process.append((first, state))
-                            processed.add((first, state))
+        for first in fsm.transitions:
+            for second in fsm.transitions[first]:
+                for a in fsm.transitions[first][second]:
+                    # first -- a --> second
+                    opposite = get_opposite(a)
+                    if opposite is not None and opposite in alphabet:
+                        for state in in_edges[first][opposite]:
+                            if (state, second) not in processed:
+                                to_process.append((state, second))
+                                processed.add((state, second))
+                        for state in out_edges[second][opposite]:
+                            if (first, state) not in processed:
+                                to_process.append((first, state))
+                                processed.add((first, state))
+                    # Multiple Inputs
+                    opposite = get_opposite_IN(a)
+                    if opposite is not None and opposite in alphabet:
+                        for state in out_edges[second][opposite]:
+                            if (first, state) not in processed:
+                                to_process.append((first, state))
+                                processed.add((first, state))
+                    opposite = get_as_input(a)
+                    if opposite is not None and opposite in alphabet:
+                        for state in out_edges[second][opposite]:
+                            if (second, state) not in processed:
+                                to_process.append((second, state))
+                                processed.add((second, state))
         while to_process:
             current = to_process.pop()
             first = current[0]
@@ -623,7 +641,7 @@ class FSM(object):
                     if first not in in_edges[state][a]:
                         in_edges[state][a].append(first)
                     opposite = get_opposite(a)
-                    if opposite in alphabet:
+                    if opposite is not None and opposite in alphabet:
                         for begin in in_edges[first][opposite]:
                             if (begin, state) not in processed:
                                 to_process.append((begin, state))
@@ -632,6 +650,19 @@ class FSM(object):
                             if (first, end) not in processed:
                                 to_process.append((first, end))
                                 processed.add((first, end))
+                    opposite = get_opposite_OUT(a)
+                    if opposite is not None and opposite in alphabet:
+                        for begin in in_edges[first][opposite]:
+                            if (begin, state) not in processed:
+                                to_process.append((begin, state))
+                                processed.add((begin, state))
+                    # Special case
+                    opposite = get_as_output(a)
+                    if opposite is not None and opposite in alphabet:
+                        for begin in in_edges[first][opposite]:
+                            if (first, state) not in processed:
+                                to_process.append((first, state))
+                                processed.add((first, state))
         alphabet = list(alphabet)
         states = fsm.states[:]
         initial = fsm.initial
@@ -692,12 +723,39 @@ class FSM(object):
         return was_modified
 
 
-def get_opposite(r):
+def get_opposite(r, not_in=True):
+    if not_in and "_IN" in r:
+        return None
     if r[-1] == "m":
         return r[:-1]
     else:
         return r + "m"
 
+def get_opposite_IN(r):
+    if "_OUT" in r:
+        return get_opposite(r.replace("_OUT", "_IN"), not_in=False)
+    else:
+        return None
+
+
+def get_opposite_OUT(r):
+    if "_IN" in r:
+        return get_opposite(r.replace("_IN", "_OUT"))
+    else:
+        return None
+
+def get_as_input(r):
+    if "_OUT" in r:
+        return r.replace("_OUT", "_IN")
+    else:
+        return None
+
+
+def get_as_output(r):
+    if "_IN" in r:
+        return r.replace("_IN", "_OUT")
+    else:
+        return None
 
 def are_opposite(r0, r1):
     return r0 == r1 + "m" or r1 == r0 + "m"

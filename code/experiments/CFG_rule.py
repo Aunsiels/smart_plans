@@ -13,3 +13,15 @@ class CFGRule(object):
         return isinstance(other, CFGRule) and\
             self.head == other.head and\
             self.body == other.body
+
+    def __hash__(self):
+        return hash(self.head) + hash(tuple(self.body))
+
+    def init_generating(self):
+        self.remaining = len(self.body)
+
+    def remove_one_remaining(self):
+        self.remaining -= 1
+
+    def is_generating(self):
+        return self.remaining == 0

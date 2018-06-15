@@ -74,8 +74,9 @@ class State(object):
             complete_res += generate_all_states(state,
                                                 functions,
                                                 max_size)
-        complete_res = filter(lambda x: x.backward_state.total_length() != 0,
-                             complete_res)
+        complete_res = list(filter(lambda x: x.is_valid() and
+                                   x.backward_state.total_length() != 0,
+                             complete_res))
         complete_res = map(lambda x: x.remove_one_relation(), complete_res)
         return list(set(complete_res))
 

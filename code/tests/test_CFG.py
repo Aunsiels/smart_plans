@@ -62,7 +62,7 @@ class TestCFG(unittest.TestCase):
                   Variable("S"))
         words = [x for x in cfg]
         self.assertEqual(words, [[Terminal("a")]])
-        cfg = CFG([Variable("S"), Variable("A"), Variable("B")],
+        cfg = CFG([Variable("S"), Variable("A"), Variable("C")],
                   [Terminal("a"), Terminal("b")],
                   [CFGRule(Variable("S"), [Variable("A")]),
                    CFGRule(Variable("S"), [Terminal("a")]),
@@ -206,3 +206,7 @@ class TestCFG(unittest.TestCase):
         fsm.close()
         cfg_temp = cfg.intersect(fsm)
         self.assertTrue(cfg_temp.is_empty())
+
+
+if __name__ == '__main__':
+    unittest.main()
